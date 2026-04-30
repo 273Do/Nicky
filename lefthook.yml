@@ -7,11 +7,7 @@ output:
 pre-commit:
   parallel: true
   commands:
-    format:
-      glob: "*.{ts,tsx,js,jsx,json,css}"
-      run: pnpm run format
-
-    lint:
+    lint-and-format-check:
       glob: "*.{ts,tsx,js,jsx}"
       run: pnpm run lint
 
