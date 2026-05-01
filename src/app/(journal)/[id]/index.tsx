@@ -2,7 +2,7 @@ import { PlatformColor, useColorScheme, View } from "react-native";
 
 import { Host, Text } from "@expo/ui/swift-ui";
 import { font, padding } from "@expo/ui/swift-ui/modifiers";
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 
 /**
  * ジャーナル一覧画面
@@ -10,12 +10,13 @@ import { Stack } from "expo-router";
 export default function JournalScreen() {
   const colorScheme = useColorScheme();
   const titleColor = colorScheme === "dark" ? "#ffffff" : "#000000";
+  const { id } = useLocalSearchParams<{ id: string }>();
 
   return (
     <>
       <Stack.Screen
         options={{
-          title: "Journal Title",
+          title: `Journal Title ${id}`,
           headerTitleStyle: {
             color: titleColor,
           },

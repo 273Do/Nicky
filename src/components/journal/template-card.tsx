@@ -12,7 +12,11 @@ import type { SFSymbol } from "sf-symbols-typescript";
 
 type Props = {
   /**
-   * ジャーナル名
+   * テンプレートID
+   */
+  id: string;
+  /**
+   * テンプレート名
    */
   name: string;
   /**
@@ -40,7 +44,7 @@ function lightenColor(hex: string, amount = 40): string {
 /**
  * テンプレートカード
  */
-export const TemplateCard = ({ name, icon, color, count }: Props) => {
+export const TemplateCard = ({ id, name, icon, color, count }: Props) => {
   const router = useRouter();
 
   return (
@@ -49,7 +53,7 @@ export const TemplateCard = ({ name, icon, color, count }: Props) => {
       modifiers={[
         frame({ height: 85 }),
         clipShape("roundedRectangle", 20),
-        onTapGesture(() => router.push("/(journal)/journal")),
+        onTapGesture(() => router.push(`/(journal)/${id}`)),
       ]}
     >
       <RoundedRectangle

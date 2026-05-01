@@ -40,6 +40,7 @@ export default function TemplateList() {
                 {row.map((template) => (
                   <TemplateCard
                     key={template.id}
+                    id={template.id}
                     name={template.name}
                     icon={template.icon}
                     color={template.color}
