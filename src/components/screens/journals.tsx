@@ -88,7 +88,7 @@ export default function JournalsScreen() {
             padding({ top: 16, bottom: 4 }),
           ]}
         >
-          Journals
+          Journal
         </Text>
 
         <Grid
