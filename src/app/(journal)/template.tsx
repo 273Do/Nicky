@@ -3,6 +3,9 @@ import { PlatformColor, View } from "react-native";
 import { Host, Text } from "@expo/ui/swift-ui";
 import { font, padding } from "@expo/ui/swift-ui/modifiers";
 
+/**
+ * テンプレート作成画面
+ */
 export default function TemplateRoute() {
   return (
     <View style={{ flex: 1 }}>

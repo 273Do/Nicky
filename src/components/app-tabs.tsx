@@ -3,6 +3,9 @@ import { PlatformColor } from "react-native";
 
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 
+/**
+ * アプリのタブバー
+ */
 export default function AppTabs() {
   return (
     <NativeTabs tintColor={PlatformColor("systemIndigo")}>

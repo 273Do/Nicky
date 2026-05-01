@@ -12,6 +12,10 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
   }
   return result;
 }
+
+/**
+ * ジャーナル一覧リスト
+ */
 export default function JournalList() {
   const rows = chunkArray(JOURNALS, 2);
 

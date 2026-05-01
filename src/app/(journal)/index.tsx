@@ -6,6 +6,9 @@ import { SymbolView } from "expo-symbols";
 
 import JournalList from "@/components/journal/journal-list";
 
+/**
+ * ジャーナル画面
+ */
 export default function JournalScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
