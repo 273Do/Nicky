@@ -18,9 +18,9 @@ import {
 } from "@expo/ui/swift-ui/modifiers";
 import type { SFSymbol } from "sf-symbols-typescript";
 
-import { JournalFolder } from "./journal-folder";
+import { Journal } from "./journal";
 
-type Shortcut = {
+type JournalObj = {
   id: string;
   name: string;
   icon: SFSymbol;
@@ -28,7 +28,7 @@ type Shortcut = {
   count: number;
 };
 
-const SHORTCUTS: Shortcut[] = [
+const JOURNALS: JournalObj[] = [
   {
     id: "1",
     name: "Morning Routine",
@@ -89,7 +89,7 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
   return result;
 }
 export default function JournalList() {
-  const rows = chunkArray(SHORTCUTS, 2);
+  const rows = chunkArray(JOURNALS, 2);
 
   return (
     <ZStack
@@ -117,13 +117,13 @@ export default function JournalList() {
           >
             {rows.map((row, rowIndex) => (
               <Grid.Row key={rowIndex}>
-                {row.map((shortcut) => (
-                  <JournalFolder
-                    key={shortcut.id}
-                    name={shortcut.name}
-                    icon={shortcut.icon}
-                    color={shortcut.color}
-                    count={shortcut.count}
+                {row.map((journal) => (
+                  <Journal
+                    key={journal.id}
+                    name={journal.name}
+                    icon={journal.icon}
+                    color={journal.color}
+                    count={journal.count}
                   />
                 ))}
               </Grid.Row>

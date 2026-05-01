@@ -10,19 +10,19 @@ import type { SFSymbol } from "sf-symbols-typescript";
 
 type Props = {
   /**
-   * フォルダー名
+   * ジャーナル名
    */
   name: string;
   /**
-   * フォルダーアイコン
+   * アイコン
    */
   icon: SFSymbol;
   /**
-   * フォルダーカラー
+   * カラー
    */
   color: string;
   /**
-   * ジャーナル数
+   * エントリー数
    */
   count: number;
 };
@@ -35,7 +35,7 @@ function lightenColor(hex: string, amount = 40): string {
   return "#" + ((r << 16) | (g << 8) | b).toString(16).padStart(6, "0");
 }
 
-export const JournalFolder = ({ name, icon, color, count }: Props) => {
+export const Journal = ({ name, icon, color, count }: Props) => {
   return (
     <ZStack
       alignment="bottomLeading"
