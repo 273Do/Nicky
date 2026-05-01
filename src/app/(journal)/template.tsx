@@ -1,15 +1,23 @@
 import { PlatformColor, View } from "react-native";
 
 import { Host, Text } from "@expo/ui/swift-ui";
+import { font, padding } from "@expo/ui/swift-ui/modifiers";
 
-export default function ExploreScreen() {
+export default function TemplateRoute() {
   return (
     <View style={{ flex: 1 }}>
       <Host
         style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}
         useViewportSizeMeasurement
       >
-        <Text>Explore</Text>
+        <Text
+          modifiers={[
+            font({ size: 28, weight: "bold" }),
+            padding({ bottom: 8 }),
+          ]}
+        >
+          テンプレート
+        </Text>
       </Host>
     </View>
   );

@@ -1,21 +1,5 @@
-import {
-  Button,
-  Grid,
-  HStack,
-  ScrollView,
-  Spacer,
-  Text,
-  VStack,
-  ZStack,
-} from "@expo/ui/swift-ui";
-import {
-  buttonStyle,
-  controlSize,
-  font,
-  frame,
-  labelStyle,
-  padding,
-} from "@expo/ui/swift-ui/modifiers";
+import { Grid, ScrollView, VStack, ZStack } from "@expo/ui/swift-ui";
+import { frame, padding } from "@expo/ui/swift-ui/modifiers";
 import type { SFSymbol } from "sf-symbols-typescript";
 
 import { Journal } from "./journal";
@@ -102,14 +86,6 @@ export default function JournalList() {
           spacing={0}
           modifiers={[padding({ horizontal: 16 })]}
         >
-          <Text
-            modifiers={[
-              font({ size: 34, weight: "bold" }),
-              padding({ top: 34, bottom: 4 }),
-            ]}
-          >
-            Journal
-          </Text>
           <Grid
             verticalSpacing={10}
             horizontalSpacing={10}
@@ -131,22 +107,6 @@ export default function JournalList() {
           </Grid>
         </VStack>
       </ScrollView>
-
-      <HStack
-        modifiers={[frame({ maxWidth: 9999 }), padding({ horizontal: 16 })]}
-      >
-        <Spacer />
-        <Button
-          label="create"
-          systemImage="plus"
-          modifiers={[
-            labelStyle("iconOnly"),
-            buttonStyle("glass"),
-            controlSize("large"),
-          ]}
-          onPress={() => alert("Create")}
-        />
-      </HStack>
     </ZStack>
   );
 }
