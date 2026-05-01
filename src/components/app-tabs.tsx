@@ -1,10 +1,11 @@
 import React from "react";
+import { PlatformColor } from "react-native";
 
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 
 export default function AppTabs() {
   return (
-    <NativeTabs>
+    <NativeTabs tintColor={PlatformColor("systemIndigo")}>
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Label>Journal</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
