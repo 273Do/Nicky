@@ -1,23 +1,31 @@
 import React from "react";
+import { PlatformColor } from "react-native";
 
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 
+/**
+ * アプリのタブバー
+ */
 export default function AppTabs() {
   return (
-    <NativeTabs>
-      <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
+    <NativeTabs tintColor={PlatformColor("systemIndigo")}>
+      <NativeTabs.Trigger name="(journal)">
+        <NativeTabs.Trigger.Label>Journal</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require("@/assets/images/tabIcons/home.png")}
-          renderingMode="template"
+          sf={{
+            default: "books.vertical.fill",
+            selected: "books.vertical.fill",
+          }}
         />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="explore">
-        <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>Report</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require("@/assets/images/tabIcons/explore.png")}
-          renderingMode="template"
+          sf={{
+            default: "chart.line.text.clipboard.fill",
+            selected: "chart.line.text.clipboard.fill",
+          }}
         />
       </NativeTabs.Trigger>
     </NativeTabs>
