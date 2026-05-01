@@ -27,11 +27,7 @@ export default function JournalScreen() {
           headerBackButtonDisplayMode: "minimal",
           headerRight: () => (
             <Pressable onPress={() => router.push("/(journal)/template")}>
-              <SymbolView
-                name="plus"
-                size={22}
-                tintColor={PlatformColor("label")}
-              />
+              <SymbolView name="plus" tintColor={PlatformColor("label")} />
             </Pressable>
           ),
         }}

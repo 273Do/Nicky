@@ -49,7 +49,7 @@ export const TemplateCard = ({ name, icon, color, count }: Props) => {
       modifiers={[
         frame({ height: 85 }),
         clipShape("roundedRectangle", 20),
-        onTapGesture(() => router.push("/(journal)/template")),
+        onTapGesture(() => router.push("/(journal)/journal")),
       ]}
     >
       <RoundedRectangle
