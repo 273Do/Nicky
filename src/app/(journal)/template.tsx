@@ -6,7 +6,7 @@ import { font, padding } from "@expo/ui/swift-ui/modifiers";
 /**
  * テンプレート作成画面
  */
-export default function TemplateRoute() {
+export default function TemplateScreen() {
   return (
     <View style={{ flex: 1 }}>
       <Host

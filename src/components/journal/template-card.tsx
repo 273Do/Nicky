@@ -4,8 +4,10 @@ import {
   font,
   foregroundStyle,
   frame,
+  onTapGesture,
   padding,
 } from "@expo/ui/swift-ui/modifiers";
+import { useRouter } from "expo-router";
 import type { SFSymbol } from "sf-symbols-typescript";
 
 type Props = {
@@ -36,13 +38,19 @@ function lightenColor(hex: string, amount = 40): string {
 }
 
 /**
- * ジャーナルカード
+ * テンプレートカード
  */
-export const Journal = ({ name, icon, color, count }: Props) => {
+export const TemplateCard = ({ name, icon, color, count }: Props) => {
+  const router = useRouter();
+
   return (
     <ZStack
       alignment="bottomLeading"
-      modifiers={[frame({ height: 85 }), clipShape("roundedRectangle", 20)]}
+      modifiers={[
+        frame({ height: 85 }),
+        clipShape("roundedRectangle", 20),
+        onTapGesture(() => router.push("/(journal)/template")),
+      ]}
     >
       <RoundedRectangle
         cornerRadius={20}

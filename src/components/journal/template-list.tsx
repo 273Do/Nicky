@@ -3,7 +3,7 @@ import { frame, padding } from "@expo/ui/swift-ui/modifiers";
 
 import { JOURNALS } from "@/mocks/journals";
 
-import { Journal } from "./journal";
+import { TemplateCard } from "./template-card";
 
 function chunkArray<T>(arr: T[], size: number): T[][] {
   const result: T[][] = [];
@@ -14,9 +14,9 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
 }
 
 /**
- * ジャーナル一覧リスト
+ * テンプレート一覧リスト
  */
-export default function JournalList() {
+export default function TemplateList() {
   const rows = chunkArray(JOURNALS, 2);
 
   return (
@@ -37,13 +37,13 @@ export default function JournalList() {
           >
             {rows.map((row, rowIndex) => (
               <Grid.Row key={rowIndex}>
-                {row.map((journal) => (
-                  <Journal
-                    key={journal.id}
-                    name={journal.name}
-                    icon={journal.icon}
-                    color={journal.color}
-                    count={journal.count}
+                {row.map((template) => (
+                  <TemplateCard
+                    key={template.id}
+                    name={template.name}
+                    icon={template.icon}
+                    color={template.color}
+                    count={template.count}
                   />
                 ))}
               </Grid.Row>

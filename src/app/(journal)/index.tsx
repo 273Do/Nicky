@@ -4,7 +4,7 @@ import { Host } from "@expo/ui/swift-ui";
 import { Stack, useRouter } from "expo-router";
 import { SymbolView } from "expo-symbols";
 
-import JournalList from "@/components/journal/journal-list";
+import TemplateList from "@/components/journal/template-list";
 
 /**
  * ジャーナル画面
@@ -44,7 +44,7 @@ export default function JournalScreen() {
           }}
           useViewportSizeMeasurement
         >
-          <JournalList />
+          <TemplateList />
         </Host>
       </View>
     </>
