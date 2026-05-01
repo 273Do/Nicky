@@ -35,7 +35,7 @@ function lightenColor(hex: string, amount = 40): string {
   return "#" + ((r << 16) | (g << 8) | b).toString(16).padStart(6, "0");
 }
 
-export const Folder = ({ name, icon, color, count }: Props) => {
+export const JournalFolder = ({ name, icon, color, count }: Props) => {
   return (
     <ZStack
       alignment="bottomLeading"

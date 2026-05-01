@@ -1,8 +1,24 @@
-import { Grid, ScrollView, Text, VStack } from "@expo/ui/swift-ui";
-import { font, padding } from "@expo/ui/swift-ui/modifiers";
+import {
+  Button,
+  Grid,
+  HStack,
+  ScrollView,
+  Spacer,
+  Text,
+  VStack,
+  ZStack,
+} from "@expo/ui/swift-ui";
+import {
+  buttonStyle,
+  controlSize,
+  font,
+  frame,
+  labelStyle,
+  padding,
+} from "@expo/ui/swift-ui/modifiers";
 import type { SFSymbol } from "sf-symbols-typescript";
 
-import { Folder } from "./folder";
+import { JournalFolder } from "./journal-folder";
 
 type Shortcut = {
   id: string;
@@ -76,41 +92,61 @@ export default function JournalList() {
   const rows = chunkArray(SHORTCUTS, 2);
 
   return (
-    <ScrollView showsIndicators={false}>
-      <VStack
-        alignment="leading"
-        spacing={0}
-        modifiers={[padding({ horizontal: 16 })]}
-      >
-        <Text
-          modifiers={[
-            font({ size: 34, weight: "bold" }),
-            padding({ top: 16, bottom: 4 }),
-          ]}
+    <ZStack
+      alignment="top"
+      modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 })]}
+    >
+      <ScrollView showsIndicators={false}>
+        <VStack
+          alignment="leading"
+          spacing={0}
+          modifiers={[padding({ horizontal: 16 })]}
         >
-          Journal
-        </Text>
+          <Text
+            modifiers={[
+              font({ size: 34, weight: "bold" }),
+              padding({ top: 34, bottom: 4 }),
+            ]}
+          >
+            Journal
+          </Text>
+          <Grid
+            verticalSpacing={10}
+            horizontalSpacing={10}
+            modifiers={[padding({ top: 8, bottom: 32 })]}
+          >
+            {rows.map((row, rowIndex) => (
+              <Grid.Row key={rowIndex}>
+                {row.map((shortcut) => (
+                  <JournalFolder
+                    key={shortcut.id}
+                    name={shortcut.name}
+                    icon={shortcut.icon}
+                    color={shortcut.color}
+                    count={shortcut.count}
+                  />
+                ))}
+              </Grid.Row>
+            ))}
+          </Grid>
+        </VStack>
+      </ScrollView>
 
-        <Grid
-          verticalSpacing={10}
-          horizontalSpacing={10}
-          modifiers={[padding({ top: 16, bottom: 32 })]}
-        >
-          {rows.map((row, rowIndex) => (
-            <Grid.Row key={rowIndex}>
-              {row.map((shortcut) => (
-                <Folder
-                  key={shortcut.id}
-                  name={shortcut.name}
-                  icon={shortcut.icon}
-                  color={shortcut.color}
-                  count={shortcut.count}
-                />
-              ))}
-            </Grid.Row>
-          ))}
-        </Grid>
-      </VStack>
-    </ScrollView>
+      <HStack
+        modifiers={[frame({ maxWidth: 9999 }), padding({ horizontal: 16 })]}
+      >
+        <Spacer />
+        <Button
+          label="create"
+          systemImage="plus"
+          modifiers={[
+            labelStyle("iconOnly"),
+            buttonStyle("glass"),
+            controlSize("large"),
+          ]}
+          onPress={() => alert("Create")}
+        />
+      </HStack>
+    </ZStack>
   );
 }
