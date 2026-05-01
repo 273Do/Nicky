@@ -1,8 +1,8 @@
-import { PlatformColor, useColorScheme, View } from "react-native";
+import { useColorScheme } from "react-native";
 
-import { Host, Text } from "@expo/ui/swift-ui";
-import { font, padding } from "@expo/ui/swift-ui/modifiers";
 import { Stack, useLocalSearchParams } from "expo-router";
+
+import { JournalListView } from "@/components/journal/journal-list-view";
 
 /**
  * ジャーナル一覧画面
@@ -63,24 +63,7 @@ export default function JournalScreen() {
           ],
         }}
       />
-      <View style={{ flex: 1 }}>
-        <Host
-          style={{
-            flex: 1,
-            backgroundColor: PlatformColor("systemBackground"),
-          }}
-          useViewportSizeMeasurement
-        >
-          <Text
-            modifiers={[
-              font({ size: 28, weight: "bold" }),
-              padding({ bottom: 8 }),
-            ]}
-          >
-            ジャーナル
-          </Text>
-        </Host>
-      </View>
+      <JournalListView />
     </>
   );
 }

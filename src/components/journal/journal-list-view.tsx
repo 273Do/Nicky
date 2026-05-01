@@ -3,14 +3,14 @@ import { PlatformColor, View } from "react-native";
 import { Host, Text } from "@expo/ui/swift-ui";
 import { font, padding } from "@expo/ui/swift-ui/modifiers";
 
-/**
- * テンプレート作成画面
- */
-export default function TemplateScreen() {
+export const JournalListView = () => {
   return (
     <View style={{ flex: 1 }}>
       <Host
-        style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}
+        style={{
+          flex: 1,
+          backgroundColor: PlatformColor("systemBackground"),
+        }}
         useViewportSizeMeasurement
       >
         <Text
@@ -19,9 +19,9 @@ export default function TemplateScreen() {
             padding({ bottom: 8 }),
           ]}
         >
-          テンプレート
+          ジャーナル
         </Text>
       </Host>
     </View>
   );
-}
+};
