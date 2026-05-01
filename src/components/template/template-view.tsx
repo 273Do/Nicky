@@ -4,7 +4,7 @@ import { Grid, Host, ScrollView, VStack, ZStack } from "@expo/ui/swift-ui";
 import { frame, padding } from "@expo/ui/swift-ui/modifiers";
 
 import { TemplateCard } from "@/components/template/template-card";
-import { JOURNALS } from "@/mocks/journals";
+import { TEMPLATE } from "@/mocks/journals";
 
 function chunkArray<T>(arr: T[], size: number): T[][] {
   const result: T[][] = [];
@@ -15,7 +15,7 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
 }
 
 export const TemplateView = () => {
-  const rows = chunkArray(JOURNALS, 2);
+  const rows = chunkArray(TEMPLATE, 2);
 
   return (
     <View style={{ flex: 1 }}>
