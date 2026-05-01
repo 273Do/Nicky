@@ -3,7 +3,7 @@ import { useColorScheme } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 
 import { JournalListView } from "@/components/journal/journal-list-view";
-import { TEMPLATE } from "@/mocks/journals";
+import { TEMPLATES } from "@/mocks/journals";
 
 /**
  * ジャーナル一覧画面
@@ -13,7 +13,7 @@ export default function JournalScreen() {
   const titleColor = colorScheme === "dark" ? "#ffffff" : "#000000";
   const { id } = useLocalSearchParams<{ id: string }>();
 
-  const journalTemplate = TEMPLATE.find((template) => template.id === id);
+  const journalTemplate = TEMPLATES.find((template) => template.id === id);
 
   return (
     <>

@@ -8,7 +8,7 @@ export type TemplateObj = {
   count: number;
 };
 
-export const TEMPLATE: TemplateObj[] = [
+export const TEMPLATES: TemplateObj[] = [
   {
     id: "1",
     name: "Morning Routine",
