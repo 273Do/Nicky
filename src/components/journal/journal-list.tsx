@@ -2,7 +2,7 @@ import { Grid, ScrollView, Text, VStack } from "@expo/ui/swift-ui";
 import { font, padding } from "@expo/ui/swift-ui/modifiers";
 import type { SFSymbol } from "sf-symbols-typescript";
 
-import { Folder } from "../journals/folder";
+import { Folder } from "./folder";
 
 type Shortcut = {
   id: string;
@@ -72,7 +72,7 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
   }
   return result;
 }
-export default function JournalsScreen() {
+export default function JournalList() {
   const rows = chunkArray(SHORTCUTS, 2);
 
   return (

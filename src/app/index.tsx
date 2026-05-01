@@ -2,16 +2,16 @@ import { PlatformColor, View } from "react-native";
 
 import { Host } from "@expo/ui/swift-ui";
 
-import JournalsScreen from "@/components/screens/journals";
+import JournalList from "@/components/journal/journal-list";
 
-export default function HomeScreen() {
+export default function JournalScreen() {
   return (
     <View style={{ flex: 1 }}>
       <Host
         style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}
         useViewportSizeMeasurement
       >
-        <JournalsScreen />
+        <JournalList />
       </Host>
     </View>
   );
