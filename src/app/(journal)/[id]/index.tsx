@@ -6,7 +6,7 @@ import { EntryListView } from "@/components/journal/entry-list-view";
 import { TEMPLATES } from "@/mocks/journals";
 
 /**
- * ジャーナル一覧画面
+ * ジャーナル一覧
  */
 export default function JournalScreen() {
   const colorScheme = useColorScheme();

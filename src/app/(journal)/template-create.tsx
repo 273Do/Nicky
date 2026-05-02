@@ -1,7 +1,7 @@
 import { TemplateCreateView } from "@/components/template/template-create-view";
 
 /**
- * テンプレート作成画面
+ * テンプレート作成
  */
 export default function TemplateCreateScreen() {
   return <TemplateCreateView />;

@@ -14,6 +14,9 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
   return result;
 }
 
+/**
+ * テンプレート一覧画面
+ */
 export function TemplateView() {
   const rows = chunkArray(TEMPLATES, 2);
 
