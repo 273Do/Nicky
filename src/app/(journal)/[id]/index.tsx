@@ -2,8 +2,8 @@ import { useColorScheme } from "react-native";
 
 import { Stack, useLocalSearchParams } from "expo-router";
 
-import { EntryListView } from "@/components/journal/entry-list-view";
-import { TEMPLATES } from "@/mocks/journals";
+import { EntryListView } from "@/components/entry/entry-list-view";
+import { TEMPLATES } from "@/mocks/templates";
 
 /**
  * ジャーナル一覧

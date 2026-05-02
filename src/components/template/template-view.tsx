@@ -4,7 +4,7 @@ import { Grid, Host, ScrollView, VStack } from "@expo/ui/swift-ui";
 import { padding } from "@expo/ui/swift-ui/modifiers";
 
 import { TemplateCard } from "@/components/template/template-card";
-import { TEMPLATES } from "@/mocks/journals";
+import { TEMPLATES } from "@/mocks/templates";
 
 function chunkArray<T>(arr: T[], size: number): T[][] {
   const result: T[][] = [];
