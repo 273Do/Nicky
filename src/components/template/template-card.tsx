@@ -44,7 +44,7 @@ function lightenColor(hex: string, amount = 40): string {
 /**
  * テンプレートカード
  */
-export const TemplateCard = ({ id, name, icon, color, count }: Props) => {
+export function TemplateCard({ id, name, icon, color, count }: Props) {
   const router = useRouter();
 
   return (
@@ -98,4 +98,4 @@ export const TemplateCard = ({ id, name, icon, color, count }: Props) => {
       </Text>
     </ZStack>
   );
-};
+}

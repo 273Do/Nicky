@@ -21,7 +21,10 @@ function groupByMonth(entries: Entry[]): { month: string; entries: Entry[] }[] {
   }));
 }
 
-export const EntryListView = () => {
+/**
+ * エントリー一覧画面
+ */
+export function EntryListView() {
   const grouped = groupByMonth(ENTRIES);
 
   return (
@@ -46,4 +49,4 @@ export const EntryListView = () => {
       </Host>
     </View>
   );
-};
+}

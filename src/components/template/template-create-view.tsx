@@ -3,7 +3,10 @@ import { PlatformColor, View } from "react-native";
 import { Host, Text } from "@expo/ui/swift-ui";
 import { font, padding } from "@expo/ui/swift-ui/modifiers";
 
-export const TemplateCreateView = () => {
+/**
+ * テンプレート作成画面
+ */
+export function TemplateCreateView() {
   return (
     <View style={{ flex: 1 }}>
       <Host
@@ -21,4 +24,4 @@ export const TemplateCreateView = () => {
       </Host>
     </View>
   );
-};
+}

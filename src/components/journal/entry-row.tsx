@@ -7,6 +7,9 @@ import { Entry } from "@/mocks/entries";
 
 const secondary = foregroundStyle({ type: "hierarchical", style: "secondary" });
 
+/**
+ * エントリー行
+ */
 export const EntryRow = ({ entry }: { entry: Entry }) => (
   <VStack alignment="leading" spacing={4}>
     <HStack alignment="center" spacing={6}>

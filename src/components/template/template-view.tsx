@@ -14,7 +14,7 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
   return result;
 }
 
-export const TemplateView = () => {
+export function TemplateView() {
   const rows = chunkArray(TEMPLATES, 2);
 
   return (
@@ -57,4 +57,4 @@ export const TemplateView = () => {
       </Host>
     </View>
   );
-};
+}
