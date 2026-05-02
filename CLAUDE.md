@@ -1,4 +1,4 @@
-# Nicky - Journal Management App
+# Nicky - Journaling App
 
 ## Project Overview
 
@@ -15,7 +15,7 @@ pnpm lint-fix       # Run ESLint with auto-fix
 
 ## Commit Convention
 
-Enforced by lefthook (pre-commit: lint check, commit-msg: format check):
+Enforced by lefthook (pre-commit: lint, commit-msg: format):
 
 ```
 feat: add new feature
@@ -30,56 +30,68 @@ chore: tooling / config changes
 
 ```
 src/app/
-├── _layout.tsx              # Root layout — NativeTabs (tab bar stays visible on push)
-├── explore.tsx              # Report tab screen
-└── (journal)/
-    ├── _layout.tsx          # Stack layout — must be inside NativeTabs to keep tab bar
-    ├── index.tsx            # Template list screen
-    ├── template-create.tsx  # Create template screen
-    └── [id]/
-        └── index.tsx        # Journal detail screen (receives id via useLocalSearchParams)
+  _layout.tsx                  # NativeTabs (root) — tab bar always visible
+  (journal)/
+    _layout.tsx                # Stack — scoped to journal tab
+    index.tsx                  # Journal list  /
+    create.tsx                 # Create journal  /create
+    [id].tsx                   # Entry list  /[id]
+    entry/
+      [id].tsx                 # Entry detail  /entry/[id]
+  explore.tsx                  # Report tab
 ```
 
-**Key rule:** `NativeTabs` is the root navigator; `Stack` lives inside a tab group. This keeps the tab bar visible when pushing screens.
+**Navigation flow:** Journal list → `[id]` (entry list) → `entry/[id]` (entry detail)
+
+**Key rule:** `NativeTabs` is the root navigator; `Stack` lives inside `(journal)` group. This keeps the tab bar visible when pushing screens.
+
+### Directory Structure
+
+```
+src/
+  app/                   # Routes (Expo Router file-based)
+  components/
+    app-tabs.tsx         # NativeTabs definition
+    journal/             # Journal-related components
+      journal-view.tsx   # Grid list of journal cards
+      journal-card.tsx   # Tappable gradient card
+      journal-create-view.tsx
+    entry/               # Entry-related components
+      entry-list-view.tsx  # List grouped by month
+      entry-row.tsx        # Date + title + preview row
+  mocks/
+    journals.ts          # JournalObj type + JOURNALS array
+    entries.ts           # Entry type + ENTRIES array
+  constants/
+  hooks/
+```
 
 ### Key Technologies
 
 | Package | Usage |
 |---|---|
 | `expo-router` | File-based routing, `useRouter`, `useLocalSearchParams` |
-| `@expo/ui/swift-ui` | SwiftUI components: `Host`, `ZStack`, `VStack`, `Grid`, `ScrollView`, `Button`, `Image`, `Text`, `RoundedRectangle`, `BottomSheet` |
-| `@expo/ui/swift-ui/modifiers` | Styling: `frame`, `padding`, `font`, `foregroundStyle`, `onTapGesture`, `clipShape`, `buttonStyle`, `labelStyle` |
+| `@expo/ui/swift-ui` | SwiftUI components: `Host`, `ZStack`, `VStack`, `Grid`, `ScrollView`, `List`, `Section`, `Button`, `Image`, `Text`, `RoundedRectangle` |
+| `@expo/ui/swift-ui/modifiers` | `frame`, `padding`, `font`, `foregroundStyle`, `onTapGesture`, `clipShape`, `lineLimit`, `headerProminence`, `listStyle` |
 | `expo-router/unstable-native-tabs` | `NativeTabs` — iOS native tab bar |
-| `expo-symbols` | `SymbolView` — SF Symbols in RN components |
+| `expo-symbols` | `SymbolView` — SF Symbols in RN header components |
 | `PlatformColor` | Adaptive system colors: `"label"`, `"systemBackground"`, `"systemIndigo"` |
 
 ### SwiftUI Component Rules
 
 - Always wrap SwiftUI components in `<Host>` with `useViewportSizeMeasurement`
 - Use `onTapGesture` modifier for taps — `onPress` prop does NOT work on layout components
-- Gradients: use `RoundedRectangle` + `foregroundStyle({ type: "linearGradient", ... })` + `clipShape` on parent
-- Adaptive text color in native headers: use `PlatformColor("label")` directly — no need for `useColorScheme`
+- Gradients: `RoundedRectangle` + `foregroundStyle({ type: "linearGradient", ... })` + `clipShape` on parent `ZStack`
+- Adaptive colors: use `PlatformColor("label")` directly — no need for `useColorScheme`
+- Secondary text: `foregroundStyle({ type: "hierarchical", style: "secondary" })`
+- `List` manages its own scrolling — never nest it inside `ScrollView`
 
 ### Naming Conventions
 
 | Term | Meaning |
 |---|---|
-| Template | A journal category/folder (the type) |
-| Journal | A record created from a template |
-| Entry | An individual entry within a journal |
-
-## Directory Structure
-
-```
-src/
-├── app/          # Routes (Expo Router file-based)
-├── components/
-│   ├── journal/  # Journal-related components
-│   ├── template/ # Template-related components
-│   └── screens/  # Full-screen view components
-└── mocks/        # Mock data with type definitions
-    └── journals.ts  # JournalObj type + JOURNALS array
-```
+| Journal | A category/collection (shown as a card in the grid) |
+| Entry | An individual record within a journal |
 
 ## Code Style
 
