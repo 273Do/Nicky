@@ -3,12 +3,14 @@ import { PlatformColor, View } from "react-native";
 import { Host, List, Section } from "@expo/ui/swift-ui";
 import { frame, headerProminence } from "@expo/ui/swift-ui/modifiers";
 
-import { ENTRIES, type Entry } from "@/mocks/entries";
+import { ENTRIES, type EntryObj } from "@/mocks/entries";
 
 import { EntryRow } from "./entry-row";
 
-function groupByMonth(entries: Entry[]): { month: string; entries: Entry[] }[] {
-  const map = new Map<string, Entry[]>();
+function groupByMonth(
+  entries: EntryObj[],
+): { month: string; entries: EntryObj[] }[] {
+  const map = new Map<string, EntryObj[]>();
   for (const entry of entries) {
     const [year, month] = entry.date.split("/");
     const key = `${year}年${Number(month)}月`;

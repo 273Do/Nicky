@@ -1,4 +1,4 @@
-export type Entry = {
+export type EntryObj = {
   id: string;
   date: string;
   title: string;
@@ -6,7 +6,7 @@ export type Entry = {
   bookmark?: boolean;
 };
 
-export const ENTRIES: Entry[] = [
+export const ENTRIES: EntryObj[] = [
   {
     id: "1",
     date: "2026/05/05",

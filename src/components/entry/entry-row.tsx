@@ -4,14 +4,14 @@ import { Button, HStack, Image, Spacer, Text, VStack } from "@expo/ui/swift-ui";
 import { font, foregroundStyle, lineLimit } from "@expo/ui/swift-ui/modifiers";
 import { useRouter } from "expo-router";
 
-import { Entry } from "@/mocks/entries";
+import { EntryObj } from "@/mocks/entries";
 
 const secondary = foregroundStyle({ type: "hierarchical", style: "secondary" });
 
 /**
  * エントリー行
  */
-export function EntryRow({ entry }: { entry: Entry }) {
+export function EntryRow({ entry }: { entry: EntryObj }) {
   const router = useRouter();
   return (
     <Button
