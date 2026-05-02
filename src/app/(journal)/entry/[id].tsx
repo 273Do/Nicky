@@ -1,6 +1,6 @@
 import { Stack, useLocalSearchParams } from "expo-router";
 
-import { EntryListView } from "@/components/entry/entry-list-view";
+import { EntryDetailView } from "@/components/entry/entry-detail";
 import { ENTRIES } from "@/mocks/entries";
 
 /**
@@ -28,47 +28,46 @@ export default function EntryDetailScreen() {
               menu: {
                 items: [
                   {
-                    type: "submenu",
-                    label: "Sort",
+                    type: "action",
                     icon: {
                       type: "sfSymbol",
-                      name: "arrow.up.arrow.down",
+                      name: entry?.bookmark ? "bookmark.fill" : "bookmark",
                     },
-                    items: [
-                      {
-                        type: "action",
-                        label: "hoge",
-                        onPress: () => {
-                          // Do something
-                        },
-                      },
-                      {
-                        type: "action",
-                        label: "fuga",
-                        onPress: () => {
-                          // Do something
-                        },
-                      },
-                    ],
+                    label: "Bookmark",
+                    onPress: () => {
+                      // Do something
+                    },
+                  },
+                  {
+                    type: "action",
+                    label: "delete",
+                    destructive: true,
+                    onPress: () => {
+                      // Do something
+                    },
                   },
                 ],
+              },
+            },
+            {
+              type: "button",
+              label: "Edit",
+              onPress: () => {
+                // Do something
               },
             },
           ],
         }}
       />
-      {/* <View style={{ flex: 1 }}>
-        <Host
-          style={{
-            flex: 1,
-            backgroundColor: PlatformColor("systemBackground"),
-          }}
-          useViewportSizeMeasurement
-        >
-          <Text>Entry Detail</Text>
-        </Host>
-      </View> */}
-      <EntryListView />
+      {entry && (
+        <EntryDetailView
+          id={id}
+          date={entry.date}
+          title={entry.title}
+          preview={entry.preview}
+          bookmark={entry.bookmark}
+        />
+      )}
     </>
   );
 }
