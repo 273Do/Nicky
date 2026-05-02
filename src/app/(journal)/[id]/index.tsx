@@ -2,7 +2,7 @@ import { useColorScheme } from "react-native";
 
 import { Stack, useLocalSearchParams } from "expo-router";
 
-import { JournalListView } from "@/components/journal/journal-list-view";
+import { EntryListView } from "@/components/journal/entry-list-view";
 import { TEMPLATES } from "@/mocks/journals";
 
 /**
@@ -66,7 +66,7 @@ export default function JournalScreen() {
           ],
         }}
       />
-      <JournalListView />
+      <EntryListView />
     </>
   );
 }
