@@ -1,16 +1,12 @@
-import { PlatformColor, useColorScheme, View } from "react-native";
-
-import { Host, Text } from "@expo/ui/swift-ui";
 import { Stack, useLocalSearchParams } from "expo-router";
 
+import { EntryListView } from "@/components/entry/entry-list-view";
 import { ENTRIES } from "@/mocks/entries";
 
 /**
  * エントリー詳細
  */
 export default function EntryDetailScreen() {
-  const colorScheme = useColorScheme();
-  const titleColor = colorScheme === "dark" ? "#ffffff" : "#000000";
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const entry = ENTRIES.find((entry) => entry.id === id);
@@ -20,12 +16,7 @@ export default function EntryDetailScreen() {
       <Stack.Screen
         options={{
           title: entry?.title,
-          headerTitleStyle: {
-            color: titleColor,
-          },
-          headerShown: true,
           headerLargeTitleEnabled: true,
-          headerBackButtonDisplayMode: "minimal",
           unstable_headerRightItems: () => [
             {
               type: "menu",
@@ -66,7 +57,7 @@ export default function EntryDetailScreen() {
           ],
         }}
       />
-      <View style={{ flex: 1 }}>
+      {/* <View style={{ flex: 1 }}>
         <Host
           style={{
             flex: 1,
@@ -76,7 +67,8 @@ export default function EntryDetailScreen() {
         >
           <Text>Entry Detail</Text>
         </Host>
-      </View>
+      </View> */}
+      <EntryListView />
     </>
   );
 }
