@@ -1,7 +1,10 @@
-import { PlatformColor, View } from "react-native";
+import { PlatformColor, Pressable, StyleSheet, View } from "react-native";
 
 import { Host, List, Section } from "@expo/ui/swift-ui";
 import { frame, headerProminence } from "@expo/ui/swift-ui/modifiers";
+import { GlassView } from "expo-glass-effect";
+import { useRouter } from "expo-router";
+import { SymbolView } from "expo-symbols";
 
 import { ENTRIES, type EntryObj } from "@/mocks/entries";
 import { formatYearMonth } from "@/utils/date";
@@ -24,16 +27,11 @@ function groupByMonth(
 }
 
 type Props = {
-  /**
-   * 検索テキスト
-   */
   searchText?: string;
 };
 
-/**
- * エントリー一覧画面
- */
 export function EntryListView({ searchText = "" }: Props) {
+  const router = useRouter();
   const filtered = searchText
     ? ENTRIES.filter(
         (e) => e.title.includes(searchText) || e.preview.includes(searchText),
@@ -61,6 +59,38 @@ export function EntryListView({ searchText = "" }: Props) {
           ))}
         </List>
       </Host>
+
+      <Pressable
+        onPress={() => router.push("/(journal)/create")}
+        style={styles.fab}
+      >
+        <GlassView
+          glassEffectStyle="regular"
+          tintColor={PlatformColor("systemGra1y3") as unknown as string}
+          style={styles.glassButton}
+        >
+          <SymbolView name="plus" tintColor={PlatformColor("label")} />
+        </GlassView>
+      </Pressable>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  fab: {
+    position: "absolute",
+    bottom: 102,
+    right: 16,
+  },
+  glassButton: {
+    width: 62,
+    height: 62,
+    borderRadius: 100,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+  },
+});

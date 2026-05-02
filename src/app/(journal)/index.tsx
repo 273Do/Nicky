@@ -19,7 +19,10 @@ export default function JournalListScreen() {
           headerLargeTitleEnabled: true,
           headerRight: () => (
             <Pressable onPress={() => router.push("/(journal)/create")}>
-              <SymbolView name="plus" tintColor={PlatformColor("label")} />
+              <SymbolView
+                name="folder.badge.plus"
+                tintColor={PlatformColor("label")}
+              />
             </Pressable>
           ),
         }}
