@@ -3,8 +3,8 @@ import { PlatformColor, View } from "react-native";
 import { Grid, Host, ScrollView, VStack } from "@expo/ui/swift-ui";
 import { padding } from "@expo/ui/swift-ui/modifiers";
 
-import { TemplateCard } from "@/components/template/template-card";
-import { TEMPLATES } from "@/mocks/templates";
+import { JournalCard } from "@/components/journal/journal-card";
+import { JOURNALS } from "@/mocks/journals";
 
 function chunkArray<T>(arr: T[], size: number): T[][] {
   const result: T[][] = [];
@@ -15,10 +15,10 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
 }
 
 /**
- * テンプレート一覧画面
+ * ジャーナル一覧画面
  */
-export function TemplateView() {
-  const rows = chunkArray(TEMPLATES, 2);
+export function JournalView() {
+  const rows = chunkArray(JOURNALS, 2);
 
   return (
     <View style={{ flex: 1 }}>
@@ -42,14 +42,14 @@ export function TemplateView() {
             >
               {rows.map((row, rowIndex) => (
                 <Grid.Row key={rowIndex}>
-                  {row.map((template) => (
-                    <TemplateCard
-                      key={template.id}
-                      id={template.id}
-                      name={template.name}
-                      icon={template.icon}
-                      color={template.color}
-                      count={template.count}
+                  {row.map((journal) => (
+                    <JournalCard
+                      key={journal.id}
+                      id={journal.id}
+                      name={journal.name}
+                      icon={journal.icon}
+                      color={journal.color}
+                      count={journal.count}
                     />
                   ))}
                 </Grid.Row>

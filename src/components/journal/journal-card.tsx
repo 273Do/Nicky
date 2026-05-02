@@ -12,11 +12,11 @@ import type { SFSymbol } from "sf-symbols-typescript";
 
 type Props = {
   /**
-   * テンプレートID
+   * ジャーナルID
    */
   id: string;
   /**
-   * テンプレート名
+   * ジャーナル名
    */
   name: string;
   /**
@@ -42,9 +42,9 @@ function lightenColor(hex: string, amount = 40): string {
 }
 
 /**
- * テンプレートカード
+ * ジャーナルカード
  */
-export function TemplateCard({ id, name, icon, color, count }: Props) {
+export function JournalCard({ id, name, icon, color, count }: Props) {
   const router = useRouter();
 
   return (

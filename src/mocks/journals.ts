@@ -1,6 +1,6 @@
 import type { SFSymbol } from "sf-symbols-typescript";
 
-export type TemplateObj = {
+export type JournalObj = {
   id: string;
   name: string;
   icon: SFSymbol;
@@ -8,7 +8,7 @@ export type TemplateObj = {
   count: number;
 };
 
-export const TEMPLATES: TemplateObj[] = [
+export const JOURNALS: JournalObj[] = [
   {
     id: "1",
     name: "Morning Routine",

@@ -1,25 +1,25 @@
-import { useColorScheme } from "react-native";
+import { PlatformColor, useColorScheme, View } from "react-native";
 
+import { Host, Text } from "@expo/ui/swift-ui";
 import { Stack, useLocalSearchParams } from "expo-router";
 
-import { EntryListView } from "@/components/entry/entry-list-view";
-import { TEMPLATES } from "@/mocks/templates";
+import { ENTRIES } from "@/mocks/entries";
 
 /**
- * ジャーナル一覧
+ * エントリー詳細
  */
-export default function JournalScreen() {
+export default function EntryDetailScreen() {
   const colorScheme = useColorScheme();
   const titleColor = colorScheme === "dark" ? "#ffffff" : "#000000";
   const { id } = useLocalSearchParams<{ id: string }>();
 
-  const journalTemplate = TEMPLATES.find((template) => template.id === id);
+  const entry = ENTRIES.find((entry) => entry.id === id);
 
   return (
     <>
       <Stack.Screen
         options={{
-          title: journalTemplate?.name,
+          title: entry?.title,
           headerTitleStyle: {
             color: titleColor,
           },
@@ -66,7 +66,17 @@ export default function JournalScreen() {
           ],
         }}
       />
-      <EntryListView />
+      <View style={{ flex: 1 }}>
+        <Host
+          style={{
+            flex: 1,
+            backgroundColor: PlatformColor("systemBackground"),
+          }}
+          useViewportSizeMeasurement
+        >
+          <Text>Entry Detail</Text>
+        </Host>
+      </View>
     </>
   );
 }
