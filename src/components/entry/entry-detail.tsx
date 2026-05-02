@@ -4,6 +4,7 @@ import { Host, List, Section, Text } from "@expo/ui/swift-ui";
 import { frame, listStyle } from "@expo/ui/swift-ui/modifiers";
 
 import { EntryObj } from "@/mocks/entries";
+import { formatDate } from "@/utils/date";
 
 /**
  * エントリー詳細画面
@@ -30,7 +31,7 @@ export function EntryDetailView({
             listStyle("insetGrouped"),
           ]}
         >
-          <Section title={date}>
+          <Section title={formatDate(date)}>
             <Text>{id}</Text>
             <Text>{title}</Text>
             <Text>{preview}</Text>

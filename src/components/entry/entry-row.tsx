@@ -5,6 +5,7 @@ import { font, foregroundStyle, lineLimit } from "@expo/ui/swift-ui/modifiers";
 import { useRouter } from "expo-router";
 
 import { EntryObj } from "@/mocks/entries";
+import { formatDate } from "@/utils/date";
 
 const secondary = foregroundStyle({ type: "hierarchical", style: "secondary" });
 
@@ -20,7 +21,9 @@ export function EntryRow({ entry }: { entry: EntryObj }) {
     >
       <VStack alignment="leading" spacing={4}>
         <HStack alignment="center" spacing={6}>
-          <Text modifiers={[font({ size: 12 }), secondary]}>{entry.date}</Text>
+          <Text modifiers={[font({ size: 12 }), secondary]}>
+            {formatDate(entry.date)}
+          </Text>
           <Spacer />
           {entry.bookmark && (
             <Image

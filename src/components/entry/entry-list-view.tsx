@@ -4,6 +4,7 @@ import { Host, List, Section } from "@expo/ui/swift-ui";
 import { frame, headerProminence } from "@expo/ui/swift-ui/modifiers";
 
 import { ENTRIES, type EntryObj } from "@/mocks/entries";
+import { formatYearMonth } from "@/utils/date";
 
 import { EntryRow } from "./entry-row";
 
@@ -12,13 +13,12 @@ function groupByMonth(
 ): { month: string; entries: EntryObj[] }[] {
   const map = new Map<string, EntryObj[]>();
   for (const entry of entries) {
-    const [year, month] = entry.date.split("/");
-    const key = `${year}年${Number(month)}月`;
+    const key = `${entry.date.getFullYear()}-${entry.date.getMonth()}`;
     if (!map.has(key)) map.set(key, []);
     map.get(key)!.push(entry);
   }
-  return Array.from(map.entries()).map(([month, entries]) => ({
-    month,
+  return Array.from(map.entries()).map(([, entries]) => ({
+    month: formatYearMonth(entries[0].date),
     entries,
   }));
 }
