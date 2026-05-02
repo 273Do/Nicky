@@ -15,12 +15,14 @@ export function EntryDetailView({
   preview,
   bookmark,
 }: EntryObj) {
-  console.log(id, date, title, preview, bookmark);
   return (
     <View style={{ flex: 1 }}>
       <Host
-        style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}
-        // useViewportSizeMeasurement
+        style={{
+          flex: 1,
+          backgroundColor: PlatformColor("systemBackground"),
+        }}
+        useViewportSizeMeasurement
       >
         <List
           modifiers={[
@@ -29,6 +31,7 @@ export function EntryDetailView({
           ]}
         >
           <Section title={date}>
+            <Text>{id}</Text>
             <Text>{title}</Text>
             <Text>{preview}</Text>
             <Text>{bookmark ? "Bookmarked" : "Not bookmarked"}</Text>
