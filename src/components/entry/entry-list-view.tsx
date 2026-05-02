@@ -23,11 +23,23 @@ function groupByMonth(
   }));
 }
 
+type Props = {
+  /**
+   * 検索テキスト
+   */
+  searchText?: string;
+};
+
 /**
  * エントリー一覧画面
  */
-export function EntryListView() {
-  const grouped = groupByMonth(ENTRIES);
+export function EntryListView({ searchText = "" }: Props) {
+  const filtered = searchText
+    ? ENTRIES.filter(
+        (e) => e.title.includes(searchText) || e.preview.includes(searchText),
+      )
+    : ENTRIES;
+  const grouped = groupByMonth(filtered);
 
   return (
     <View style={{ flex: 1 }}>

@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { Stack, useLocalSearchParams } from "expo-router";
 
 import { EntryListView } from "@/components/entry/entry-list-view";
@@ -8,6 +10,7 @@ import { JOURNALS } from "@/mocks/journals";
  */
 export default function JournalScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const [searchText, setSearchText] = useState("");
 
   const journal = JOURNALS.find((journal) => journal.id === id);
 
@@ -17,6 +20,13 @@ export default function JournalScreen() {
         options={{
           title: journal?.name,
           headerLargeTitleEnabled: true,
+          headerSearchBarOptions: {
+            placeholder: "Search",
+            hideWhenScrolling: false,
+            onChangeText: (e) => setSearchText(e.nativeEvent.text),
+            onCancelButtonPress: () => setSearchText(""),
+          },
+
           unstable_headerRightItems: () => [
             {
               type: "menu",
@@ -57,7 +67,7 @@ export default function JournalScreen() {
           ],
         }}
       />
-      <EntryListView />
+      <EntryListView searchText={searchText} />
     </>
   );
 }
