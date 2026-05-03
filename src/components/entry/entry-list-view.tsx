@@ -6,10 +6,28 @@ import { GlassView } from "expo-glass-effect";
 import { useRouter } from "expo-router";
 import { SymbolView } from "expo-symbols";
 
+import type { SortKey } from "@/app/(journal)/[id]";
 import { ENTRIES, type EntryObj } from "@/mocks/entries";
 import { formatYearMonth } from "@/utils/date";
 
 import { EntryRow } from "./entry-row";
+
+function sortEntries(entries: EntryObj[], sortKey: SortKey): EntryObj[] {
+  switch (sortKey) {
+    case "dateDesc":
+      return [...entries].sort((a, b) => b.date.getTime() - a.date.getTime());
+    case "dateAsc":
+      return [...entries].sort((a, b) => a.date.getTime() - b.date.getTime());
+    case "titleAsc":
+      return [...entries].sort((a, b) => a.title.localeCompare(b.title));
+    case "titleDesc":
+      return [...entries].sort((a, b) => b.title.localeCompare(a.title));
+    case "bookmark":
+      return [...entries].sort(
+        (a, b) => (b.bookmark ? 1 : 0) - (a.bookmark ? 1 : 0),
+      );
+  }
+}
 
 function groupByMonth(
   entries: EntryObj[],
@@ -28,16 +46,22 @@ function groupByMonth(
 
 type Props = {
   searchText?: string;
+  sortKey?: SortKey;
 };
 
-export function EntryListView({ searchText = "" }: Props) {
+export function EntryListView({
+  searchText = "",
+  sortKey = "dateDesc",
+}: Props) {
   const router = useRouter();
+
   const filtered = searchText
     ? ENTRIES.filter(
         (e) => e.title.includes(searchText) || e.preview.includes(searchText),
       )
     : ENTRIES;
-  const grouped = groupByMonth(filtered);
+  const sorted = sortEntries(filtered, sortKey);
+  const grouped = groupByMonth(sorted);
 
   return (
     <View style={{ flex: 1 }}>

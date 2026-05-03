@@ -40,7 +40,11 @@ export default function EntryDetailScreen() {
                   },
                   {
                     type: "action",
-                    label: "delete",
+                    label: "Delete",
+                    icon: {
+                      type: "sfSymbol",
+                      name: "trash",
+                    },
                     destructive: true,
                     onPress: () => {
                       // Do something
