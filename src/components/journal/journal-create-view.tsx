@@ -21,7 +21,7 @@ import { SFSymbol } from "expo-symbols";
 
 import { FieldBottomSheet } from "./field-bottom-sheet";
 
-type FieldType = "text" | "number" | "check";
+type FieldType = "text" | "number" | "check" | "date" | "time" | "location";
 
 type Field = {
   id: string;
@@ -31,8 +31,11 @@ type Field = {
 
 const FIELD_ICONS: Record<FieldType, SFSymbol> = {
   text: "text.quote",
-  number: "numbers.rectangle.fill",
-  check: "checkmark.circle.fill",
+  number: "numbers.rectangle",
+  check: "checkmark.circle",
+  location: "mappin.and.ellipse",
+  date: "calendar",
+  time: "stopwatch",
 } as const;
 
 /**
@@ -46,6 +49,9 @@ export function JournalCreateView() {
     { id: "1", type: "text", label: "text" },
     { id: "2", type: "number", label: "number" },
     { id: "3", type: "check", label: "check" },
+    { id: "4", type: "location", label: "location" },
+    { id: "5", type: "date", label: "date" },
+    { id: "6", type: "time", label: "time" },
   ]);
 
   function handleMove(sourceIndices: number[], destination: number) {

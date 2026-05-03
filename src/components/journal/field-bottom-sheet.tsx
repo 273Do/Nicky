@@ -58,7 +58,7 @@ export function FieldBottomSheet({
           presentationDragIndicator("visible"),
           presentationBackgroundInteraction({
             type: "enabledUpThrough",
-            detent: "large",
+            detent: "medium",
           }),
         ]}
       >
