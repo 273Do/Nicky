@@ -8,6 +8,7 @@ import {
   Image,
   List,
   Section,
+  Spacer,
   Text,
   VStack,
 } from "@expo/ui/swift-ui";
@@ -16,6 +17,7 @@ import {
   foregroundStyle,
   frame,
   listRowInsets,
+  padding,
 } from "@expo/ui/swift-ui/modifiers";
 import { SFSymbol } from "expo-symbols";
 
@@ -73,7 +75,7 @@ export function JournalCreateView() {
         <List
           modifiers={[
             frame({ maxWidth: 9999, maxHeight: 9999 }),
-            environment("editMode", "active"),
+            environment("editMode", "inactive"),
           ]}
         >
           <Section
@@ -96,17 +98,28 @@ export function JournalCreateView() {
                       }),
                     ]}
                   >
-                    <HStack spacing={12}>
+                    <HStack spacing={16}>
                       <Image
                         systemName={FIELD_ICONS[field.type]}
                         color={PlatformColor("systemIndigo")}
-                        modifiers={[frame({ width: 28 })]}
+                        size={22}
+                        modifiers={[frame({ width: 24 })]}
                       />
                       <Text
                         modifiers={[foregroundStyle(PlatformColor("label"))]}
                       >
                         {field.label}
                       </Text>
+                      <Spacer />
+                      <Image
+                        systemName="line.3.horizontal"
+                        color={PlatformColor("tertiaryLabel")}
+                        size={22}
+                        modifiers={[
+                          frame({ width: 28 }),
+                          padding({ trailing: 14 }),
+                        ]}
+                      />
                     </HStack>
                   </Button>
                 ))}

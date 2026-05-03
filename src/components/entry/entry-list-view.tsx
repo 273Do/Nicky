@@ -1,7 +1,11 @@
 import { PlatformColor, Pressable, StyleSheet, View } from "react-native";
 
 import { Host, List, Section } from "@expo/ui/swift-ui";
-import { frame, headerProminence } from "@expo/ui/swift-ui/modifiers";
+import {
+  frame,
+  headerProminence,
+  moveDisabled,
+} from "@expo/ui/swift-ui/modifiers";
 import { GlassView } from "expo-glass-effect";
 import { useRouter } from "expo-router";
 import { SymbolView } from "expo-symbols";
@@ -70,17 +74,19 @@ export function EntryListView({
         useViewportSizeMeasurement
       >
         <List modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 })]}>
-          {grouped.map(({ month, entries }) => (
-            <Section
-              key={month}
-              title={month}
-              modifiers={[headerProminence("increased")]}
-            >
-              {entries.map((entry) => (
-                <EntryRow key={entry.id} entry={entry} />
-              ))}
-            </Section>
-          ))}
+          <List.ForEach modifiers={[moveDisabled()]}>
+            {grouped.map(({ month, entries }) => (
+              <Section
+                key={month}
+                title={month}
+                modifiers={[headerProminence("increased")]}
+              >
+                {entries.map((entry) => (
+                  <EntryRow key={entry.id} entry={entry} />
+                ))}
+              </Section>
+            ))}
+          </List.ForEach>
         </List>
       </Host>
 
