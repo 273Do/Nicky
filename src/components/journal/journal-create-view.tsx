@@ -4,9 +4,9 @@ import { Host, Text } from "@expo/ui/swift-ui";
 import { font, padding } from "@expo/ui/swift-ui/modifiers";
 
 /**
- * テンプレート作成画面
+ * ジャーナル作成画面
  */
-export default function TemplateRoute() {
+export function JournalCreateView() {
   return (
     <View style={{ flex: 1 }}>
       <Host
@@ -19,7 +19,7 @@ export default function TemplateRoute() {
             padding({ bottom: 8 }),
           ]}
         >
-          テンプレート
+          ジャーナル作成
         </Text>
       </Host>
     </View>

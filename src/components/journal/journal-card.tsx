@@ -4,11 +4,17 @@ import {
   font,
   foregroundStyle,
   frame,
+  onTapGesture,
   padding,
 } from "@expo/ui/swift-ui/modifiers";
+import { useRouter } from "expo-router";
 import type { SFSymbol } from "sf-symbols-typescript";
 
 type Props = {
+  /**
+   * ジャーナルID
+   */
+  id: string;
   /**
    * ジャーナル名
    */
@@ -38,11 +44,17 @@ function lightenColor(hex: string, amount = 40): string {
 /**
  * ジャーナルカード
  */
-export const Journal = ({ name, icon, color, count }: Props) => {
+export function JournalCard({ id, name, icon, color, count }: Props) {
+  const router = useRouter();
+
   return (
     <ZStack
       alignment="bottomLeading"
-      modifiers={[frame({ height: 85 }), clipShape("roundedRectangle", 20)]}
+      modifiers={[
+        frame({ height: 85 }),
+        clipShape("roundedRectangle", 20),
+        onTapGesture(() => router.push(`/(journal)/${id}`)),
+      ]}
     >
       <RoundedRectangle
         cornerRadius={20}
@@ -86,4 +98,4 @@ export const Journal = ({ name, icon, color, count }: Props) => {
       </Text>
     </ZStack>
   );
-};
+}
