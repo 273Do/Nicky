@@ -1,89 +1,81 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { PlatformColor } from "react-native";
 
 import {
   BottomSheet,
   Button,
   Group,
+  HStack,
+  Image,
   List,
-  Section,
   Text,
 } from "@expo/ui/swift-ui";
 import {
   foregroundStyle,
-  presentationBackgroundInteraction,
-  PresentationDetent,
+  frame,
   presentationDetents,
   presentationDragIndicator,
 } from "@expo/ui/swift-ui/modifiers";
 
-const detents: PresentationDetent[] = [
-  { height: 300 },
-  { fraction: 0.3 },
-  "medium",
-  "large",
-];
-
-const formatDetent = (detent: PresentationDetent): string => {
-  if (typeof detent === "string") return detent;
-  if ("fraction" in detent) return `Fraction ${detent.fraction}`;
-  return `Height ${detent.height}`;
-};
+import {
+  FIELD_ICONS,
+  FIELD_LABELS,
+  FIELD_TYPES,
+  type FieldType,
+} from "@/hooks/journal/use-journal-field";
 
 type Props = {
-  showFieldBottomSheet: boolean;
-  setShowieldBottomSheet: Dispatch<SetStateAction<boolean>>;
+  /** ボトムシートの表示状態 */
+  isPresented: boolean;
+  /** 表示状態の変更コールバック */
+  onIsPresentedChange: (value: boolean) => void;
+  /** フィールド追加時のコールバック */
+  onAdd: (type: FieldType) => void;
 };
 
 /**
- * フィールド設定ボトムシート
+ * フィールド追加ボトムシート
  */
 export function FieldBottomSheet({
-  showFieldBottomSheet,
-  setShowieldBottomSheet,
+  isPresented,
+  onIsPresentedChange,
+  onAdd,
 }: Props) {
-  const [selectedDetent, setSelectedDetent] =
-    useState<PresentationDetent>("medium");
+  const handlePress = (type: FieldType) => {
+    onAdd(type);
+    onIsPresentedChange(false);
+  };
 
   return (
     <BottomSheet
-      isPresented={showFieldBottomSheet}
-      onIsPresentedChange={setShowieldBottomSheet}
+      isPresented={isPresented}
+      onIsPresentedChange={onIsPresentedChange}
     >
       <Group
         modifiers={[
-          presentationDetents(detents, {
-            selection: selectedDetent,
-            onSelectionChange: setSelectedDetent,
-          }),
+          presentationDetents(["medium"]),
           presentationDragIndicator("visible"),
-          presentationBackgroundInteraction({
-            type: "enabledUpThrough",
-            detent: "medium",
-          }),
         ]}
       >
-        <Text>sss</Text>
         <List>
-          <Section title="Change Detent">
+          {FIELD_TYPES.map((type) => (
             <Button
-              label="Height 300"
-              onPress={() => setSelectedDetent({ height: 300 })}
-            />
-            <Button
-              label="Fraction 0.3"
-              onPress={() => setSelectedDetent({ fraction: 0.3 })}
-            />
-            <Button
-              label="Medium"
-              onPress={() => setSelectedDetent("medium")}
-            />
-            <Button label="Large" onPress={() => setSelectedDetent("large")} />
-          </Section>
-          <Section title="Current">
-            <Text modifiers={[foregroundStyle("secondaryLabel")]}>
-              {formatDetent(selectedDetent)}
-            </Text>
-          </Section>
+              key={type}
+              modifiers={[
+                foregroundStyle({ type: "hierarchical", style: "primary" }),
+              ]}
+              onPress={() => handlePress(type)}
+            >
+              <HStack spacing={12}>
+                <Image
+                  systemName={FIELD_ICONS[type]}
+                  color={PlatformColor("systemIndigo")}
+                  size={20}
+                  modifiers={[frame({ width: 24 })]}
+                />
+                <Text>{FIELD_LABELS[type]}</Text>
+              </HStack>
+            </Button>
+          ))}
         </List>
       </Group>
     </BottomSheet>

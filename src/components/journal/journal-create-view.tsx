@@ -10,61 +10,39 @@ import {
   Section,
   Spacer,
   Text,
-  VStack,
 } from "@expo/ui/swift-ui";
 import {
   environment,
-  foregroundStyle,
   frame,
   listRowInsets,
   padding,
 } from "@expo/ui/swift-ui/modifiers";
-import { SFSymbol } from "expo-symbols";
+
+import {
+  FIELD_ICONS,
+  FieldObj,
+  FieldType,
+} from "@/hooks/journal/use-journal-field";
 
 import { FieldBottomSheet } from "./field-bottom-sheet";
 
-type FieldType = "text" | "number" | "check" | "date" | "time" | "location";
-
-type Field = {
-  id: string;
-  type: FieldType;
-  label: string;
+type Props = {
+  fields: FieldObj[];
+  addField: (type: FieldType) => void;
+  deleteField: (indices: number[]) => void;
+  moveField: (sourceIndices: number[], destination: number) => void;
 };
-
-const FIELD_ICONS: Record<FieldType, SFSymbol> = {
-  text: "text.quote",
-  number: "numbers.rectangle",
-  check: "checkmark.circle",
-  location: "mappin.and.ellipse",
-  date: "calendar",
-  time: "stopwatch",
-} as const;
 
 /**
  * ジャーナル作成画面
  */
-export function JournalCreateView() {
-  const [showFieldBottomSheet, setShowieldBottomSheet] =
-    useState<boolean>(false);
-
-  const [fields, setFields] = useState<Field[]>([
-    { id: "1", type: "text", label: "text" },
-    { id: "2", type: "number", label: "number" },
-    { id: "3", type: "check", label: "check" },
-    { id: "4", type: "location", label: "location" },
-    { id: "5", type: "date", label: "date" },
-    { id: "6", type: "time", label: "time" },
-  ]);
-
-  function handleMove(sourceIndices: number[], destination: number) {
-    setFields((prev) => {
-      const next = [...prev];
-      const moved = sourceIndices.map((i) => next[i]);
-      sourceIndices.sort((a, b) => b - a).forEach((i) => next.splice(i, 1));
-      next.splice(destination, 0, ...moved);
-      return next;
-    });
-  }
+export function JournalCreateView({
+  fields,
+  addField,
+  deleteField,
+  moveField,
+}: Props) {
+  const [showBottomSheet, setShowBottomSheet] = useState(false);
 
   return (
     <View style={{ flex: 1 }}>
@@ -78,70 +56,47 @@ export function JournalCreateView() {
             environment("editMode", "inactive"),
           ]}
         >
-          <Section
-            header={
-              <VStack>
-                <Text>Fields</Text>
-              </VStack>
-            }
-          >
-            <List.ForEach onMove={handleMove}>
-              <>
-                {fields.map((field) => (
-                  <Button
-                    key={field.id}
+          <Section title="Fields">
+            <List.ForEach onMove={moveField} onDelete={deleteField}>
+              {fields.map((field) => (
+                <HStack
+                  key={field.id}
+                  spacing={16}
+                  modifiers={[listRowInsets({ leading: 16 })]}
+                >
+                  <Image
+                    systemName={FIELD_ICONS[field.type]}
+                    color={PlatformColor("systemIndigo")}
+                    size={22}
+                    modifiers={[frame({ width: 24 })]}
+                  />
+                  <Text>{field.label}</Text>
+                  <Spacer />
+                  <Image
+                    systemName="line.3.horizontal"
+                    color={PlatformColor("tertiaryLabel")}
+                    size={22}
                     modifiers={[
-                      listRowInsets({ leading: 16 }),
-                      foregroundStyle({
-                        type: "hierarchical",
-                        style: "primary",
-                      }),
+                      frame({ width: 28 }),
+                      padding({ trailing: 14 }),
                     ]}
-                    onPress={() => {
-                      setShowieldBottomSheet(true);
-                    }}
-                  >
-                    <HStack spacing={16}>
-                      <Image
-                        systemName={FIELD_ICONS[field.type]}
-                        color={PlatformColor("systemIndigo")}
-                        size={22}
-                        modifiers={[frame({ width: 24 })]}
-                      />
-                      <Text
-                        modifiers={[foregroundStyle(PlatformColor("label"))]}
-                      >
-                        {field.label}
-                      </Text>
-                      <Spacer />
-                      <Image
-                        systemName="line.3.horizontal"
-                        color={PlatformColor("tertiaryLabel")}
-                        size={22}
-                        modifiers={[
-                          frame({ width: 28 }),
-                          padding({ trailing: 14 }),
-                        ]}
-                      />
-                    </HStack>
-                  </Button>
-                ))}
-              </>
+                  />
+                </HStack>
+              ))}
             </List.ForEach>
 
             <Button
               label="Add Field"
               systemImage="plus"
-              onPress={() => {
-                setShowieldBottomSheet(true);
-              }}
+              onPress={() => setShowBottomSheet(true)}
             />
           </Section>
         </List>
 
         <FieldBottomSheet
-          showFieldBottomSheet={showFieldBottomSheet}
-          setShowieldBottomSheet={setShowieldBottomSheet}
+          isPresented={showBottomSheet}
+          onIsPresentedChange={setShowBottomSheet}
+          onAdd={addField}
         />
       </Host>
     </View>
