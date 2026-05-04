@@ -97,6 +97,9 @@ export function JournalCreateView() {
                         style: "primary",
                       }),
                     ]}
+                    onPress={() => {
+                      setShowieldBottomSheet(true);
+                    }}
                   >
                     <HStack spacing={16}>
                       <Image
@@ -127,7 +130,7 @@ export function JournalCreateView() {
             </List.ForEach>
 
             <Button
-              label="Add New Field"
+              label="Add Field"
               systemImage="plus"
               onPress={() => {
                 setShowieldBottomSheet(true);
