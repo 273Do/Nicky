@@ -3,18 +3,30 @@ import { useState } from "react";
 import * as Crypto from "expo-crypto";
 import type { SFSymbol } from "sf-symbols-typescript";
 
+import {
+  FIELD_ICONS,
+  FIELD_LABELS,
+  FieldType,
+  JOURNAL_ICONS,
+} from "@/core/constants";
+
 /**
- * ジャーナルフィールドの種別
+ * ジャーナルの型
  */
-export type FieldType =
-  | "text"
-  | "longText"
-  | "number"
-  | "media"
-  | "check"
-  | "date"
-  | "time"
-  | "location";
+export type JournalObj = {
+  id: string;
+  meta: JournalMetaObj;
+  fields: FieldObj[];
+};
+
+/**
+ * ジャーナルメタ情報の型
+ */
+export type JournalMetaObj = {
+  name: string;
+  color: string;
+  icon: SFSymbol;
+};
 
 /**
  * ジャーナルフィールドの1項目
@@ -29,34 +41,6 @@ export type FieldObj = {
 };
 
 /**
- * FieldType に対応する SF Symbol アイコン名
- */
-export const FIELD_ICONS: Record<FieldType, SFSymbol> = {
-  text: "character.textbox",
-  longText: "text.quote",
-  number: "numbers.rectangle",
-  media: "photo",
-  check: "checkmark.circle",
-  location: "mappin.and.ellipse",
-  date: "calendar",
-  time: "stopwatch",
-};
-
-/**
- * FieldType に対応する日本語表示名
- */
-export const FIELD_LABELS: Record<FieldType, string> = {
-  text: "Text",
-  longText: "Long Text",
-  number: "Number",
-  media: "Media",
-  check: "Check",
-  location: "Location",
-  date: "Date",
-  time: "Time",
-};
-
-/**
  * 全 FieldType の配列
  */
 export const FIELD_TYPES = Object.keys(FIELD_ICONS) as FieldType[];
@@ -68,9 +52,21 @@ export const FIELD_TYPES = Object.keys(FIELD_ICONS) as FieldType[];
  * - addField 新規フィールドを追加
  * - removeField フィールドを削除
  * - moveField フィールドを並び替え
+ * - meta ジャーナルのメタ情報
+ * - setMeta ジャーナルのメタ情報をセットする関数
+ * - createJournal ジャーナルを作成する関数
+ * - formDisabled フォームが送信可能かどうかのフラグ
  */
 export const useJournalField = () => {
   const [fields, setFields] = useState<FieldObj[]>([]);
+
+  const initialState = {
+    name: "",
+    color: "#007AFF",
+    icon: JOURNAL_ICONS[0],
+  };
+
+  const [meta, setMeta] = useState<JournalMetaObj>(initialState);
 
   /**
    * 新規フィールドを追加する
@@ -108,5 +104,32 @@ export const useJournalField = () => {
     });
   };
 
-  return { fields, addField, deleteField, moveField };
+  /**
+   * formDisabled フォームが送信可能かどうかのフラグ
+   */
+  const formDisabled = fields.length === 0 || meta.name.length === 0;
+
+  /**
+   * ジャーナルを作成する関数
+   */
+  const createJournal = () => {
+    if (formDisabled) {
+      const newJournal: JournalObj = { id: Crypto.randomUUID(), meta, fields };
+      console.log(newJournal);
+      return newJournal;
+    }
+  };
+
+  return {
+    fields,
+    addField,
+    deleteField,
+    moveField,
+
+    meta,
+    setMeta,
+    createJournal,
+
+    formDisabled,
+  };
 };

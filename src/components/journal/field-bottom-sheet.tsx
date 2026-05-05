@@ -16,12 +16,8 @@ import {
   presentationDragIndicator,
 } from "@expo/ui/swift-ui/modifiers";
 
-import {
-  FIELD_ICONS,
-  FIELD_LABELS,
-  FIELD_TYPES,
-  type FieldType,
-} from "@/hooks/journal/use-journal-field";
+import { FIELD_ICONS, FIELD_LABELS, FieldType } from "@/core/constants";
+import { FIELD_TYPES } from "@/hooks/journal/use-journal-field";
 
 type Props = {
   /** ボトムシートの表示状態 */

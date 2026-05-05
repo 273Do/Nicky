@@ -12,12 +12,20 @@ import { useJournalField } from "@/hooks/journal/use-journal-field";
 export default function JournalCreateScreen() {
   const router = useRouter();
 
-  const { fields, addField, deleteField, moveField } = useJournalField();
+  const {
+    fields,
+    addField,
+    deleteField,
+    moveField,
+    meta,
+    setMeta,
+    createJournal,
+    formDisabled,
+  } = useJournalField();
 
   const handleCreate = () => {
-    console.log(fields);
-
-    router.push(`/(journal)/1}`);
+    router.push(`/(journal)/1`);
+    createJournal();
   };
 
   return (
@@ -29,7 +37,11 @@ export default function JournalCreateScreen() {
             <Pressable onPress={handleCreate}>
               <SymbolView
                 name="checkmark"
-                tintColor={PlatformColor("systemIndigo")}
+                tintColor={
+                  formDisabled
+                    ? PlatformColor("tertiaryLabel")
+                    : PlatformColor("systemIndigo")
+                }
               />
             </Pressable>
           ),
@@ -40,6 +52,8 @@ export default function JournalCreateScreen() {
         addField={addField}
         deleteField={deleteField}
         moveField={moveField}
+        meta={meta}
+        setMeta={setMeta}
       />
     </>
   );
