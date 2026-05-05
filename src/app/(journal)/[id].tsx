@@ -31,7 +31,7 @@ const SORT_LABELS: Record<SortKey, string> = {
  */
 export default function JournalScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState<string>("");
   const [sortKey, setSortKey] = useState<SortKey>("dateDesc");
 
   const journal = JOURNALS.find((journal) => journal.id === id);
