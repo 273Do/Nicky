@@ -15,6 +15,7 @@ export default function JournalCreateScreen() {
   const {
     fields,
     addField,
+    renameField,
     deleteField,
     moveField,
     meta,
@@ -50,6 +51,7 @@ export default function JournalCreateScreen() {
       <JournalCreateView
         fields={fields}
         addField={addField}
+        renameField={renameField}
         deleteField={deleteField}
         moveField={moveField}
         meta={meta}

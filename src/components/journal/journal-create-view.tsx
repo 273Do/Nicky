@@ -10,7 +10,6 @@ import {
   RoundedRectangle,
   Section,
   Spacer,
-  Text,
   TextField,
   ZStack,
 } from "@expo/ui/swift-ui";
@@ -50,6 +49,8 @@ type Props = {
   fields: FieldObj[];
   /** フィールドを追加する関数 */
   addField: (type: FieldType) => void;
+  /** フィールドのラベルを更新する関数 */
+  renameField: (id: string, newLabel: string) => void;
   /** フィールドを削除する関数 */
   deleteField: (indices: number[]) => void;
   /** フィールドを並び替える関数 */
@@ -66,6 +67,7 @@ type Props = {
 export function JournalCreateView({
   fields,
   addField,
+  renameField,
   deleteField,
   moveField,
   meta,
@@ -132,7 +134,11 @@ export function JournalCreateView({
                     size={22}
                     modifiers={[frame({ width: 24 })]}
                   />
-                  <Text>{field.label}</Text>
+                  <TextField
+                    placeholder={`${field.label} Field Name`}
+                    onValueChange={(value) => renameField(field.id, value)}
+                    modifiers={[frame({ maxWidth: 9999 })]}
+                  />
                   <Spacer />
                   <Image
                     systemName="line.3.horizontal"
