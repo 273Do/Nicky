@@ -24,9 +24,9 @@ export default function JournalCreateScreen() {
     formDisabled,
   } = useJournalField();
 
-  const handleCreate = () => {
-    router.push(`/(journal)/1`);
-    createJournal();
+  const handleCreate = async () => {
+    const id = await createJournal();
+    router.push(`/(journal)/${id}`);
   };
 
   return (
@@ -35,7 +35,7 @@ export default function JournalCreateScreen() {
         options={{
           title: "New Journal",
           headerRight: () => (
-            <Pressable onPress={handleCreate}>
+            <Pressable onPress={handleCreate} disabled={formDisabled}>
               <SymbolView
                 name="checkmark"
                 tintColor={

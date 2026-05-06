@@ -4,6 +4,7 @@ import * as Crypto from "expo-crypto";
 import type { SFSymbol } from "sf-symbols-typescript";
 
 import { FIELD_ICONS, FieldType, JOURNAL_ICONS } from "@/core/constants";
+import { storeJournal } from "@/db/queries/journals";
 
 /**
  * ジャーナルの型
@@ -50,7 +51,7 @@ export const FIELD_TYPES = Object.keys(FIELD_ICONS) as FieldType[];
  * - moveField フィールドを並び替えする関数
  * - meta ジャーナルのメタ情報
  * - setMeta ジャーナルのメタ情報をセットする関数
- * - createJournal ジャーナルを作成する関数
+ * - createJournal 新規ジャーナルを作成する関数
  * - formDisabled フォームが送信可能かどうかのフラグ
  */
 export const useJournalField = () => {
@@ -122,14 +123,30 @@ export const useJournalField = () => {
     fields.some((field) => field.label.length === 0);
 
   /**
-   * ジャーナルを作成する関数
+   * 新規ジャーナルをフィールドと共にDBに保存する
    */
-  const createJournal = () => {
-    if (!formDisabled) {
-      const newJournal: JournalObj = { id: Crypto.randomUUID(), meta, fields };
-      console.log(newJournal);
-      return newJournal;
-    }
+  const createJournal = async () => {
+    const now = Date.now();
+
+    const id = Crypto.randomUUID();
+    await storeJournal(
+      {
+        id,
+        name: meta.name,
+        icon: meta.icon,
+        color: meta.color,
+        createdAt: now,
+        updatedAt: now,
+      },
+      fields.map((field, i) => ({
+        id: field.id,
+        type: field.type,
+        label: field.label,
+        sortOrder: i,
+      })),
+    );
+
+    return id;
   };
 
   return {
