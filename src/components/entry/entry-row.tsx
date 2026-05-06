@@ -4,8 +4,8 @@ import { Button, HStack, Image, Spacer, Text, VStack } from "@expo/ui/swift-ui";
 import { font, foregroundStyle, lineLimit } from "@expo/ui/swift-ui/modifiers";
 import { useRouter } from "expo-router";
 
-import { EntryObj } from "@/mocks/entries";
 import { formatDate } from "@/utils/date";
+import { EntryObj } from "@/utils/journal/use-entry";
 
 const secondary = foregroundStyle({ type: "hierarchical", style: "secondary" });
 
