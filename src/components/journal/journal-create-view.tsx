@@ -22,7 +22,7 @@ import {
   padding,
 } from "@expo/ui/swift-ui/modifiers";
 
-import { FIELD_ICONS, FieldType } from "@/core/constants";
+import { FIELD_ICONS, FIELD_LABELS, FieldType } from "@/core/constants";
 import {
   JournalMetaObj,
   type FieldObj,
@@ -135,7 +135,7 @@ export function JournalCreateView({
                     modifiers={[frame({ width: 24 })]}
                   />
                   <TextField
-                    placeholder={`${field.label} Field Name`}
+                    placeholder={`${FIELD_LABELS[field.type]} Field Name`}
                     onValueChange={(value) => renameField(field.id, value)}
                     modifiers={[frame({ maxWidth: 9999 })]}
                   />
