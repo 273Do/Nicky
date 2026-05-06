@@ -8,6 +8,9 @@ import { db, expoDb } from "@/db/client";
 import migrations from "../../drizzle/migrations";
 
 type Props = {
+  /**
+   * React Node
+   */
   children: ReactNode;
 };
 
