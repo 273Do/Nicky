@@ -53,7 +53,7 @@ export function JournalCard({ id, name, icon, color, count }: Props) {
       modifiers={[
         frame({ height: 85 }),
         clipShape("roundedRectangle", 20),
-        onTapGesture(() => router.push(`/(journal)/${id}`)),
+        onTapGesture(() => router.push(`/(journal)/${id}?name=${name}`)),
       ]}
     >
       <RoundedRectangle
