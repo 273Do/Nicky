@@ -1,26 +1,32 @@
+import { sql } from "drizzle-orm";
+
 import { db } from "@/db/client";
-import { FieldlObj, fields, JournalObj, journals } from "@/db/schemas";
+import { entries, FieldlObj, fields, JournalObj, journals } from "@/db/schemas";
 
 /**
- * ジャーナル一覧を取得する
+ * ジャーナル一覧を取得するクエリ
  */
-export const getJournals = async () => {
-  return db.query.journals.findMany();
-};
+export const getJournalsQuery = db.query.journals.findMany({
+  extras: {
+    entryCount:
+      sql<number>`(select count(*) from ${entries} where ${entries.journalId} = ${journals.id})`.as(
+        "entry_count",
+      ),
+  },
+});
 
 /**
- * ジャーナルに紐付いたエントリー一覧を取得する
+ * ジャーナルに紐付いたエントリー一覧を取得するクエリ
  * @param journalId ジャーナルID
  */
-export const getEntries = async (journalId: string) => {
-  return db.query.journals.findFirst({
+export const getEntriesQuery = (journalId: string) =>
+  db.query.journals.findFirst({
     where: (journals, { eq }) => eq(journals.id, journalId),
     with: { entries: true },
   });
-};
 
 /**
- * ジャーナルをフィールドと共に作成する
+ * ジャーナルをフィールドと共に作成するクエリを実行
  * @param journal ジャーナルのメタ情報
  * @param newFields フィールド一覧
  */
