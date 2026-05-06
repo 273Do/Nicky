@@ -26,7 +26,7 @@ import { FIELD_ICONS, FieldType } from "@/core/constants";
 import {
   JournalMetaObj,
   type FieldObj,
-} from "@/hooks/journal/use-journal-field";
+} from "@/utils/journal/use-journal-field";
 
 import { FieldBottomSheet } from "./field-bottom-sheet";
 import { IconSelectBottomSheet } from "./icon-select-bottom-sheet";

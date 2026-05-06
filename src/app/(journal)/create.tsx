@@ -4,7 +4,7 @@ import { Stack, useRouter } from "expo-router";
 import { SymbolView } from "expo-symbols";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
-import { useJournalField } from "@/hooks/journal/use-journal-field";
+import { useJournalField } from "@/utils/journal/use-journal-field";
 
 /**
  * ジャーナル作成
