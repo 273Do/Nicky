@@ -3,8 +3,8 @@ import { PlatformColor, View } from "react-native";
 import { Host, List, Section, Text } from "@expo/ui/swift-ui";
 import { frame, listStyle } from "@expo/ui/swift-ui/modifiers";
 
-import { EntryObj } from "@/mocks/entries";
 import { formatDate } from "@/utils/date";
+import { EntryObj } from "@/utils/journal/use-entry";
 
 /**
  * エントリー詳細画面
