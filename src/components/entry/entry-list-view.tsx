@@ -51,14 +51,17 @@ function groupByMonth(
 }
 
 type Props = {
-  /**ジャーナル id */
+  /** ジャーナル id */
   id: string;
-  /** 検索テキスト*/
+  /** 検索テキスト */
   searchText?: string;
   /** ソートキー */
   sortKey?: SortKey;
 };
 
+/**
+ * エントリー一覧画面
+ */
 export function EntryListView({
   id,
   searchText = "",

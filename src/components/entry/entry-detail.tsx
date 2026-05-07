@@ -3,19 +3,15 @@ import { PlatformColor, View } from "react-native";
 import { Host, List, Section, Text } from "@expo/ui/swift-ui";
 import { frame, listStyle } from "@expo/ui/swift-ui/modifiers";
 
-import { formatDate } from "@/utils/date";
-import { EntryObj } from "@/utils/journal/use-entry";
+type Props = {
+  /** エントリーid */
+  id: string;
+};
 
 /**
  * エントリー詳細画面
  */
-export function EntryDetailView({
-  id,
-  date,
-  title,
-  preview,
-  bookmark,
-}: EntryObj) {
+export function EntryDetailView({ id }: Props) {
   return (
     <View style={{ flex: 1 }}>
       <Host
@@ -31,11 +27,11 @@ export function EntryDetailView({
             listStyle("insetGrouped"),
           ]}
         >
-          <Section title={formatDate(date)}>
+          <Section>
             <Text>{id}</Text>
-            <Text>{title}</Text>
+            {/* <Text>{title}</Text>
             <Text>{preview}</Text>
-            <Text>{bookmark ? "Bookmarked" : "Not bookmarked"}</Text>
+            <Text>{bookmark ? "Bookmarked" : "Not bookmarked"}</Text> */}
           </Section>
         </List>
       </Host>

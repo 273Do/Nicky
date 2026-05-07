@@ -10,9 +10,7 @@ import { EntryObj } from "@/utils/journal/use-entry";
 const secondary = foregroundStyle({ type: "hierarchical", style: "secondary" });
 
 type Props = {
-  /**
-   * エントリーデータ
-   * */
+  /** エントリーデータ */
   entry: EntryObj;
 };
 

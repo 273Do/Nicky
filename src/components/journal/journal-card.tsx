@@ -11,25 +11,15 @@ import { useRouter } from "expo-router";
 import type { SFSymbol } from "sf-symbols-typescript";
 
 type Props = {
-  /**
-   * ジャーナルID
-   */
+  /** ジャーナルID */
   id: string;
-  /**
-   * ジャーナル名
-   */
+  /** ジャーナル名 */
   name: string;
-  /**
-   * アイコン
-   */
+  /** アイコン */
   icon: SFSymbol;
-  /**
-   * カラー
-   */
+  /** カラー */
   color: string;
-  /**
-   * エントリー数
-   */
+  /** エントリー数　*/
   count: number;
 };
 
