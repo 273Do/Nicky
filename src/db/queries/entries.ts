@@ -9,3 +9,22 @@ export const getEntriesQuery = (journalId: string) =>
     where: (entries, { eq }) => eq(entries.journalId, journalId),
     with: { values: true },
   });
+
+/**
+ * エントリー詳細を取得するクエリ
+ * @param entryId エントリーID
+ */
+export const getEntryDetailQuery = (entryId: string) =>
+  db.query.entries.findFirst({
+    where: (entries, { eq }) => eq(entries.id, entryId),
+    with: {
+      values: {
+        with: { field: true },
+      },
+    },
+  });
+
+/** エントリー詳細の型 */
+export type EntryDetailObj = NonNullable<
+  Awaited<ReturnType<typeof getEntryDetailQuery>>
+>;

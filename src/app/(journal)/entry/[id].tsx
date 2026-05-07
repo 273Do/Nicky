@@ -1,7 +1,8 @@
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useLocalSearchParams } from "expo-router";
 
 import { EntryDetailView } from "@/components/entry/entry-detail";
-import { ENTRIES } from "@/mocks/entries";
+import { getEntryDetailQuery } from "@/db/queries/entries";
 
 /**
  * エントリー詳細
@@ -9,7 +10,7 @@ import { ENTRIES } from "@/mocks/entries";
 export default function EntryDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
-  const entry = ENTRIES.find((entry) => entry.id === id);
+  const { data: entry } = useLiveQuery(getEntryDetailQuery(id));
 
   return (
     <>
@@ -63,15 +64,7 @@ export default function EntryDetailScreen() {
           ],
         }}
       />
-      {entry && (
-        <EntryDetailView
-          id={id}
-          date={entry.date}
-          title={entry.title}
-          preview={entry.preview}
-          bookmark={entry.bookmark}
-        />
-      )}
+      {entry && <EntryDetailView entry={entry} />}
     </>
   );
 }

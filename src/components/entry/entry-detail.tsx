@@ -1,17 +1,27 @@
 import { PlatformColor, View } from "react-native";
 
-import { Host, List, Section, Text } from "@expo/ui/swift-ui";
-import { frame, listStyle } from "@expo/ui/swift-ui/modifiers";
+import { Host, List, Section, Text, VStack } from "@expo/ui/swift-ui";
+import {
+  font,
+  foregroundStyle,
+  frame,
+  listStyle,
+} from "@expo/ui/swift-ui/modifiers";
+
+import { EntryDetailObj } from "@/db/queries/entries";
 
 type Props = {
-  /** エントリーid */
-  id: string;
+  /** エントリーデータ */
+  entry: EntryDetailObj;
 };
-
 /**
  * エントリー詳細画面
  */
-export function EntryDetailView({ id }: Props) {
+export function EntryDetailView({ entry }: Props) {
+  const sorted = [...entry.values].sort(
+    (a, b) => a.field.sortOrder - b.field.sortOrder,
+  );
+
   return (
     <View style={{ flex: 1 }}>
       <Host
@@ -28,10 +38,22 @@ export function EntryDetailView({ id }: Props) {
           ]}
         >
           <Section>
-            <Text>{id}</Text>
-            {/* <Text>{title}</Text>
-            <Text>{preview}</Text>
-            <Text>{bookmark ? "Bookmarked" : "Not bookmarked"}</Text> */}
+            {sorted.map((v) => (
+              <VStack key={v.id} alignment="leading" spacing={4}>
+                <Text
+                  modifiers={[
+                    font({ size: 12 }),
+                    foregroundStyle({
+                      type: "hierarchical",
+                      style: "secondary",
+                    }),
+                  ]}
+                >
+                  {v.field.label}
+                </Text>
+                <Text>{v.value ?? ""}</Text>
+              </VStack>
+            ))}
           </Section>
         </List>
       </Host>

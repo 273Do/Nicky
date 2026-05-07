@@ -22,7 +22,7 @@ export function EntryRow({ entry }: Props) {
   return (
     <Button
       modifiers={[foregroundStyle({ type: "hierarchical", style: "primary" })]}
-      onPress={() => router.push(`/(journal)/entry/${entry.id}}`)}
+      onPress={() => router.push(`/(journal)/entry/${entry.id}`)}
     >
       <VStack alignment="leading" spacing={4}>
         <HStack alignment="center" spacing={6}>
