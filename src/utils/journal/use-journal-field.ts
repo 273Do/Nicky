@@ -7,15 +7,6 @@ import { FIELD_ICONS, FieldType, JOURNAL_ICONS } from "@/core/constants";
 import { storeJournal } from "@/db/queries/journals";
 
 /**
- * ジャーナルの型
- */
-export type JournalObj = {
-  id: string;
-  meta: JournalMetaObj;
-  fields: FieldObj[];
-};
-
-/**
  * ジャーナルメタ情報の型
  */
 export type JournalMetaObj = {
