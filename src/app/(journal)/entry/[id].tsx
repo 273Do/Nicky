@@ -15,8 +15,8 @@ export default function EntryDetailScreen() {
     <>
       <Stack.Screen
         options={{
-          title: entry?.title,
-          headerLargeTitleEnabled: true,
+          title: "",
+          headerBackButtonDisplayMode: "default",
           unstable_headerRightItems: () => [
             {
               type: "menu",
