@@ -8,19 +8,12 @@ import {
   padding,
 } from "@expo/ui/swift-ui/modifiers";
 import { useRouter } from "expo-router";
-import type { SFSymbol } from "sf-symbols-typescript";
+
+import { JournalWithCountObj } from "@/db/queries/journals";
 
 type Props = {
-  /** ジャーナルID */
-  id: string;
-  /** ジャーナル名 */
-  name: string;
-  /** アイコン */
-  icon: SFSymbol;
-  /** カラー */
-  color: string;
-  /** エントリー数　*/
-  count: number;
+  /** ジャーナルデータ */
+  journal: JournalWithCountObj;
 };
 
 function lightenColor(hex: string, amount = 40): string {
@@ -34,8 +27,9 @@ function lightenColor(hex: string, amount = 40): string {
 /**
  * ジャーナルカード
  */
-export function JournalCard({ id, name, icon, color, count }: Props) {
+export function JournalCard({ journal }: Props) {
   const router = useRouter();
+  const { id, name, icon, color, entryCount } = journal;
 
   return (
     <ZStack
@@ -75,7 +69,7 @@ export function JournalCard({ id, name, icon, color, count }: Props) {
           foregroundStyle("white"),
         ]}
       >
-        {count}
+        {entryCount}
       </Text>
       <Text
         modifiers={[

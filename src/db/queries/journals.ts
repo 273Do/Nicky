@@ -36,3 +36,6 @@ export const storeJournal = async (
     }
   });
 };
+
+/** ジャーナル一覧の型 */
+export type JournalWithCountObj = Awaited<typeof getJournalsQuery>[number];

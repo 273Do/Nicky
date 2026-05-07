@@ -42,14 +42,7 @@ export function JournalView() {
               {rows.map((row, rowIndex) => (
                 <Grid.Row key={rowIndex}>
                   {row.map((journal) => (
-                    <JournalCard
-                      key={journal.id}
-                      id={journal.id}
-                      name={journal.name}
-                      icon={journal.icon}
-                      color={journal.color}
-                      count={journal.entryCount}
-                    />
+                    <JournalCard key={journal.id} journal={journal} />
                   ))}
                 </Grid.Row>
               ))}

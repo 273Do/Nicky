@@ -66,5 +66,3 @@ export const entryValuesRelations = relations(entryValues, ({ one }) => ({
     references: [fields.id],
   }),
 }));
-
-export type EntryObj = typeof entries.$inferSelect;
