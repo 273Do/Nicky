@@ -1,6 +1,15 @@
 import { PlatformColor, View } from "react-native";
 
-import { Host, List, Section, Text, VStack } from "@expo/ui/swift-ui";
+import {
+  Host,
+  HStack,
+  Image,
+  List,
+  Section,
+  Spacer,
+  Text,
+  VStack,
+} from "@expo/ui/swift-ui";
 import {
   font,
   foregroundStyle,
@@ -9,6 +18,7 @@ import {
 } from "@expo/ui/swift-ui/modifiers";
 
 import { EntryDetailObj } from "@/db/queries/entries";
+import { formatDate } from "@/utils/date";
 
 type Props = {
   /** エントリーデータ */
@@ -34,10 +44,24 @@ export function EntryDetailView({ entry }: Props) {
         <List
           modifiers={[
             frame({ maxWidth: 9999, maxHeight: 9999 }),
-            listStyle("insetGrouped"),
+            listStyle("plain"),
           ]}
         >
-          <Section>
+          <Section
+            header={
+              <HStack>
+                <Text>{formatDate(entry.createdAt)}</Text>
+                <Spacer />
+                {entry.bookmark && (
+                  <Image
+                    systemName={"bookmark.fill"}
+                    color={PlatformColor("systemIndigo")}
+                    size={16}
+                  />
+                )}
+              </HStack>
+            }
+          >
             {sorted.map((v) => (
               <VStack key={v.id} alignment="leading" spacing={4}>
                 <Text

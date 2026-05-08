@@ -3,7 +3,7 @@
  * @param date フォーマットする日付
  * @return フォーマットされた日付文字列
  */
-export const formatDate = (date: Date): string => {
+export const formatDate = (date: Date | number): string => {
   return new Intl.DateTimeFormat(undefined, {
     year: "numeric",
     month: "long",
@@ -17,7 +17,7 @@ export const formatDate = (date: Date): string => {
  * @param date フォーマットする日付
  * @returns フォーマットされた年月文字列
  */
-export const formatYearMonth = (date: Date): string => {
+export const formatYearMonth = (date: Date | number): string => {
   return new Intl.DateTimeFormat(undefined, {
     year: "numeric",
     month: "long",
