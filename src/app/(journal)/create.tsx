@@ -4,7 +4,7 @@ import { Stack, useRouter } from "expo-router";
 import { SymbolView } from "expo-symbols";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
-import { useJournalField } from "@/hooks/journal/use-journal-field";
+import { useJournalField } from "@/utils/journal/use-journal-field";
 
 /**
  * ジャーナル作成
@@ -24,9 +24,11 @@ export default function JournalCreateScreen() {
     formDisabled,
   } = useJournalField();
 
-  const handleCreate = () => {
-    router.push(`/(journal)/1`);
-    createJournal();
+  const handleCreate = async () => {
+    const { id, name } = await createJournal();
+
+    // replace でスタックせずにジャーナル詳細画面からジャーナル一覧へ戻れるようにする
+    router.replace(`/(journal)/${id}?name=${name}`);
   };
 
   return (
@@ -35,7 +37,7 @@ export default function JournalCreateScreen() {
         options={{
           title: "New Journal",
           headerRight: () => (
-            <Pressable onPress={handleCreate}>
+            <Pressable onPress={handleCreate} disabled={formDisabled}>
               <SymbolView
                 name="checkmark"
                 tintColor={

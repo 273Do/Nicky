@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
 
 import { EntryListView } from "@/components/entry/entry-list-view";
-import { JOURNALS } from "@/mocks/journals";
 
 /**
  * ソート一覧
@@ -27,20 +26,18 @@ const SORT_LABELS: Record<SortKey, string> = {
 };
 
 /**
- * ジャーナル一覧
+ * ジャーナル詳細(エントリー一覧)
  */
 export default function JournalScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, name } = useLocalSearchParams<{ id: string; name: string }>();
   const [searchText, setSearchText] = useState<string>("");
   const [sortKey, setSortKey] = useState<SortKey>("dateDesc");
-
-  const journal = JOURNALS.find((journal) => journal.id === id);
 
   return (
     <>
       <Stack.Screen
         options={{
-          title: journal?.name,
+          title: name,
           headerLargeTitleEnabled: true,
           headerSearchBarOptions: {
             placeholder: "Search",
@@ -147,7 +144,7 @@ export default function JournalScreen() {
           ],
         }}
       />
-      <EntryListView searchText={searchText} sortKey={sortKey} />
+      <EntryListView id={id} searchText={searchText} sortKey={sortKey} />
     </>
   );
 }

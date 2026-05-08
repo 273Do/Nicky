@@ -1,21 +1,37 @@
 import { PlatformColor, View } from "react-native";
 
-import { Host, List, Section, Text } from "@expo/ui/swift-ui";
-import { frame, listStyle } from "@expo/ui/swift-ui/modifiers";
+import {
+  Host,
+  HStack,
+  Image,
+  List,
+  Section,
+  Spacer,
+  Text,
+  VStack,
+} from "@expo/ui/swift-ui";
+import {
+  font,
+  foregroundStyle,
+  frame,
+  listStyle,
+} from "@expo/ui/swift-ui/modifiers";
 
-import { EntryObj } from "@/mocks/entries";
+import { EntryDetailObj } from "@/db/queries/entries";
 import { formatDate } from "@/utils/date";
 
+type Props = {
+  /** エントリーデータ */
+  entry: EntryDetailObj;
+};
 /**
  * エントリー詳細画面
  */
-export function EntryDetailView({
-  id,
-  date,
-  title,
-  preview,
-  bookmark,
-}: EntryObj) {
+export function EntryDetailView({ entry }: Props) {
+  const sorted = [...entry.values].sort(
+    (a, b) => a.field.sortOrder - b.field.sortOrder,
+  );
+
   return (
     <View style={{ flex: 1 }}>
       <Host
@@ -28,14 +44,40 @@ export function EntryDetailView({
         <List
           modifiers={[
             frame({ maxWidth: 9999, maxHeight: 9999 }),
-            listStyle("insetGrouped"),
+            listStyle("plain"),
           ]}
         >
-          <Section title={formatDate(date)}>
-            <Text>{id}</Text>
-            <Text>{title}</Text>
-            <Text>{preview}</Text>
-            <Text>{bookmark ? "Bookmarked" : "Not bookmarked"}</Text>
+          <Section
+            header={
+              <HStack>
+                <Text>{formatDate(entry.createdAt)}</Text>
+                <Spacer />
+                {entry.bookmark && (
+                  <Image
+                    systemName={"bookmark.fill"}
+                    color={PlatformColor("systemIndigo")}
+                    size={16}
+                  />
+                )}
+              </HStack>
+            }
+          >
+            {sorted.map((v) => (
+              <VStack key={v.id} alignment="leading" spacing={4}>
+                <Text
+                  modifiers={[
+                    font({ size: 12 }),
+                    foregroundStyle({
+                      type: "hierarchical",
+                      style: "secondary",
+                    }),
+                  ]}
+                >
+                  {v.field.label}
+                </Text>
+                <Text>{v.value ?? ""}</Text>
+              </VStack>
+            ))}
           </Section>
         </List>
       </Host>

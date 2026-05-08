@@ -1,10 +1,4 @@
-export type EntryObj = {
-  id: string;
-  date: Date;
-  title: string;
-  preview: string;
-  bookmark?: boolean;
-};
+import { EntryObj } from "@/utils/journal/use-entry";
 
 export const ENTRIES: EntryObj[] = [
   {

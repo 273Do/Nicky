@@ -1,18 +1,11 @@
 import { useState } from "react";
 
 import * as Crypto from "expo-crypto";
-import type { SFSymbol } from "sf-symbols-typescript";
+import { SFSymbol } from "expo-symbols";
 
 import { FIELD_ICONS, FieldType, JOURNAL_ICONS } from "@/core/constants";
-
-/**
- * ジャーナルの型
- */
-export type JournalObj = {
-  id: string;
-  meta: JournalMetaObj;
-  fields: FieldObj[];
-};
+import { storeJournal } from "@/db/queries/journals";
+import { FieldlObj, JournalObj } from "@/db/schemas";
 
 /**
  * ジャーナルメタ情報の型
@@ -50,7 +43,7 @@ export const FIELD_TYPES = Object.keys(FIELD_ICONS) as FieldType[];
  * - moveField フィールドを並び替えする関数
  * - meta ジャーナルのメタ情報
  * - setMeta ジャーナルのメタ情報をセットする関数
- * - createJournal ジャーナルを作成する関数
+ * - createJournal 新規ジャーナルを作成する関数
  * - formDisabled フォームが送信可能かどうかのフラグ
  */
 export const useJournalField = () => {
@@ -68,7 +61,7 @@ export const useJournalField = () => {
    * 新規フィールドを追加する
    * @param type 追加するフィールドの種別
    */
-  const addField = (type: FieldType) => {
+  const addField = (type: FieldType): void => {
     const newField: FieldObj = {
       id: Crypto.randomUUID(),
       type,
@@ -82,7 +75,7 @@ export const useJournalField = () => {
    * @param id ラベルを編集する id
    * @param newLabel 新しいラベル
    */
-  const renameField = (id: string, newLabel: string) => {
+  const renameField = (id: string, newLabel: string): void => {
     setFields((prev) =>
       prev.map((field) =>
         field.id === id ? { ...field, label: newLabel } : field,
@@ -94,7 +87,7 @@ export const useJournalField = () => {
    * インデックス指定でフィールドを削除する（List.ForEach の onDelete 用）
    * @param indices 削除するインデックスの配列
    */
-  const deleteField = (indices: number[]) => {
+  const deleteField = (indices: number[]): void => {
     setFields((prev) => prev.filter((_, i) => !indices.includes(i)));
   };
 
@@ -103,7 +96,7 @@ export const useJournalField = () => {
    * @param sourceIndices 移動元のインデックス配列
    * @param destination 移動先のインデックス
    */
-  const moveField = (sourceIndices: number[], destination: number) => {
+  const moveField = (sourceIndices: number[], destination: number): void => {
     setFields((prev) => {
       const next = [...prev];
       const moved = sourceIndices.map((i) => next[i]);
@@ -122,14 +115,30 @@ export const useJournalField = () => {
     fields.some((field) => field.label.length === 0);
 
   /**
-   * ジャーナルを作成する関数
+   * 新規ジャーナルをフィールドと共にDBに保存する
    */
-  const createJournal = () => {
-    if (!formDisabled) {
-      const newJournal: JournalObj = { id: Crypto.randomUUID(), meta, fields };
-      console.log(newJournal);
-      return newJournal;
-    }
+  const createJournal = async (): Promise<JournalObj> => {
+    const now = Date.now();
+
+    const newJournal: JournalObj = {
+      id: Crypto.randomUUID(),
+      name: meta.name,
+      icon: meta.icon,
+      color: meta.color,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    const newFieldsFieldlObj: FieldlObj[] = fields.map((field, i) => ({
+      id: field.id,
+      type: field.type,
+      label: field.label,
+      sortOrder: i,
+    }));
+
+    await storeJournal(newJournal, newFieldsFieldlObj);
+
+    return newJournal;
   };
 
   return {

@@ -1,16 +1,20 @@
-# Nicky - Journaling App
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
 
-Nicky is a React Native journaling app built with Expo and Expo Router. It features native iOS UI via `@expo/ui/swift-ui` (SwiftUI components), native tab navigation, and file-based routing.
+Nicky is a React Native journaling app built with Expo and Expo Router. It features native iOS UI via `@expo/ui/swift-ui` (SwiftUI components), native tab navigation, and SQLite persistence via Drizzle ORM.
 
 ## Development Commands
 
 ```bash
-pnpm expo run:ios   # Build and run on iOS simulator
-pnpm expo start     # Start Expo dev server
-pnpm lint           # Run ESLint
-pnpm lint-fix       # Run ESLint with auto-fix
+pnpm expo run:ios        # Build and run on iOS simulator
+pnpm expo start --clear  # Start Expo dev server (clear cache)
+pnpm lint                # Run ESLint
+pnpm lint-fix            # Run ESLint with auto-fix
+pnpm typecheck           # TypeScript type check
+pnpm drizzle-kit generate  # Generate migration files from schema
 ```
 
 ## Commit Convention
@@ -30,7 +34,7 @@ chore: tooling / config changes
 
 ```
 src/app/
-  _layout.tsx                  # NativeTabs (root) — tab bar always visible
+  _layout.tsx                  # Root — wraps everything in DrizzleProvider + NativeTabs
   (journal)/
     _layout.tsx                # Stack — scoped to journal tab
     index.tsx                  # Journal list  /
@@ -45,46 +49,46 @@ src/app/
 
 **Key rule:** `NativeTabs` is the root navigator; `Stack` lives inside `(journal)` group. This keeps the tab bar visible when pushing screens.
 
-### Directory Structure
+### Database Layer
 
-```
-src/
-  app/                   # Routes (Expo Router file-based)
-  components/
-    app-tabs.tsx         # NativeTabs definition
-    journal/             # Journal-related components
-      journal-view.tsx   # Grid list of journal cards
-      journal-card.tsx   # Tappable gradient card
-      journal-create-view.tsx
-    entry/               # Entry-related components
-      entry-list-view.tsx  # List grouped by month
-      entry-row.tsx        # Date + title + preview row
-  mocks/
-    journals.ts          # JournalObj type + JOURNALS array
-    entries.ts           # Entry type + ENTRIES array
-  constants/
-  hooks/
-```
+Drizzle ORM + expo-sqlite. Schema is split by domain in `src/db/schemas/`:
+
+| File | Tables |
+|---|---|
+| `journals.ts` | `journals` |
+| `fields.ts` | `fields` (field definitions per journal) |
+| `entries.ts` | `entries`, `entry_values` |
+
+`src/db/schemas/index.ts` re-exports all schemas. `src/components/drizzle-provider.tsx` opens the DB, runs migrations via `useMigrations`, and exports `db`.
+
+**Adding a schema change:** edit the relevant schema file → `pnpm drizzle-kit generate` → commit the generated files in `drizzle/`.
+
+**Drizzle config notes:**
+- Schema files must not import React Native packages (`expo-crypto`, `expo-symbols` runtime imports) — drizzle-kit runs in Node.js. Use `import type` for RN types.
+- `$defaultFn` with `Crypto.randomUUID()` cannot be used in schema — generate IDs at the application layer instead.
 
 ### Key Technologies
 
 | Package | Usage |
 |---|---|
 | `expo-router` | File-based routing, `useRouter`, `useLocalSearchParams` |
-| `@expo/ui/swift-ui` | SwiftUI components: `Host`, `ZStack`, `VStack`, `Grid`, `ScrollView`, `List`, `Section`, `Button`, `Image`, `Text`, `RoundedRectangle` |
-| `@expo/ui/swift-ui/modifiers` | `frame`, `padding`, `font`, `foregroundStyle`, `onTapGesture`, `clipShape`, `lineLimit`, `headerProminence`, `listStyle` |
+| `@expo/ui/swift-ui` | SwiftUI components: `Host`, `ZStack`, `VStack`, `Grid`, `ScrollView`, `List`, `Section`, `Button`, `Image`, `Text`, `RoundedRectangle`, `ColorPicker`, `BottomSheet` |
+| `@expo/ui/swift-ui/modifiers` | `frame`, `padding`, `foregroundStyle`, `onTapGesture`, `listStyle`, `presentationDetents`, `environment`, `fixedSize` |
 | `expo-router/unstable-native-tabs` | `NativeTabs` — iOS native tab bar |
-| `expo-symbols` | `SymbolView` — SF Symbols in RN header components |
+| `expo-symbols` | `SymbolView` — SF Symbols in RN (non-SwiftUI) header components |
+| `expo-sqlite` + `drizzle-orm` | Local SQLite persistence |
+| `expo-crypto` | `Crypto.randomUUID()` for ID generation at the app layer |
 | `PlatformColor` | Adaptive system colors: `"label"`, `"systemBackground"`, `"systemIndigo"` |
 
 ### SwiftUI Component Rules
 
 - Always wrap SwiftUI components in `<Host>` with `useViewportSizeMeasurement`
 - Use `onTapGesture` modifier for taps — `onPress` prop does NOT work on layout components
-- Gradients: `RoundedRectangle` + `foregroundStyle({ type: "linearGradient", ... })` + `clipShape` on parent `ZStack`
-- Adaptive colors: use `PlatformColor("label")` directly — no need for `useColorScheme`
-- Secondary text: `foregroundStyle({ type: "hierarchical", style: "secondary" })`
+- `Button` inside `List` gets a blue tint by default — use `foregroundStyle({ type: "hierarchical", style: "primary" })` to keep the tap highlight without the blue color
 - `List` manages its own scrolling — never nest it inside `ScrollView`
+- Adaptive colors: use `PlatformColor("label")` directly — no need for `useColorScheme`
+- `fixedSize()` on a component prevents it from stretching in an HStack, allowing siblings to fill remaining space
+- Gradients: `RoundedRectangle` + `foregroundStyle({ type: "linearGradient", ... })` + `clipShape` on parent `ZStack`
 
 ### Naming Conventions
 
@@ -96,8 +100,7 @@ src/
 ## Code Style
 
 - **Import order:** external → internal (`@/`) → relative; always separated by newlines
-- **Unused imports:** auto-enforced by ESLint (`eslint-plugin-unused-imports`)
 - **Path alias:** `@/*` → `src/*`
 - **TypeScript:** strict mode enabled
 - **Formatter:** Prettier (enforced via ESLint)
-- **React Compiler:** enabled (`reactCompiler: true` in app.json)
+- **React Compiler:** enabled — do not manually add `useMemo`/`useCallback` unless there is a specific reason

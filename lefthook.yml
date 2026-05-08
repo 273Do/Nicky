@@ -10,6 +10,8 @@ pre-commit:
     lint-and-format-check:
       glob: "*.{ts,tsx,js,jsx}"
       run: pnpm run lint
+    typecheck:
+      run: pnpm run typecheck
 
 commit-msg:
   commands:
