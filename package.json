@@ -57,8 +57,6 @@
     "prettier": "^3.8.3",
     "typescript": "~5.9.2"
   },
-  "private": true,
-  "pnpm": {
-    "onlyBuiltDependencies": ["esbuild", "unrs-resolver"]
-  }
+  "packageManager": "pnpm@9.11.0",
+  "private": true
 }
