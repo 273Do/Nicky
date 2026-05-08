@@ -26,7 +26,7 @@ const SORT_LABELS: Record<SortKey, string> = {
 };
 
 /**
- * ジャーナル一覧
+ * ジャーナル詳細(エントリー一覧)
  */
 export default function JournalScreen() {
   const { id, name } = useLocalSearchParams<{ id: string; name: string }>();

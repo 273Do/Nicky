@@ -26,7 +26,9 @@ export default function JournalCreateScreen() {
 
   const handleCreate = async () => {
     const { id, name } = await createJournal();
-    router.push(`/(journal)/${id}?name=${name}`);
+
+    // replace でスタックせずにジャーナル詳細画面からジャーナル一覧へ戻れるようにする
+    router.replace(`/(journal)/${id}?name=${name}`);
   };
 
   return (
