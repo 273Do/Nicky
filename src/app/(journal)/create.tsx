@@ -25,8 +25,8 @@ export default function JournalCreateScreen() {
   } = useJournalField();
 
   const handleCreate = async () => {
-    const id = await createJournal();
-    router.push(`/(journal)/${id}`);
+    const { id, name } = await createJournal();
+    router.push(`/(journal)/${id}?name=${name}`);
   };
 
   return (

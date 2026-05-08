@@ -5,6 +5,7 @@ import type { SFSymbol } from "sf-symbols-typescript";
 
 import { FIELD_ICONS, FieldType, JOURNAL_ICONS } from "@/core/constants";
 import { storeJournal } from "@/db/queries/journals";
+import { FieldlObj, JournalObj } from "@/db/schemas";
 
 /**
  * ジャーナルメタ情報の型
@@ -60,7 +61,7 @@ export const useJournalField = () => {
    * 新規フィールドを追加する
    * @param type 追加するフィールドの種別
    */
-  const addField = (type: FieldType) => {
+  const addField = (type: FieldType): void => {
     const newField: FieldObj = {
       id: Crypto.randomUUID(),
       type,
@@ -74,7 +75,7 @@ export const useJournalField = () => {
    * @param id ラベルを編集する id
    * @param newLabel 新しいラベル
    */
-  const renameField = (id: string, newLabel: string) => {
+  const renameField = (id: string, newLabel: string): void => {
     setFields((prev) =>
       prev.map((field) =>
         field.id === id ? { ...field, label: newLabel } : field,
@@ -86,7 +87,7 @@ export const useJournalField = () => {
    * インデックス指定でフィールドを削除する（List.ForEach の onDelete 用）
    * @param indices 削除するインデックスの配列
    */
-  const deleteField = (indices: number[]) => {
+  const deleteField = (indices: number[]): void => {
     setFields((prev) => prev.filter((_, i) => !indices.includes(i)));
   };
 
@@ -95,7 +96,7 @@ export const useJournalField = () => {
    * @param sourceIndices 移動元のインデックス配列
    * @param destination 移動先のインデックス
    */
-  const moveField = (sourceIndices: number[], destination: number) => {
+  const moveField = (sourceIndices: number[], destination: number): void => {
     setFields((prev) => {
       const next = [...prev];
       const moved = sourceIndices.map((i) => next[i]);
@@ -116,28 +117,28 @@ export const useJournalField = () => {
   /**
    * 新規ジャーナルをフィールドと共にDBに保存する
    */
-  const createJournal = async () => {
+  const createJournal = async (): Promise<JournalObj> => {
     const now = Date.now();
 
-    const id = Crypto.randomUUID();
-    await storeJournal(
-      {
-        id,
-        name: meta.name,
-        icon: meta.icon,
-        color: meta.color,
-        createdAt: now,
-        updatedAt: now,
-      },
-      fields.map((field, i) => ({
-        id: field.id,
-        type: field.type,
-        label: field.label,
-        sortOrder: i,
-      })),
-    );
+    const newJournal: JournalObj = {
+      id: Crypto.randomUUID(),
+      name: meta.name,
+      icon: meta.icon,
+      color: meta.color,
+      createdAt: now,
+      updatedAt: now,
+    };
 
-    return id;
+    const newFieldsFieldlObj: FieldlObj[] = fields.map((field, i) => ({
+      id: field.id,
+      type: field.type,
+      label: field.label,
+      sortOrder: i,
+    }));
+
+    await storeJournal(newJournal, newFieldsFieldlObj);
+
+    return newJournal;
   };
 
   return {
