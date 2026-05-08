@@ -27,6 +27,7 @@ export default function JournalListScreen() {
           ),
         }}
       />
+      {/* TODO: 空の場合の処理を追加する */}
       <JournalView />
     </>
   );
