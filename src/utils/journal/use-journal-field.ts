@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import * as Crypto from "expo-crypto";
-import type { SFSymbol } from "sf-symbols-typescript";
+import { SFSymbol } from "expo-symbols";
 
 import { FIELD_ICONS, FieldType, JOURNAL_ICONS } from "@/core/constants";
 import { storeJournal } from "@/db/queries/journals";

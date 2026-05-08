@@ -18,7 +18,7 @@ import {
   presentationDetents,
   presentationDragIndicator,
 } from "@expo/ui/swift-ui/modifiers";
-import type { SFSymbol } from "sf-symbols-typescript";
+import { SFSymbol } from "expo-symbols";
 
 import { JOURNAL_ICONS } from "@/core/constants";
 
