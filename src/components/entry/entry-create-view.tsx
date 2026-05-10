@@ -24,7 +24,6 @@ type Props = {
  */
 export function EntryCreateView({ id, values, setValue }: Props) {
   const now = Date.now();
-  console.log(id);
 
   const { data: fields } = useLiveQuery(getFieldsQuery(id));
 

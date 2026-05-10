@@ -18,21 +18,21 @@ export const getJournalsQuery = db.query.journals.findMany({
 
 /**
  * ジャーナルをフィールドと共に作成するクエリを実行
- * @param journal ジャーナルのメタ情報
+ * @param newJournal ジャーナルのメタ情報
  * @param newFields フィールド一覧
  */
 export const storeJournal = async (
-  journal: JournalObj,
+  newJournal: JournalObj,
   newFields: FieldWithSortObj[],
-) => {
+): Promise<void> => {
   await db.transaction(async (tx) => {
-    await tx.insert(journals).values(journal);
+    await tx.insert(journals).values(newJournal);
 
     if (newFields.length > 0) {
       await tx
         .insert(fields)
         .values(
-          newFields.map((field) => ({ ...field, journalId: journal.id })),
+          newFields.map((field) => ({ ...field, journalId: newJournal.id })),
         );
     }
   });
