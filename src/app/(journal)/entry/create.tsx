@@ -6,24 +6,10 @@ import {
   View,
 } from "react-native";
 
-import {
-  Host,
-  List,
-  Section,
-  Text,
-  TextField,
-  VStack,
-} from "@expo/ui/swift-ui";
-import {
-  font,
-  foregroundStyle,
-  frame,
-  listStyle,
-} from "@expo/ui/swift-ui/modifiers";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { SymbolView } from "expo-symbols";
 
-import { formatDate } from "@/utils/date";
+import { EntryCreateView } from "@/components/entry/entry-create-view";
 import { useJournalField } from "@/utils/journal/use-journal-field";
 
 /**
@@ -42,8 +28,6 @@ export default function EntryCreateScreen() {
     // replace でスタックせずにジャーナル詳細画面からジャーナル一覧へ戻れるようにする
     router.replace(`/(journal)/entry/${id}}`);
   };
-
-  const now = Date.now();
 
   return (
     <>
@@ -69,43 +53,7 @@ export default function EntryCreateScreen() {
           ),
         }}
       />
-      <View style={{ flex: 1 }}>
-        <Host
-          style={{
-            flex: 1,
-            backgroundColor: PlatformColor("systemBackground"),
-          }}
-          useViewportSizeMeasurement
-        >
-          <List
-            modifiers={[
-              frame({ maxWidth: 9999, maxHeight: 9999 }),
-              listStyle("plain"),
-            ]}
-          >
-            <Section title={formatDate(now)}>
-              <VStack alignment="leading" spacing={4}>
-                <Text
-                  modifiers={[
-                    font({ size: 12 }),
-                    foregroundStyle({
-                      type: "hierarchical",
-                      style: "secondary",
-                    }),
-                  ]}
-                >
-                  hogehoge
-                </Text>
-
-                <TextField
-                  placeholder="fugafuga"
-                  modifiers={[frame({ maxWidth: 9999 })]}
-                />
-              </VStack>
-            </Section>
-          </List>
-        </Host>
-      </View>
+      <EntryCreateView />
     </>
   );
 }
@@ -120,7 +68,7 @@ const styles = StyleSheet.create({
     color: PlatformColor("label"),
   },
   subtitle: {
-    fontSize: 12,
+    fontSize: 14,
     color: PlatformColor("secondaryLabel"),
   },
 });
