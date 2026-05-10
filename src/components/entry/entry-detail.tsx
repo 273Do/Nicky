@@ -24,6 +24,7 @@ type Props = {
   /** エントリーデータ */
   entry: EntryDetailObj;
 };
+
 /**
  * エントリー詳細画面
  */
@@ -75,7 +76,7 @@ export function EntryDetailView({ entry }: Props) {
                 >
                   {v.field.label}
                 </Text>
-                <Text modifiers={[font({ size: 16 })]}>{v.value ?? ""}</Text>
+                <Text>{v.value ?? ""}</Text>
               </VStack>
             ))}
           </Section>
