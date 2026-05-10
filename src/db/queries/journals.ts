@@ -1,7 +1,8 @@
 import { sql } from "drizzle-orm";
 
 import { db } from "@/db/client";
-import { entries, FieldlObj, fields, JournalObj, journals } from "@/db/schemas";
+import { entries, fields, JournalObj, journals } from "@/db/schemas";
+import { FieldWithSortObj } from "@/utils/journal/use-journal-field";
 
 /**
  * ジャーナル一覧を取得するクエリ
@@ -22,7 +23,7 @@ export const getJournalsQuery = db.query.journals.findMany({
  */
 export const storeJournal = async (
   journal: JournalObj,
-  newFields: FieldlObj[],
+  newFields: FieldWithSortObj[],
 ) => {
   await db.transaction(async (tx) => {
     await tx.insert(journals).values(journal);

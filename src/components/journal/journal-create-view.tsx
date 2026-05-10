@@ -25,7 +25,7 @@ import {
 import { FIELD_ICONS, FIELD_LABELS, FieldType } from "@/core/constants";
 import {
   JournalMetaObj,
-  type FieldOmitSortObj,
+  type FieldDraftObj,
 } from "@/utils/journal/use-journal-field";
 
 import { FieldBottomSheet } from "./field-bottom-sheet";
@@ -46,7 +46,7 @@ function isValidColor(hex: string): boolean {
 
 type Props = {
   /** フィールド一覧 */
-  fields: FieldOmitSortObj[];
+  fields: FieldDraftObj[];
   /** フィールドを追加する関数 */
   addField: (type: FieldType) => void;
   /** フィールドのラベルを更新する関数 */

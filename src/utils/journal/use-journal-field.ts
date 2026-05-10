@@ -20,9 +20,14 @@ export type JournalMetaObj = {
 };
 
 /**
- * ジャーナルフィールドの1項目
+ * ジャーナル作成フォームのフィールド下書き（journalId・sortOrder なし）
  */
-export type FieldOmitSortObj = Omit<FieldlObj, "sortOrder">;
+export type FieldDraftObj = Omit<FieldlObj, "journalId" | "sortOrder">;
+
+/**
+ * sortOrder 確定済み・journalId 未割当のフィールド（DB 保存直前）
+ */
+export type FieldWithSortObj = Omit<FieldlObj, "journalId">;
 
 /**
  * 全 FieldType の配列
@@ -43,7 +48,7 @@ export const FIELD_TYPES = Object.keys(FIELD_ICONS) as FieldType[];
  * - formDisabled フォームが送信可能かどうかのフラグ
  */
 export const useJournalField = () => {
-  const [fields, setFields] = useState<FieldOmitSortObj[]>([]);
+  const [fields, setFields] = useState<FieldDraftObj[]>([]);
 
   const initialState = {
     name: "",
@@ -58,7 +63,7 @@ export const useJournalField = () => {
    * @param type 追加するフィールドの種別
    */
   const addField = (type: FieldType): void => {
-    const newField: FieldOmitSortObj = {
+    const newField: FieldDraftObj = {
       id: Crypto.randomUUID(),
       type,
       label: "",
@@ -125,7 +130,7 @@ export const useJournalField = () => {
       updatedAt: now,
     };
 
-    const newFieldsFieldlObj: FieldlObj[] = fields.map((field, i) => ({
+    const newFieldsFieldlObj: FieldWithSortObj[] = fields.map((field, i) => ({
       id: field.id,
       type: field.type,
       label: field.label,

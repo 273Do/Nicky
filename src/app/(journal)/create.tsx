@@ -24,7 +24,7 @@ export default function JournalCreateScreen() {
     formDisabled,
   } = useJournalField();
 
-  const handleCreate = async () => {
+  const handleJournalCreate = async () => {
     const { id, name } = await createJournal();
 
     // replace でスタックせずにジャーナル詳細画面からジャーナル一覧へ戻れるようにする
@@ -37,7 +37,7 @@ export default function JournalCreateScreen() {
         options={{
           title: "New Journal",
           headerRight: () => (
-            <Pressable onPress={handleCreate} disabled={formDisabled}>
+            <Pressable onPress={handleJournalCreate} disabled={formDisabled}>
               <SymbolView
                 name="checkmark"
                 tintColor={
