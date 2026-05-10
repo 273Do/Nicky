@@ -8,17 +8,13 @@ import {
   Section,
   Spacer,
   Text,
-  VStack,
 } from "@expo/ui/swift-ui";
-import {
-  font,
-  foregroundStyle,
-  frame,
-  listStyle,
-} from "@expo/ui/swift-ui/modifiers";
+import { frame, listStyle } from "@expo/ui/swift-ui/modifiers";
 
 import { EntryDetailObj } from "@/db/queries/entries";
 import { formatDate } from "@/utils/date";
+
+import { EntryFieldItem } from "./entry-field-item";
 
 type Props = {
   /** エントリーデータ */
@@ -64,20 +60,7 @@ export function EntryDetailView({ entry }: Props) {
             }
           >
             {sorted.map((v) => (
-              <VStack key={v.id} alignment="leading" spacing={4}>
-                <Text
-                  modifiers={[
-                    font({ size: 14, weight: "bold" }),
-                    foregroundStyle({
-                      type: "hierarchical",
-                      style: "secondary",
-                    }),
-                  ]}
-                >
-                  {v.field.label}
-                </Text>
-                <Text>{v.value ?? ""}</Text>
-              </VStack>
+              <EntryFieldItem key={v.id} field={v.field} value={v.value} />
             ))}
           </Section>
         </List>

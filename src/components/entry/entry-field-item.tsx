@@ -15,19 +15,28 @@ type Props = {
   field: FieldlObj;
   /** 現在の値 */
   value: FieldValue;
-  /** 値変更時のコールバック */
-  setValue: (id: string, value: FieldValue) => void;
+  /** 値変更時のコールバック（edit=true のときのみ必要） */
+  setValue?: (id: string, value: FieldValue) => void;
+  /** 入力かどうか */
+  edit?: boolean;
 };
 
 /**
  * フィールドタイプによってコンポーネントを切り替えるコンポーネント
  * React Compiler がこの単位で再レンダリングを最適化する
  */
-export function EntryFieldItem({ field, value, setValue }: Props) {
+export function EntryFieldItem({
+  field,
+  value,
+  setValue,
+  edit = false,
+}: Props) {
   const shared = {
     label: field.label,
-    onValueChange: <T extends FieldValue>(v: T) => setValue(field.id, v),
-    edit: true,
+    onValueChange: setValue
+      ? <T extends FieldValue>(v: T) => setValue(field.id, v)
+      : undefined,
+    edit,
   };
 
   switch (field.type as FieldType) {
