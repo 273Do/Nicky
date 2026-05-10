@@ -22,14 +22,7 @@ export type JournalMetaObj = {
 /**
  * ジャーナルフィールドの1項目
  */
-export type FieldObj = {
-  /** フィールドID */
-  id: string;
-  /** フィールド種別 */
-  type: FieldType;
-  /** 表示ラベル */
-  label: string;
-};
+export type FieldOmitSortObj = Omit<FieldlObj, "sortOrder">;
 
 /**
  * 全 FieldType の配列
@@ -37,7 +30,7 @@ export type FieldObj = {
 export const FIELD_TYPES = Object.keys(FIELD_ICONS) as FieldType[];
 
 /**
- * ジャーナルフィールドの管理フック
+ * ジャーナルフィールドに関するフック
  * @returns
  * - fields 現在のフィールド一覧
  * - addField 新規フィールドを追加する関数
@@ -50,7 +43,7 @@ export const FIELD_TYPES = Object.keys(FIELD_ICONS) as FieldType[];
  * - formDisabled フォームが送信可能かどうかのフラグ
  */
 export const useJournalField = () => {
-  const [fields, setFields] = useState<FieldObj[]>([]);
+  const [fields, setFields] = useState<FieldOmitSortObj[]>([]);
 
   const initialState = {
     name: "",
@@ -65,7 +58,7 @@ export const useJournalField = () => {
    * @param type 追加するフィールドの種別
    */
   const addField = (type: FieldType): void => {
-    const newField: FieldObj = {
+    const newField: FieldOmitSortObj = {
       id: Crypto.randomUUID(),
       type,
       label: "",

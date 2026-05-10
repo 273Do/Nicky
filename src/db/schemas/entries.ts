@@ -53,6 +53,7 @@ export const entriesRelations = relations(entries, ({ one, many }) => ({
     fields: [entries.journalId],
     references: [journals.id],
   }),
+  // entry.enry_value ではなく entry.valueで取ると命名が綺麗
   values: many(entryValues),
 }));
 
