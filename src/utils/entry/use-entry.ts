@@ -1,15 +1,10 @@
 import { useRef } from "react";
 
-import type { FieldType } from "@/core/constants";
-import { FieldlObj } from "@/db/schemas";
+import * as Crypto from "expo-crypto";
 
-export type EntryObj = {
-  id: string;
-  date: Date;
-  title: string;
-  preview: string;
-  bookmark?: boolean;
-};
+import type { FieldType } from "@/core/constants";
+import { storeEntry } from "@/db/queries/entries";
+import { EntryObj, EntryValueObj, FieldlObj } from "@/db/schemas";
 
 export type FieldValue = string | number | boolean | Date | null;
 
@@ -61,15 +56,48 @@ export const useEntry = (fields: FieldlObj[] | undefined) => {
    * @param id フィールド id
    * @param value フィールドの値
    */
-  const setValue = (id: string, value: FieldValue): void => {
-    valuesRef.current[id] = value;
+  const setValue = (fieldId: string, value: FieldValue): void => {
+    valuesRef.current[fieldId] = value;
   };
 
   /**
    * 新規エントリーをDBに保存する
+   * @param journalId ジャーナル id
    */
-  const createEntry = async () => {
-    console.log(valuesRef.current);
+  /** FieldValue を DB の text 型に変換 */
+  const serializeValue = (value: FieldValue): string | null => {
+    if (value === null) return null;
+    if (value instanceof Date) return String(value.getTime());
+    return String(value);
+  };
+
+  /**
+   * 新規エントリーを値と共にDBに保存する
+   * @param journalId ジャーナル id
+   */
+  const createEntry = async (journalId: string) => {
+    const now = Date.now();
+
+    const newEntry: EntryObj = {
+      id: Crypto.randomUUID(),
+      journalId,
+      bookmark: false,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    const newValues: EntryValueObj[] = Object.entries(valuesRef.current).map(
+      ([fieldId, value]) => ({
+        id: Crypto.randomUUID(),
+        entryId: newEntry.id,
+        fieldId,
+        value: serializeValue(value),
+      }),
+    );
+
+    await storeEntry(newEntry, newValues);
+
+    return newEntry;
   };
 
   return { valuesRef, setValue, createEntry };

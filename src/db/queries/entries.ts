@@ -1,5 +1,7 @@
 import { db } from "@/db/client";
 
+import { entries, entryValues, EntryObj, EntryValueObj } from "../schemas";
+
 /**
  * ジャーナルに紐付いたエントリー一覧を取得するクエリ
  * @param journalId ジャーナルID
@@ -23,6 +25,24 @@ export const getEntryDetailQuery = (entryId: string) =>
       },
     },
   });
+
+/**
+ * エントリーをフィールド値と共に保存する
+ * @param newEntry エントリー本体
+ * @param newValues エントリー値一覧
+ */
+export const storeEntry = async (
+  newEntry: EntryObj,
+  newValues: EntryValueObj[],
+): Promise<void> => {
+  await db.transaction(async (tx) => {
+    await tx.insert(entries).values(newEntry);
+
+    if (newValues.length > 0) {
+      await tx.insert(entryValues).values(newValues);
+    }
+  });
+};
 
 /** エントリー詳細の型 */
 export type EntryDetailObj = NonNullable<
