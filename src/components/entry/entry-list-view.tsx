@@ -14,7 +14,7 @@ import { SymbolView } from "expo-symbols";
 import type { SortKey } from "@/app/(journal)/[id]";
 import { getEntriesQuery } from "@/db/queries/entries";
 import { formatYearMonth } from "@/utils/date";
-import { EntryObj } from "@/utils/journal/use-entry";
+import { EntryObj } from "@/utils/entry/use-entry";
 
 import { EntryRow } from "./entry-row";
 

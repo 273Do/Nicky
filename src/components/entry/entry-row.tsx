@@ -5,7 +5,7 @@ import { font, foregroundStyle, lineLimit } from "@expo/ui/swift-ui/modifiers";
 import { useRouter } from "expo-router";
 
 import { formatDate } from "@/utils/date";
-import { EntryObj } from "@/utils/journal/use-entry";
+import { EntryObj } from "@/utils/entry/use-entry";
 
 const secondary = foregroundStyle({ type: "hierarchical", style: "secondary" });
 

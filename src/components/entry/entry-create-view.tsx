@@ -6,7 +6,7 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { getFieldsQuery } from "@/db/queries/fields";
 import { formatDate } from "@/utils/date";
-import { useEntry } from "@/utils/journal/use-entry";
+import { useEntry } from "@/utils/entry/use-entry";
 
 import { EntryFieldItem } from "./entry-field-item";
 

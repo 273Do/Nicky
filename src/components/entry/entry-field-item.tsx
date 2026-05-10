@@ -8,7 +8,7 @@ import { EntryText } from "@/components/field/entry-text";
 import { EntryTime } from "@/components/field/entry-time";
 import { FieldType } from "@/core/constants";
 import type { FieldlObj } from "@/db/schemas";
-import { type FieldValue } from "@/utils/journal/use-entry";
+import { type FieldValue } from "@/utils/entry/use-entry";
 
 type Props = {
   /** フィールド定義 */
