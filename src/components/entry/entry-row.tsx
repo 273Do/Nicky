@@ -24,15 +24,15 @@ export function EntryRow({ entry }: Props) {
       modifiers={[foregroundStyle({ type: "hierarchical", style: "primary" })]}
       onPress={() => router.push(`/(journal)/entry/${entry.id}`)}
     >
-      <VStack alignment="leading" spacing={4}>
-        <Text modifiers={[font({ size: 16, weight: "bold" })]}>
+      <VStack alignment="leading" spacing={2}>
+        <Text modifiers={[font({ size: 18, weight: "bold" })]}>
           {entry.title}
         </Text>
         <Text modifiers={[font({ size: 14 }), secondary, lineLimit(2)]}>
           {entry.preview}
         </Text>
         <HStack alignment="center" spacing={6}>
-          <Text modifiers={[font({ size: 12 }), secondary]}>
+          <Text modifiers={[font({ size: 13 }), secondary]}>
             {formatDate(entry.date)}
           </Text>
           <Spacer />

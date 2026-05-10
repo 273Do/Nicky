@@ -66,7 +66,7 @@ export function EntryDetailView({ entry }: Props) {
               <VStack key={v.id} alignment="leading" spacing={4}>
                 <Text
                   modifiers={[
-                    font({ size: 12 }),
+                    font({ size: 14, weight: "bold" }),
                     foregroundStyle({
                       type: "hierarchical",
                       style: "secondary",
@@ -75,7 +75,7 @@ export function EntryDetailView({ entry }: Props) {
                 >
                   {v.field.label}
                 </Text>
-                <Text>{v.value ?? ""}</Text>
+                <Text modifiers={[font({ size: 16 })]}>{v.value ?? ""}</Text>
               </VStack>
             ))}
           </Section>
