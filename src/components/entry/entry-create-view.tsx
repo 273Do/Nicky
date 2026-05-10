@@ -6,26 +6,27 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { getFieldsQuery } from "@/db/queries/fields";
 import { formatDate } from "@/utils/date";
-import { useEntry } from "@/utils/entry/use-entry";
+import { FieldValue } from "@/utils/entry/use-entry";
 
 import { EntryFieldItem } from "./entry-field-item";
 
 type Props = {
-  id: string;
   /** ジャーナル id */
+  id: string;
+  /** 現在のフィールドの値 */
+  values: Record<string, FieldValue>;
+  /** フィールドに値を格納する関数 */
+  setValue: (id: string, value: FieldValue) => void;
 };
 
 /**
  * エントリー作成画面
  */
-export function EntryCreateView({ id }: Props) {
+export function EntryCreateView({ id, values, setValue }: Props) {
   const now = Date.now();
   console.log(id);
 
   const { data: fields } = useLiveQuery(getFieldsQuery(id));
-
-  const { values, setValue } = useEntry(fields);
-  if (!fields) return null;
 
   return (
     <View style={{ flex: 1 }}>
@@ -46,6 +47,7 @@ export function EntryCreateView({ id }: Props) {
                 field={field}
                 value={values[field.id]}
                 setValue={setValue}
+                edit
               />
             ))}
           </Section>

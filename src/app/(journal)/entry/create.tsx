@@ -6,10 +6,13 @@ import {
   View,
 } from "react-native";
 
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { SymbolView } from "expo-symbols";
 
 import { EntryCreateView } from "@/components/entry/entry-create-view";
+import { getFieldsQuery } from "@/db/queries/fields";
+import { useEntry } from "@/utils/entry/use-entry";
 
 const formDisabled = false;
 
@@ -21,9 +24,12 @@ export default function EntryCreateScreen() {
 
   const { id, name } = useLocalSearchParams<{ id: string; name: string }>();
 
+  const { data: fields } = useLiveQuery(getFieldsQuery(id));
+  const { valuesRef, setValue, createEntry } = useEntry(fields);
+
   const handleEntryCreate = async () => {
     // const { id } = await createJournal();
-    // // replace でスタックせずにジャーナル詳細画面からジャーナル一覧へ戻れるようにする
+    createEntry();
     // router.replace(`/(journal)/entry/${id}}`);
   };
 
@@ -51,7 +57,7 @@ export default function EntryCreateScreen() {
           ),
         }}
       />
-      <EntryCreateView id={id} />
+      <EntryCreateView id={id} values={valuesRef.current} setValue={setValue} />
     </>
   );
 }

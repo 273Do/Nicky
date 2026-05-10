@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef } from "react";
 
 import type { FieldType } from "@/core/constants";
 import { FieldlObj } from "@/db/schemas";
@@ -37,18 +37,40 @@ const getDefaultValue = (type: FieldType): FieldValue => {
 
 /**
  * エントリーフォームの値を管理するフック
+ * ref ベースのため、入力のたびに再レンダリングが発生しない
  * @param fields ジャーナルに紐づくフィールド一覧
  * @returns
- * - values 現在のフィールドの値
+ * - valuesRef 現在のフィールドの値
  * - setValue フィールドに値を格納する関数
+ * - createEntry 新規エントリーをDBに保存する関数
  */
-export const useEntry = (fields: FieldlObj[]) => {
-  const [values, setValues] = useState<Record<string, FieldValue>>(() =>
-    Object.fromEntries(fields.map((f) => [f.id, getDefaultValue(f.type)])),
-  );
+export const useEntry = (fields: FieldlObj[] | undefined) => {
+  const valuesRef = useRef<Record<string, FieldValue>>({});
+  const initialized = useRef(false);
 
-  const setValue = (id: string, value: FieldValue) =>
-    setValues((prev) => ({ ...prev, [id]: value }));
+  // fields が初めてロードされたタイミングで一度だけ初期化
+  if (!initialized.current && fields && fields.length > 0) {
+    initialized.current = true;
+    valuesRef.current = Object.fromEntries(
+      fields.map((f) => [f.id, getDefaultValue(f.type)]),
+    );
+  }
 
-  return { values, setValue };
+  /**
+   * フィールドに値を格納する
+   * @param id フィールド id
+   * @param value フィールドの値
+   */
+  const setValue = (id: string, value: FieldValue): void => {
+    valuesRef.current[id] = value;
+  };
+
+  /**
+   * 新規エントリーをDBに保存する
+   */
+  const createEntry = async () => {
+    console.log(valuesRef.current);
+  };
+
+  return { valuesRef, setValue, createEntry };
 };
