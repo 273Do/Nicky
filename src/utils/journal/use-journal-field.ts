@@ -11,8 +11,11 @@ import { FieldlObj, JournalObj } from "@/db/schemas";
  * ジャーナルメタ情報の型
  */
 export type JournalMetaObj = {
+  /** ジャーナル名 */
   name: string;
+  /** ジャーナルカラー */
   color: string;
+  /** ジャーナルアイコン */
   icon: SFSymbol;
 };
 

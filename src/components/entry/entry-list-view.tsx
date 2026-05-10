@@ -53,6 +53,8 @@ function groupByMonth(
 type Props = {
   /** ジャーナル id */
   id: string;
+  /** ジャーナル */
+  journalName: string;
   /** 検索テキスト */
   searchText?: string;
   /** ソートキー */
@@ -64,6 +66,7 @@ type Props = {
  */
 export function EntryListView({
   id,
+  journalName,
   searchText = "",
   sortKey = "dateDesc",
 }: Props) {
@@ -114,7 +117,9 @@ export function EntryListView({
       </Host>
 
       <Pressable
-        onPress={() => router.push("/(journal)/create")}
+        onPress={() =>
+          router.push(`/(journal)/entry/create?name=${journalName}`)
+        }
         style={styles.fab}
       >
         <GlassView

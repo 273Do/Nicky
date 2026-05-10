@@ -146,7 +146,12 @@ export default function JournalScreen() {
       />
       {/* TODO: 空の場合の処理を追加する */}
       {/* エントリー一覧にはheaderTitleのデータは含まないので src/app/(journal)/entry/[id].tsx と混同しないように。 */}
-      <EntryListView id={id} searchText={searchText} sortKey={sortKey} />
+      <EntryListView
+        id={id}
+        journalName={name}
+        searchText={searchText}
+        sortKey={sortKey}
+      />
     </>
   );
 }
