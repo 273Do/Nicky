@@ -17,6 +17,9 @@ import {
 
 import { formatDate } from "@/utils/date";
 
+/**
+ * エントリー作成画面
+ */
 export function EntryCreateView() {
   const now = Date.now();
 

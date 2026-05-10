@@ -1,6 +1,8 @@
 import { PlatformColor, View } from "react-native";
 
-import { Host, Text } from "@expo/ui/swift-ui";
+import { Host } from "@expo/ui/swift-ui";
+
+import { AllformList } from "@/components/all-form-list";
 
 export default function ExploreScreen() {
   return (
@@ -9,7 +11,7 @@ export default function ExploreScreen() {
         style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}
         useViewportSizeMeasurement
       >
-        <Text>Explore</Text>
+        <AllformList />
       </Host>
     </View>
   );
