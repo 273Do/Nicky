@@ -8,7 +8,7 @@ import { getFieldsQuery } from "@/db/queries/fields";
 import { formatDate } from "@/utils/date";
 import { useEntry } from "@/utils/journal/use-entry";
 
-import { renderField } from "./entry-render-field";
+import { EntryFieldItem } from "./entry-field-item";
 
 type Props = {
   id: string;
@@ -40,9 +40,14 @@ export function EntryCreateView({ id }: Props) {
           ]}
         >
           <Section title={formatDate(now)}>
-            {fields.map((field) =>
-              renderField(field, values[field.id], setValue),
-            )}
+            {fields.map((field) => (
+              <EntryFieldItem
+                key={field.id}
+                field={field}
+                value={values[field.id]}
+                setValue={setValue}
+              />
+            ))}
           </Section>
         </List>
       </Host>
