@@ -6,27 +6,25 @@ import {
   View,
 } from "react-native";
 
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import { SymbolView } from "expo-symbols";
 
 import { EntryCreateView } from "@/components/entry/entry-create-view";
-import { useJournalField } from "@/utils/journal/use-journal-field";
+
+const formDisabled = false;
 
 /**
  * エントリー作成
  */
 export default function EntryCreateScreen() {
-  const router = useRouter();
+  // const router = useRouter();
 
-  const { name } = useLocalSearchParams<{ name: string }>();
+  const { id, name } = useLocalSearchParams<{ id: string; name: string }>();
 
-  const { createJournal, formDisabled } = useJournalField();
-
-  const handleCreate = async () => {
-    const { id } = await createJournal();
-
-    // replace でスタックせずにジャーナル詳細画面からジャーナル一覧へ戻れるようにする
-    router.replace(`/(journal)/entry/${id}}`);
+  const handleEntryCreate = async () => {
+    // const { id } = await createJournal();
+    // // replace でスタックせずにジャーナル詳細画面からジャーナル一覧へ戻れるようにする
+    // router.replace(`/(journal)/entry/${id}}`);
   };
 
   return (
@@ -40,7 +38,7 @@ export default function EntryCreateScreen() {
             </View>
           ),
           headerRight: () => (
-            <Pressable onPress={handleCreate} disabled={formDisabled}>
+            <Pressable onPress={handleEntryCreate} disabled={formDisabled}>
               <SymbolView
                 name="checkmark"
                 tintColor={
@@ -53,7 +51,7 @@ export default function EntryCreateScreen() {
           ),
         }}
       />
-      <EntryCreateView />
+      <EntryCreateView id={id} />
     </>
   );
 }

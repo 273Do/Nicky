@@ -21,11 +21,11 @@ type Props = {
  */
 export function EntryNumber({
   label,
-  defaultValue = 0,
+  defaultValue,
   onValueChange,
   edit = false,
 }: Props) {
-  const [number, setNumber] = useState<number>(defaultValue);
+  const [number, setNumber] = useState<number | undefined>(defaultValue);
   const numberFieldRef = useRef<TextFieldRef>(null);
 
   return (

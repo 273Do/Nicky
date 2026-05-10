@@ -1,35 +1,36 @@
 import { PlatformColor, View } from "react-native";
 
-import {
-  Host,
-  List,
-  Section,
-  Text,
-  TextField,
-  VStack,
-} from "@expo/ui/swift-ui";
-import {
-  font,
-  foregroundStyle,
-  frame,
-  listStyle,
-} from "@expo/ui/swift-ui/modifiers";
+import { Host, List, Section } from "@expo/ui/swift-ui";
+import { frame, listStyle } from "@expo/ui/swift-ui/modifiers";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
+import { getFieldsQuery } from "@/db/queries/fields";
 import { formatDate } from "@/utils/date";
+import { useEntry } from "@/utils/journal/use-entry";
+
+import { renderField } from "./entry-render-field";
+
+type Props = {
+  id: string;
+  /** ジャーナル id */
+};
 
 /**
  * エントリー作成画面
  */
-export function EntryCreateView() {
+export function EntryCreateView({ id }: Props) {
   const now = Date.now();
+  console.log(id);
+
+  const { data: fields } = useLiveQuery(getFieldsQuery(id));
+
+  const { values, setValue } = useEntry(fields);
+  if (!fields) return null;
 
   return (
     <View style={{ flex: 1 }}>
       <Host
-        style={{
-          flex: 1,
-          backgroundColor: PlatformColor("systemBackground"),
-        }}
+        style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}
         useViewportSizeMeasurement
       >
         <List
@@ -39,24 +40,9 @@ export function EntryCreateView() {
           ]}
         >
           <Section title={formatDate(now)}>
-            <VStack alignment="leading" spacing={4}>
-              <Text
-                modifiers={[
-                  font({ size: 12 }),
-                  foregroundStyle({
-                    type: "hierarchical",
-                    style: "secondary",
-                  }),
-                ]}
-              >
-                hogehoge
-              </Text>
-
-              <TextField
-                placeholder="fugafuga"
-                modifiers={[frame({ maxWidth: 9999 })]}
-              />
-            </VStack>
+            {fields.map((field) =>
+              renderField(field, values[field.id], setValue),
+            )}
           </Section>
         </List>
       </Host>
