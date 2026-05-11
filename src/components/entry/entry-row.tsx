@@ -5,13 +5,13 @@ import { font, foregroundStyle, lineLimit } from "@expo/ui/swift-ui/modifiers";
 import { useRouter } from "expo-router";
 
 import { formatDate } from "@/utils/date";
-import { EntryObj } from "@/utils/entry/use-entry";
+import { PreviewEntryObj } from "@/utils/entry/preview";
 
 const secondary = foregroundStyle({ type: "hierarchical", style: "secondary" });
 
 type Props = {
   /** エントリーデータ */
-  entry: EntryObj;
+  entry: PreviewEntryObj;
 };
 
 /**
@@ -28,12 +28,12 @@ export function EntryRow({ entry }: Props) {
         <Text modifiers={[font({ size: 18, weight: "bold" })]}>
           {entry.title}
         </Text>
-        <Text modifiers={[font({ size: 14 }), secondary, lineLimit(2)]}>
+        <Text modifiers={[font({ size: 14 }), secondary, lineLimit(1)]}>
           {entry.preview}
         </Text>
         <HStack alignment="center" spacing={6}>
           <Text modifiers={[font({ size: 13 }), secondary]}>
-            {formatDate(entry.date)}
+            {formatDate(entry.createdAt)}
           </Text>
           <Spacer />
           {entry.bookmark && (

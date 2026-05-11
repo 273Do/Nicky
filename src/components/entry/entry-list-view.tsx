@@ -13,42 +13,13 @@ import { SymbolView } from "expo-symbols";
 
 import type { SortKey } from "@/app/(journal)/[id]";
 import { getEntriesQuery } from "@/db/queries/entries";
-import { formatYearMonth } from "@/utils/date";
-import { EntryObj } from "@/utils/entry/use-entry";
+import {
+  buildPreviewEntry,
+  groupByMonth,
+  sortEntries,
+} from "@/utils/entry/preview";
 
 import { EntryRow } from "./entry-row";
-
-function sortEntries(entries: EntryObj[], sortKey: SortKey): EntryObj[] {
-  switch (sortKey) {
-    case "dateDesc":
-      return [...entries].sort((a, b) => b.date.getTime() - a.date.getTime());
-    case "dateAsc":
-      return [...entries].sort((a, b) => a.date.getTime() - b.date.getTime());
-    case "titleAsc":
-      return [...entries].sort((a, b) => a.title.localeCompare(b.title));
-    case "titleDesc":
-      return [...entries].sort((a, b) => b.title.localeCompare(a.title));
-    case "bookmark":
-      return [...entries].sort(
-        (a, b) => (b.bookmark ? 1 : 0) - (a.bookmark ? 1 : 0),
-      );
-  }
-}
-
-function groupByMonth(
-  entries: EntryObj[],
-): { month: string; entries: EntryObj[] }[] {
-  const map = new Map<string, EntryObj[]>();
-  for (const entry of entries) {
-    const key = `${entry.date.getFullYear()}-${entry.date.getMonth()}`;
-    if (!map.has(key)) map.set(key, []);
-    map.get(key)!.push(entry);
-  }
-  return Array.from(map.entries()).map(([, entries]) => ({
-    month: formatYearMonth(entries[0].date),
-    entries,
-  }));
-}
 
 type Props = {
   /** ジャーナル id */
@@ -74,23 +45,19 @@ export function EntryListView({
 
   const { data: dbEntries } = useLiveQuery(getEntriesQuery(id));
 
-  const entries: EntryObj[] = (dbEntries ?? []).map((entry) => ({
-    id: entry.id,
-    date: new Date(entry.createdAt),
-    title: entry.values[0]?.value ?? "",
-    preview: entry.values
-      .slice(1)
-      .map((v) => v.value)
-      .join(" "),
-    bookmark: entry.bookmark,
-  }));
+  const previewEntries = dbEntries.map(buildPreviewEntry);
 
+  // 検索
   const filtered = searchText
-    ? entries.filter(
+    ? previewEntries.filter(
         (e) => e.title.includes(searchText) || e.preview.includes(searchText),
       )
-    : entries;
+    : previewEntries;
+
+  // 並び替え
   const sorted = sortEntries(filtered, sortKey);
+
+  // 月毎にグループ分け
   const grouped = groupByMonth(sorted);
 
   return (

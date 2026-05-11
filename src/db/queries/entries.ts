@@ -1,15 +1,15 @@
 import { db } from "@/db/client";
 
-import { entries, entryValues, EntryObj, EntryValueObj } from "../schemas";
+import { entries, EntryObj, EntryValueObj, entryValues } from "../schemas";
 
 /**
- * ジャーナルに紐付いたエントリー一覧を取得するクエリ
+ * ジャーナルに紐付いたエントリー一覧をフィールドとともに取得するクエリ
  * @param journalId ジャーナルID
  */
 export const getEntriesQuery = (journalId: string) =>
   db.query.entries.findMany({
     where: (entries, { eq }) => eq(entries.journalId, journalId),
-    with: { values: true },
+    with: { values: { with: { field: true } } },
   });
 
 /**
@@ -45,6 +45,6 @@ export const storeEntry = async (
 };
 
 /** エントリー詳細の型 */
-export type EntryDetailObj = NonNullable<
-  Awaited<ReturnType<typeof getEntryDetailQuery>>
->;
+export type EntryDetailObj = Awaited<
+  ReturnType<typeof getEntriesQuery>
+>[number];
