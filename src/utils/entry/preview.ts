@@ -46,7 +46,7 @@ export const formatFieldValue = (
 export const buildPreviewEntry = (entry: EntryDetailObj): PreviewEntryObj => {
   const { id, createdAt, bookmark, values } = entry;
 
-  // エントリー順に並び替え
+  // フィールド順に並び替え
   const sorted = [...values].sort(
     (a, b) => a.field.sortOrder - b.field.sortOrder,
   );
@@ -107,16 +107,16 @@ export const sortEntries = (
  * @param previewEntries プレビューエントリー一覧
  */
 export const groupByMonth = (
-  entries: PreviewEntryObj[],
-): { month: string; entries: PreviewEntryObj[] }[] => {
+  previewEntries: PreviewEntryObj[],
+): { month: string; previewEntries: PreviewEntryObj[] }[] => {
   const map = new Map<string, PreviewEntryObj[]>();
-  for (const entry of entries) {
+  for (const entry of previewEntries) {
     const key = `${entry.createdAt.getFullYear()}-${entry.createdAt.getMonth()}`;
     if (!map.has(key)) map.set(key, []);
     map.get(key)!.push(entry);
   }
-  return Array.from(map.entries()).map(([, entries]) => ({
-    month: formatYearMonth(entries[0].createdAt),
-    entries,
+  return Array.from(map.entries()).map(([, previewEntries]) => ({
+    month: formatYearMonth(previewEntries[0].createdAt),
+    previewEntries,
   }));
 };

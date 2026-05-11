@@ -45,6 +45,7 @@ export function EntryListView({
 
   const { data: dbEntries } = useLiveQuery(getEntriesQuery(id));
 
+  // エントリープレビュー一覧に変換
   const previewEntries = dbEntries.map(buildPreviewEntry);
 
   // 検索
@@ -68,14 +69,14 @@ export function EntryListView({
       >
         <List modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 })]}>
           <List.ForEach modifiers={[moveDisabled()]}>
-            {grouped.map(({ month, entries }) => (
+            {grouped.map(({ month, previewEntries }) => (
               <Section
                 key={month}
                 title={month}
                 modifiers={[headerProminence("increased")]}
               >
-                {entries.map((entry) => (
-                  <EntryRow key={entry.id} entry={entry} />
+                {previewEntries.map((previewEntry) => (
+                  <EntryRow key={previewEntry.id} entry={previewEntry} />
                 ))}
               </Section>
             ))}
