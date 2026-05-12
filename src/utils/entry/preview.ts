@@ -60,9 +60,9 @@ export const buildPreviewEntry = (entry: EntryDetailObj): PreviewEntryObj => {
   // プレビューは2つ目以降のフィールドを順に並べる
   const preview = sorted
     .slice(1)
-    .map((v) => formatFieldValue(v.value, v.field.type as FieldType))
+    .map((v) => formatFieldValue(v.value, v.field.type))
     .filter(Boolean)
-    .join(" ");
+    .join(" "); // 全ての値を繋げることで検索できる
 
   return {
     id,
@@ -110,11 +110,14 @@ export const groupByMonth = (
   previewEntries: PreviewEntryObj[],
 ): { month: string; previewEntries: PreviewEntryObj[] }[] => {
   const map = new Map<string, PreviewEntryObj[]>();
+
   for (const entry of previewEntries) {
     const key = `${entry.createdAt.getFullYear()}-${entry.createdAt.getMonth()}`;
+
     if (!map.has(key)) map.set(key, []);
     map.get(key)!.push(entry);
   }
+
   return Array.from(map.entries()).map(([, previewEntries]) => ({
     month: formatYearMonth(previewEntries[0].createdAt),
     previewEntries,

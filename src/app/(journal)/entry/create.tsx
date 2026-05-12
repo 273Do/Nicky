@@ -14,8 +14,6 @@ import { EntryCreateView } from "@/components/entry/entry-create-view";
 import { getFieldsQuery } from "@/db/queries/fields";
 import { useEntry } from "@/utils/entry/use-entry";
 
-const formDisabled = false;
-
 /**
  * エントリー作成
  */
@@ -28,7 +26,7 @@ export default function EntryCreateScreen() {
   }>();
 
   const { data: fields } = useLiveQuery(getFieldsQuery(jounalId));
-  const { valuesRef, setValue, createEntry } = useEntry(fields);
+  const { valuesRef, setValue, createEntry, formDisabled } = useEntry(fields);
 
   const handleEntryCreate = async () => {
     const { id: newEntryId } = await createEntry(jounalId);

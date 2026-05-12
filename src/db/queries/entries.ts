@@ -9,7 +9,11 @@ import { entries, EntryObj, EntryValueObj, entryValues } from "../schemas";
 export const getEntriesQuery = (journalId: string) =>
   db.query.entries.findMany({
     where: (entries, { eq }) => eq(entries.journalId, journalId),
-    with: { values: { with: { field: true } } },
+    with: {
+      values: {
+        with: { field: true },
+      },
+    },
   });
 
 /**
