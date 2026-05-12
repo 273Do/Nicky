@@ -11,22 +11,23 @@ import { FieldlObj, JournalObj } from "@/db/schemas";
  * ジャーナルメタ情報の型
  */
 export type JournalMetaObj = {
+  /** ジャーナル名 */
   name: string;
+  /** ジャーナルカラー */
   color: string;
+  /** ジャーナルアイコン */
   icon: SFSymbol;
 };
 
 /**
- * ジャーナルフィールドの1項目
+ * ジャーナル作成フォームのフィールド下書き（journalId・sortOrder なし）
  */
-export type FieldObj = {
-  /** フィールドID */
-  id: string;
-  /** フィールド種別 */
-  type: FieldType;
-  /** 表示ラベル */
-  label: string;
-};
+export type FieldDraftObj = Omit<FieldlObj, "journalId" | "sortOrder">;
+
+/**
+ * sortOrder 確定済み・journalId 未割当のフィールド（DB 保存直前）
+ */
+export type FieldWithSortObj = Omit<FieldlObj, "journalId">;
 
 /**
  * 全 FieldType の配列
@@ -34,7 +35,7 @@ export type FieldObj = {
 export const FIELD_TYPES = Object.keys(FIELD_ICONS) as FieldType[];
 
 /**
- * ジャーナルフィールドの管理フック
+ * ジャーナルフィールドに関するフック
  * @returns
  * - fields 現在のフィールド一覧
  * - addField 新規フィールドを追加する関数
@@ -47,7 +48,7 @@ export const FIELD_TYPES = Object.keys(FIELD_ICONS) as FieldType[];
  * - formDisabled フォームが送信可能かどうかのフラグ
  */
 export const useJournalField = () => {
-  const [fields, setFields] = useState<FieldObj[]>([]);
+  const [fields, setFields] = useState<FieldDraftObj[]>([]);
 
   const initialState = {
     name: "",
@@ -62,7 +63,7 @@ export const useJournalField = () => {
    * @param type 追加するフィールドの種別
    */
   const addField = (type: FieldType): void => {
-    const newField: FieldObj = {
+    const newField: FieldDraftObj = {
       id: Crypto.randomUUID(),
       type,
       label: "",
@@ -129,7 +130,7 @@ export const useJournalField = () => {
       updatedAt: now,
     };
 
-    const newFieldsFieldlObj: FieldlObj[] = fields.map((field, i) => ({
+    const newFieldsFieldlObj: FieldWithSortObj[] = fields.map((field, i) => ({
       id: field.id,
       type: field.type,
       label: field.label,

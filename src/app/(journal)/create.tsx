@@ -24,11 +24,11 @@ export default function JournalCreateScreen() {
     formDisabled,
   } = useJournalField();
 
-  const handleCreate = async () => {
-    const { id, name } = await createJournal();
+  const handleJournalCreate = async () => {
+    const { id: newJournalId, name } = await createJournal();
 
     // replace でスタックせずにジャーナル詳細画面からジャーナル一覧へ戻れるようにする
-    router.replace(`/(journal)/${id}?name=${name}`);
+    router.replace(`/(journal)/${newJournalId}?name=${name}`);
   };
 
   return (
@@ -37,7 +37,7 @@ export default function JournalCreateScreen() {
         options={{
           title: "New Journal",
           headerRight: () => (
-            <Pressable onPress={handleCreate} disabled={formDisabled}>
+            <Pressable onPress={handleJournalCreate} disabled={formDisabled}>
               <SymbolView
                 name="checkmark"
                 tintColor={

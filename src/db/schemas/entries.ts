@@ -53,6 +53,7 @@ export const entriesRelations = relations(entries, ({ one, many }) => ({
     fields: [entries.journalId],
     references: [journals.id],
   }),
+  // entry.enry_value ではなく entry.valueで取ると命名が綺麗
   values: many(entryValues),
 }));
 
@@ -66,3 +67,6 @@ export const entryValuesRelations = relations(entryValues, ({ one }) => ({
     references: [fields.id],
   }),
 }));
+
+export type EntryObj = typeof entries.$inferSelect;
+export type EntryValueObj = typeof entryValues.$inferInsert;

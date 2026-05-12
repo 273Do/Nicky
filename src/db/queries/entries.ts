@@ -1,13 +1,19 @@
 import { db } from "@/db/client";
 
+import { entries, EntryObj, EntryValueObj, entryValues } from "../schemas";
+
 /**
- * ジャーナルに紐付いたエントリー一覧を取得するクエリ
+ * ジャーナルに紐付いたエントリー一覧をフィールドとともに取得するクエリ
  * @param journalId ジャーナルID
  */
 export const getEntriesQuery = (journalId: string) =>
   db.query.entries.findMany({
     where: (entries, { eq }) => eq(entries.journalId, journalId),
-    with: { values: true },
+    with: {
+      values: {
+        with: { field: true },
+      },
+    },
   });
 
 /**
@@ -24,7 +30,25 @@ export const getEntryDetailQuery = (entryId: string) =>
     },
   });
 
+/**
+ * エントリーをフィールド値と共に保存する
+ * @param newEntry エントリー本体
+ * @param newValues エントリー値一覧
+ */
+export const storeEntry = async (
+  newEntry: EntryObj,
+  newValues: EntryValueObj[],
+): Promise<void> => {
+  await db.transaction(async (tx) => {
+    await tx.insert(entries).values(newEntry);
+
+    if (newValues.length > 0) {
+      await tx.insert(entryValues).values(newValues);
+    }
+  });
+};
+
 /** エントリー詳細の型 */
-export type EntryDetailObj = NonNullable<
-  Awaited<ReturnType<typeof getEntryDetailQuery>>
->;
+export type EntryDetailObj = Awaited<
+  ReturnType<typeof getEntriesQuery>
+>[number];

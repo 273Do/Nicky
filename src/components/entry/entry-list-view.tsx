@@ -13,46 +13,19 @@ import { SymbolView } from "expo-symbols";
 
 import type { SortKey } from "@/app/(journal)/[id]";
 import { getEntriesQuery } from "@/db/queries/entries";
-import { formatYearMonth } from "@/utils/date";
-import { EntryObj } from "@/utils/journal/use-entry";
+import {
+  buildPreviewEntry,
+  groupByMonth,
+  sortEntries,
+} from "@/utils/entry/preview";
 
 import { EntryRow } from "./entry-row";
-
-function sortEntries(entries: EntryObj[], sortKey: SortKey): EntryObj[] {
-  switch (sortKey) {
-    case "dateDesc":
-      return [...entries].sort((a, b) => b.date.getTime() - a.date.getTime());
-    case "dateAsc":
-      return [...entries].sort((a, b) => a.date.getTime() - b.date.getTime());
-    case "titleAsc":
-      return [...entries].sort((a, b) => a.title.localeCompare(b.title));
-    case "titleDesc":
-      return [...entries].sort((a, b) => b.title.localeCompare(a.title));
-    case "bookmark":
-      return [...entries].sort(
-        (a, b) => (b.bookmark ? 1 : 0) - (a.bookmark ? 1 : 0),
-      );
-  }
-}
-
-function groupByMonth(
-  entries: EntryObj[],
-): { month: string; entries: EntryObj[] }[] {
-  const map = new Map<string, EntryObj[]>();
-  for (const entry of entries) {
-    const key = `${entry.date.getFullYear()}-${entry.date.getMonth()}`;
-    if (!map.has(key)) map.set(key, []);
-    map.get(key)!.push(entry);
-  }
-  return Array.from(map.entries()).map(([, entries]) => ({
-    month: formatYearMonth(entries[0].date),
-    entries,
-  }));
-}
 
 type Props = {
   /** ジャーナル id */
   id: string;
+  /** ジャーナル */
+  journalName: string;
   /** 検索テキスト */
   searchText?: string;
   /** ソートキー */
@@ -64,6 +37,7 @@ type Props = {
  */
 export function EntryListView({
   id,
+  journalName,
   searchText = "",
   sortKey = "dateDesc",
 }: Props) {
@@ -71,23 +45,20 @@ export function EntryListView({
 
   const { data: dbEntries } = useLiveQuery(getEntriesQuery(id));
 
-  const entries: EntryObj[] = (dbEntries ?? []).map((entry) => ({
-    id: entry.id,
-    date: new Date(entry.createdAt),
-    title: entry.values[0]?.value ?? "",
-    preview: entry.values
-      .slice(1)
-      .map((v) => v.value)
-      .join(" "),
-    bookmark: entry.bookmark,
-  }));
+  // エントリープレビュー一覧に変換
+  const previewEntries = dbEntries.map(buildPreviewEntry);
 
+  // 検索
   const filtered = searchText
-    ? entries.filter(
+    ? previewEntries.filter(
         (e) => e.title.includes(searchText) || e.preview.includes(searchText),
       )
-    : entries;
+    : previewEntries;
+
+  // 並び替え
   const sorted = sortEntries(filtered, sortKey);
+
+  // 月毎にグループ分け
   const grouped = groupByMonth(sorted);
 
   return (
@@ -98,14 +69,14 @@ export function EntryListView({
       >
         <List modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 })]}>
           <List.ForEach modifiers={[moveDisabled()]}>
-            {grouped.map(({ month, entries }) => (
+            {grouped.map(({ month, previewEntries }) => (
               <Section
                 key={month}
                 title={month}
                 modifiers={[headerProminence("increased")]}
               >
-                {entries.map((entry) => (
-                  <EntryRow key={entry.id} entry={entry} />
+                {previewEntries.map((previewEntry) => (
+                  <EntryRow key={previewEntry.id} entry={previewEntry} />
                 ))}
               </Section>
             ))}
@@ -114,7 +85,9 @@ export function EntryListView({
       </Host>
 
       <Pressable
-        onPress={() => router.push("/(journal)/create")}
+        onPress={() =>
+          router.push(`/(journal)/entry/create?id=${id}&name=${journalName}`)
+        }
         style={styles.fab}
       >
         <GlassView

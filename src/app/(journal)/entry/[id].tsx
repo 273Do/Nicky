@@ -64,6 +64,7 @@ export default function EntryDetailScreen() {
           ],
         }}
       />
+      {/* TODO: 空の場合の処理を追加する */}
       {entry && <EntryDetailView entry={entry} />}
     </>
   );
