@@ -26,7 +26,7 @@ export default function EntryCreateScreen() {
   }>();
 
   const { data: fields } = useLiveQuery(getFieldsQuery(jounalId));
-  const { valuesRef, setValue, createEntry, formDisabled } = useEntry(fields);
+  const { valuesRef, setValue, createEntry } = useEntry(fields);
 
   const handleEntryCreate = async () => {
     const { id: newEntryId } = await createEntry(jounalId);
@@ -44,14 +44,11 @@ export default function EntryCreateScreen() {
             </View>
           ),
           headerRight: () => (
-            <Pressable onPress={handleEntryCreate} disabled={formDisabled}>
+            // エントリー作成では disabled は設定しない
+            <Pressable onPress={handleEntryCreate}>
               <SymbolView
                 name="checkmark"
-                tintColor={
-                  formDisabled
-                    ? PlatformColor("tertiaryLabel")
-                    : PlatformColor("systemIndigo")
-                }
+                tintColor={PlatformColor("systemIndigo")}
               />
             </Pressable>
           ),

@@ -75,7 +75,7 @@ export const useEntry = (fields: FieldlObj[] | undefined) => {
    * 新規エントリーを値と共にDBに保存する
    * @param journalId ジャーナル id
    */
-  const createEntry = async (journalId: string) => {
+  const createEntry = async (journalId: string): Promise<EntryObj> => {
     const now = Date.now();
 
     const newEntry: EntryObj = {

@@ -51,11 +51,11 @@ export const buildPreviewEntry = (entry: EntryDetailObj): PreviewEntryObj => {
     (a, b) => a.field.sortOrder - b.field.sortOrder,
   );
 
-  // 1つめのフィールドをタイトルに設定する
-  const title = formatFieldValue(
-    sorted[0]?.value ?? null,
-    sorted[0]?.field.type,
-  );
+  // 1つめのフィールドをタイトルに設定し、値がなければ作成日にフォールバック
+  const titleFromField = sorted[0]
+    ? formatFieldValue(sorted[0].value, sorted[0].field.type as FieldType)
+    : "";
+  const title = titleFromField || formatDate(new Date(createdAt));
 
   // プレビューは2つ目以降のフィールドを順に並べる
   const preview = sorted
