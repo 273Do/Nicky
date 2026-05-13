@@ -93,6 +93,7 @@ export function EntryListView({
         <GlassView
           glassEffectStyle="regular"
           tintColor={PlatformColor("systemGra1y3") as unknown as string}
+          isInteractive
           style={styles.glassButton}
         >
           <SymbolView name="plus" tintColor={PlatformColor("label")} />

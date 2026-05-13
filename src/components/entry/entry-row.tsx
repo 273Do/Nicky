@@ -25,25 +25,25 @@ export function EntryRow({ entry }: Props) {
       onPress={() => router.push(`/(journal)/entry/${entry.id}`)}
     >
       <VStack alignment="leading" spacing={2}>
-        <Text modifiers={[font({ size: 18, weight: "bold" })]}>
-          {entry.title}
-        </Text>
-        <Text modifiers={[font({ size: 14 }), secondary, lineLimit(1)]}>
-          {entry.preview}
-        </Text>
         <HStack alignment="center" spacing={6}>
-          <Text modifiers={[font({ size: 13 }), secondary]}>
-            {formatDate(entry.createdAt)}
+          <Text modifiers={[font({ size: 18, weight: "bold" }), lineLimit(1)]}>
+            {entry.title} {entry.title}
           </Text>
           <Spacer />
           {entry.bookmark && (
             <Image
               systemName="bookmark.fill"
-              size={12}
+              size={14}
               color={PlatformColor("systemIndigo")}
             />
           )}
         </HStack>
+        <Text modifiers={[font({ size: 14 }), secondary, lineLimit(1)]}>
+          {entry.preview}
+        </Text>
+        <Text modifiers={[font({ size: 13 }), secondary]}>
+          {formatDate(entry.createdAt)}
+        </Text>
       </VStack>
     </Button>
   );
