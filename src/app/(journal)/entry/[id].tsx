@@ -1,23 +1,36 @@
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 import { EntryDetailView } from "@/components/entry/entry-detail";
-import { getEntryDetailQuery } from "@/db/queries/entries";
+import { deleteEntry, getEntryDetailQuery } from "@/db/queries/entries";
 
 /**
  * エントリー詳細
  */
 export default function EntryDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
 
-  const { data: entry } = useLiveQuery(getEntryDetailQuery(id));
+  const { id: entryId, journalName } = useLocalSearchParams<{
+    id: string;
+    journalName: string;
+  }>();
+
+  const { data: entry } = useLiveQuery(getEntryDetailQuery(entryId));
+
+  const handleDelete = async () => {
+    await deleteEntry(entryId);
+    router.back();
+  };
 
   return (
     <>
       <Stack.Screen
         options={{
-          title: "",
-          headerBackButtonDisplayMode: "default",
+          title: journalName,
+          headerLargeTitleEnabled: true,
+          // headerBackButtonDisplayMode: "default",
+          // headerBackVisible: false,
+          // headerTitle: "aa",
           unstable_headerRightItems: () => [
             {
               type: "menu",
@@ -47,9 +60,7 @@ export default function EntryDetailScreen() {
                       name: "trash",
                     },
                     destructive: true,
-                    onPress: () => {
-                      // Do something
-                    },
+                    onPress: handleDelete,
                   },
                 ],
               },

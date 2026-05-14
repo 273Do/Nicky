@@ -1,3 +1,5 @@
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db/client";
 
 import { entries, EntryObj, EntryValueObj, entryValues } from "../schemas";
@@ -46,6 +48,26 @@ export const storeEntry = async (
       await tx.insert(entryValues).values(newValues);
     }
   });
+};
+
+/**
+ * エントリー詳細を削除するクエリ
+ * @param entryId エントリーID
+ */
+export const deleteEntry = async (entryId: string) => {
+  await db.delete(entries).where(eq(entries.id, entryId));
+};
+
+/**
+ * 全てのエントリーを削除するクエリ
+ * @param journalId ジャーナルID
+ */
+export const deleteAllEntries = async (journalId?: string) => {
+  if (journalId) {
+    await db.delete(entries).where(eq(entries.journalId, journalId));
+  } else {
+    await db.delete(entries);
+  }
 };
 
 /** エントリー詳細の型 */

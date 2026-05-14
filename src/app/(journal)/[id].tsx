@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
 
 import { EntryListView } from "@/components/entry/entry-list-view";
+import { deleteAllEntries } from "@/db/queries/entries";
 
 /**
  * ソート一覧
@@ -29,9 +30,23 @@ const SORT_LABELS: Record<SortKey, string> = {
  * ジャーナル詳細(エントリー一覧)
  */
 export default function JournalScreen() {
-  const { id, name } = useLocalSearchParams<{ id: string; name: string }>();
+  const { id: journalId, name } = useLocalSearchParams<{
+    id: string;
+    name: string;
+  }>();
   const [searchText, setSearchText] = useState<string>("");
   const [sortKey, setSortKey] = useState<SortKey>("dateDesc");
+
+  const handleDeleteAll = async () => {
+    // TODO: 削除できないので後ほど修正
+    console.log("handleDeleteAll called, journalId:", journalId);
+    try {
+      await deleteAllEntries(journalId);
+      console.log("deleteAllEntries completed");
+    } catch (e) {
+      console.error("deleteAllEntries error:", e);
+    }
+  };
 
   return (
     <>
@@ -128,15 +143,13 @@ export default function JournalScreen() {
                   },
                   {
                     type: "action",
+                    label: "Delete All",
                     icon: {
                       type: "sfSymbol",
                       name: "trash",
                     },
                     destructive: true,
-                    label: "Delete All",
-                    onPress: () => {
-                      // Do something
-                    },
+                    onPress: handleDeleteAll,
                   },
                 ],
               },
@@ -147,7 +160,7 @@ export default function JournalScreen() {
       {/* TODO: 空の場合の処理を追加する */}
       {/* エントリー一覧にはheaderTitleのデータは含まないので src/app/(journal)/entry/[id].tsx と混同しないように。 */}
       <EntryListView
-        id={id}
+        journalId={journalId}
         journalName={name}
         searchText={searchText}
         sortKey={sortKey}
