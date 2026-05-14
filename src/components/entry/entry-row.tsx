@@ -10,6 +10,8 @@ import { PreviewEntryObj } from "@/utils/entry/preview";
 const secondary = foregroundStyle({ type: "hierarchical", style: "secondary" });
 
 type Props = {
+  /** ジャーナル */
+  journalName: string;
   /** エントリーデータ */
   entry: PreviewEntryObj;
 };
@@ -17,12 +19,14 @@ type Props = {
 /**
  * エントリー行
  */
-export function EntryRow({ entry }: Props) {
+export function EntryRow({ journalName, entry }: Props) {
   const router = useRouter();
   return (
     <Button
       modifiers={[foregroundStyle({ type: "hierarchical", style: "primary" })]}
-      onPress={() => router.push(`/(journal)/entry/${entry.id}`)}
+      onPress={() =>
+        router.push(`/(journal)/entry/${entry.id}?journalName=${journalName}`)
+      }
     >
       <VStack alignment="leading" spacing={2}>
         <HStack alignment="center" spacing={6}>

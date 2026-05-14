@@ -1,8 +1,8 @@
-import { SortKey } from "@/app/(journal)/[id]";
 import { FieldType } from "@/core/constants";
 import { EntryDetailObj } from "@/db/queries/entries";
 
 import { formatDate, formatTime, formatYearMonth } from "../date";
+import { SortKey } from "./consts";
 
 export type PreviewEntryObj = {
   /** エントリー id */

@@ -1,10 +1,4 @@
-import {
-  PlatformColor,
-  Pressable,
-  Text as RNText,
-  StyleSheet,
-  View,
-} from "react-native";
+import { PlatformColor, Pressable } from "react-native";
 
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
@@ -20,9 +14,9 @@ import { useEntry } from "@/utils/entry/use-entry";
 export default function EntryCreateScreen() {
   const router = useRouter();
 
-  const { id: jounalId, name } = useLocalSearchParams<{
-    id: string;
-    name: string;
+  const { jounalId, journalName } = useLocalSearchParams<{
+    jounalId: string;
+    journalName: string;
   }>();
 
   const { data: fields } = useLiveQuery(getFieldsQuery(jounalId));
@@ -30,19 +24,21 @@ export default function EntryCreateScreen() {
 
   const handleEntryCreate = async () => {
     const { id: newEntryId } = await createEntry(jounalId);
-    router.replace(`/(journal)/entry/${newEntryId}`);
+    router.replace(`/(journal)/entry/${newEntryId}?journalName=${journalName}`);
   };
 
   return (
     <>
       <Stack.Screen
         options={{
-          headerTitle: () => (
-            <View style={styles.headerTitle}>
-              <RNText style={styles.title}>New Entry</RNText>
-              <RNText style={styles.subtitle}>{name}</RNText>
-            </View>
-          ),
+          title: journalName,
+          headerLargeTitleEnabled: true,
+          // headerTitle: () => (
+          //   <View style={styles.headerTitle}>
+          //     <RNText style={styles.title}>New Entry</RNText>
+          //     <RNText style={styles.subtitle}>{journalName}</RNText>
+          //   </View>
+          // ),
           headerRight: () => (
             // エントリー作成では disabled は設定しない
             <Pressable onPress={handleEntryCreate}>
@@ -63,17 +59,17 @@ export default function EntryCreateScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  headerTitle: {
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 17,
-    fontWeight: "600",
-    color: PlatformColor("label"),
-  },
-  subtitle: {
-    fontSize: 14,
-    color: PlatformColor("secondaryLabel"),
-  },
-});
+// const styles = StyleSheet.create({
+//   headerTitle: {
+//     alignItems: "center",
+//   },
+//   title: {
+//     fontSize: 17,
+//     fontWeight: "600",
+//     color: PlatformColor("label"),
+//   },
+//   subtitle: {
+//     fontSize: 14,
+//     color: PlatformColor("secondaryLabel"),
+//   },
+// });

@@ -4,27 +4,7 @@ import { Stack, useLocalSearchParams } from "expo-router";
 
 import { EntryListView } from "@/components/entry/entry-list-view";
 import { deleteAllEntries } from "@/db/queries/entries";
-
-/**
- * ソート一覧
- */
-export type SortKey =
-  | "dateDesc"
-  | "dateAsc"
-  | "titleAsc"
-  | "titleDesc"
-  | "bookmark";
-
-/**
- * ソートラベル
- */
-const SORT_LABELS: Record<SortKey, string> = {
-  dateDesc: "Newest First",
-  dateAsc: "Oldest First",
-  titleAsc: "Title (A→Z)",
-  titleDesc: "Title (Z→A)",
-  bookmark: "Bookmarked",
-};
+import { SORT_LABELS, SortKey } from "@/utils/entry/consts";
 
 /**
  * ジャーナル詳細(エントリー一覧)

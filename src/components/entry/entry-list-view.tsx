@@ -7,8 +7,8 @@ import { GlassView } from "expo-glass-effect";
 import { useRouter } from "expo-router";
 import { SymbolView } from "expo-symbols";
 
-import type { SortKey } from "@/app/(journal)/[id]";
 import { deleteEntry, getEntriesQuery } from "@/db/queries/entries";
+import { type SortKey } from "@/utils/entry/consts";
 import {
   buildPreviewEntry,
   groupByMonth,
@@ -19,7 +19,7 @@ import { EntryRow } from "./entry-row";
 
 type Props = {
   /** ジャーナル id */
-  id: string;
+  journalId: string;
   /** ジャーナル */
   journalName: string;
   /** 検索テキスト */
@@ -32,14 +32,14 @@ type Props = {
  * エントリー一覧画面
  */
 export function EntryListView({
-  id,
+  journalId,
   journalName,
   searchText = "",
   sortKey = "dateDesc",
 }: Props) {
   const router = useRouter();
 
-  const { data: dbEntries } = useLiveQuery(getEntriesQuery(id));
+  const { data: dbEntries } = useLiveQuery(getEntriesQuery(journalId));
 
   // エントリープレビュー一覧に変換
   const previewEntries = dbEntries.map(buildPreviewEntry);
@@ -93,7 +93,7 @@ export function EntryListView({
       <Pressable
         onPress={() =>
           router.push(
-            `/(journal)/entry/create?jounalId=${id}&journalName=${journalName}`,
+            `/(journal)/entry/create?jounalId=${journalId}&journalName=${journalName}`,
           )
         }
         style={styles.fab}
