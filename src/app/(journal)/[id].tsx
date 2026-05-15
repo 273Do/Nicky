@@ -102,7 +102,7 @@ export default function JournalScreen() {
                           type: "sfSymbol",
                           name: "ellipsis.circle",
                         },
-                        label: "Edit Journal",
+                        label: "Edit",
                         onPress: () => {
                           // Do something
                           console.log("Edit Journal");

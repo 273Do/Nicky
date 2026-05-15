@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 import { db } from "@/db/client";
 import { entries, fields, JournalObj, journals } from "@/db/schemas";
@@ -36,6 +36,14 @@ export const storeJournal = async (
         );
     }
   });
+};
+
+/**
+ * ジャーナルを削除するクエリ
+ * @param journalId ジャーナルID
+ */
+export const deleteJournal = async (journalId: string) => {
+  await db.delete(journals).where(eq(journals.id, journalId));
 };
 
 /** ジャーナル一覧の型 */
