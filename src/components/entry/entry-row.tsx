@@ -31,7 +31,7 @@ export function EntryRow({ journalName, entry }: Props) {
       <VStack alignment="leading" spacing={2}>
         <HStack alignment="center" spacing={6}>
           <Text modifiers={[font({ size: 18, weight: "bold" }), lineLimit(1)]}>
-            {entry.title} {entry.title}
+            {entry.title}
           </Text>
           <Spacer />
           {entry.bookmark && (

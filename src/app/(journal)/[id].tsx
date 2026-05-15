@@ -123,7 +123,7 @@ export default function JournalScreen() {
                   },
                   {
                     type: "action",
-                    label: "Delete All",
+                    label: "Delete All Entries",
                     icon: {
                       type: "sfSymbol",
                       name: "trash",

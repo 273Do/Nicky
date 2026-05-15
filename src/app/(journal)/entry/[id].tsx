@@ -28,9 +28,6 @@ export default function EntryDetailScreen() {
         options={{
           title: journalName,
           headerLargeTitleEnabled: true,
-          // headerBackButtonDisplayMode: "default",
-          // headerBackVisible: false,
-          // headerTitle: "aa",
           unstable_headerRightItems: () => [
             {
               type: "menu",
