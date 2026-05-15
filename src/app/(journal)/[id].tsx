@@ -4,7 +4,7 @@ import { Stack, useLocalSearchParams } from "expo-router";
 
 import { EntryListView } from "@/components/entry/entry-list-view";
 import { deleteAllEntries } from "@/db/queries/entries";
-import { SORT_LABELS, SortKey } from "@/utils/entry/consts";
+import { SortKey } from "@/utils/entry/consts";
 
 /**
  * ジャーナル詳細(エントリー一覧)
@@ -18,14 +18,7 @@ export default function JournalScreen() {
   const [sortKey, setSortKey] = useState<SortKey>("dateDesc");
 
   const handleDeleteAll = async () => {
-    // TODO: 削除できないので後ほど修正
-    console.log("handleDeleteAll called, journalId:", journalId);
-    try {
-      await deleteAllEntries(journalId);
-      console.log("deleteAllEntries completed");
-    } catch (e) {
-      console.error("deleteAllEntries error:", e);
-    }
+    await deleteAllEntries(journalId).catch(console.error);
   };
 
   return (
@@ -43,6 +36,48 @@ export default function JournalScreen() {
           unstable_headerRightItems: () => [
             {
               type: "menu",
+              label: "Sort",
+              icon: {
+                type: "sfSymbol",
+                name: "arrow.up.arrow.down",
+              },
+              menu: {
+                items: [
+                  {
+                    type: "action",
+                    label: "Newest First",
+                    state: sortKey === "dateDesc" ? "on" : "off",
+                    onPress: () => setSortKey("dateDesc"),
+                  },
+                  {
+                    type: "action",
+                    label: "Oldest First",
+                    state: sortKey === "dateAsc" ? "on" : "off",
+                    onPress: () => setSortKey("dateAsc"),
+                  },
+                  {
+                    type: "action",
+                    label: "Title (A→Z)",
+                    state: sortKey === "titleAsc" ? "on" : "off",
+                    onPress: () => setSortKey("titleAsc"),
+                  },
+                  {
+                    type: "action",
+                    label: "Title (Z→A)",
+                    state: sortKey === "titleDesc" ? "on" : "off",
+                    onPress: () => setSortKey("titleDesc"),
+                  },
+                  {
+                    type: "action",
+                    label: "Bookmarked",
+                    state: sortKey === "bookmark" ? "on" : "off",
+                    onPress: () => setSortKey("bookmark"),
+                  },
+                ],
+              },
+            },
+            {
+              type: "menu",
               label: "Options",
               icon: {
                 type: "sfSymbol",
@@ -51,75 +86,27 @@ export default function JournalScreen() {
               menu: {
                 items: [
                   {
-                    type: "submenu",
-                    label: "",
-                    inline: true,
-                    items: [
-                      {
-                        type: "submenu",
-                        label: "Sort",
-                        details: SORT_LABELS[sortKey],
-                        icon: {
-                          type: "sfSymbol",
-                          name: "arrow.up.arrow.down",
-                        },
-                        items: [
-                          {
-                            type: "action",
-                            label: "Newest First",
-                            state: sortKey === "dateDesc" ? "on" : "off",
-                            onPress: () => setSortKey("dateDesc"),
-                          },
-                          {
-                            type: "action",
-                            label: "Oldest First",
-                            state: sortKey === "dateAsc" ? "on" : "off",
-                            onPress: () => setSortKey("dateAsc"),
-                          },
-                          {
-                            type: "action",
-                            label: "Title (A→Z)",
-                            state: sortKey === "titleAsc" ? "on" : "off",
-                            onPress: () => setSortKey("titleAsc"),
-                          },
-                          {
-                            type: "action",
-                            label: "Title (Z→A)",
-                            state: sortKey === "titleDesc" ? "on" : "off",
-                            onPress: () => setSortKey("titleDesc"),
-                          },
-                          {
-                            type: "action",
-                            label: "Bookmarked",
-                            state: sortKey === "bookmark" ? "on" : "off",
-                            onPress: () => setSortKey("bookmark"),
-                          },
-                        ],
-                      },
-                      {
-                        type: "action",
-                        icon: {
-                          type: "sfSymbol",
-                          name: "ellipsis.circle",
-                        },
-                        label: "Edit",
-                        onPress: () => {
-                          // Do something
-                          console.log("Edit Journal");
-                        },
-                      },
-                      {
-                        type: "action",
-                        icon: {
-                          type: "sfSymbol",
-                          name: "square.and.arrow.up.on.square",
-                        },
-                        label: "Export",
-                        onPress: () => {
-                          // Do something
-                        },
-                      },
-                    ],
+                    type: "action",
+                    icon: {
+                      type: "sfSymbol",
+                      name: "ellipsis.circle",
+                    },
+                    label: "Edit",
+                    onPress: () => {
+                      // Do something
+                      console.log("Edit Journal");
+                    },
+                  },
+                  {
+                    type: "action",
+                    icon: {
+                      type: "sfSymbol",
+                      name: "square.and.arrow.up.on.square",
+                    },
+                    label: "Export",
+                    onPress: () => {
+                      // Do something
+                    },
                   },
                   {
                     type: "action",
