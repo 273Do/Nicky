@@ -104,7 +104,11 @@ export function JournalCard({ journal }: Props) {
           </ZStack>
         </ContextMenu.Trigger>
         <ContextMenu.Items>
-          <Button label="Edit" systemImage="pencil" onPress={() => {}} />
+          <Button
+            label="Edit"
+            systemImage="ellipsis.circle"
+            onPress={() => {}}
+          />
           <Button
             label="Delete"
             systemImage="trash"
