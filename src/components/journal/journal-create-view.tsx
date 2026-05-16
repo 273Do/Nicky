@@ -107,7 +107,7 @@ export function JournalCreateView({
               <TextField
                 placeholder="Journal Name"
                 onValueChange={(value) =>
-                  setMeta((prev) => ({ ...prev, name: value }))
+                  setMeta((prev) => ({ ...prev, name: value.slice(0, 10) }))
                 }
                 modifiers={[frame({ maxWidth: 9999 })]}
               />
