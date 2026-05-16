@@ -29,4 +29,4 @@ export const fieldsRelations = relations(fields, ({ one, many }) => ({
   entryValues: many(entryValues),
 }));
 
-export type FieldlObj = typeof fields.$inferInsert;
+export type FieldObj = typeof fields.$inferInsert;

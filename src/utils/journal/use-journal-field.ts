@@ -5,7 +5,7 @@ import { SFSymbol } from "expo-symbols";
 
 import { FIELD_ICONS, FieldType, JOURNAL_ICONS } from "@/core/constants";
 import { storeJournal } from "@/db/queries/journals";
-import { FieldlObj, JournalObj } from "@/db/schemas";
+import { FieldObj, JournalObj } from "@/db/schemas";
 
 /**
  * ジャーナルメタ情報の型
@@ -22,12 +22,12 @@ export type JournalMetaObj = {
 /**
  * ジャーナル作成フォームのフィールド下書き（journalId・sortOrder なし）
  */
-export type FieldDraftObj = Omit<FieldlObj, "journalId" | "sortOrder">;
+export type FieldDraftObj = Omit<FieldObj, "journalId" | "sortOrder">;
 
 /**
  * sortOrder 確定済み・journalId 未割当のフィールド（DB 保存直前）
  */
-export type FieldWithSortObj = Omit<FieldlObj, "journalId">;
+export type FieldWithSortObj = Omit<FieldObj, "journalId">;
 
 /**
  * 全 FieldType の配列
@@ -130,14 +130,14 @@ export const useJournalField = () => {
       updatedAt: now,
     };
 
-    const newFieldsFieldlObj: FieldWithSortObj[] = fields.map((field, i) => ({
+    const newFieldsFieldObj: FieldWithSortObj[] = fields.map((field, i) => ({
       id: field.id,
       type: field.type,
       label: field.label,
       sortOrder: i,
     }));
 
-    await storeJournal(newJournal, newFieldsFieldlObj);
+    await storeJournal(newJournal, newFieldsFieldObj);
 
     return newJournal;
   };

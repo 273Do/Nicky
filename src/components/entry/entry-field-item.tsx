@@ -7,12 +7,12 @@ import { EntryMedia } from "@/components/field/entry-media";
 import { EntryText } from "@/components/field/entry-text";
 import { EntryTime } from "@/components/field/entry-time";
 import { FieldType } from "@/core/constants";
-import type { FieldlObj } from "@/db/schemas";
+import type { FieldObj } from "@/db/schemas";
 import { type FieldValue } from "@/utils/entry/use-entry";
 
 type Props = {
   /** フィールド定義 */
-  field: FieldlObj;
+  field: FieldObj;
   /** 現在の値 */
   value: FieldValue;
   /** 値変更時のコールバック（edit=true のときのみ必要） */
