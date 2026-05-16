@@ -10,7 +10,7 @@ import { FieldWithSortObj } from "@/utils/journal/use-journal-field";
 export const getJournalsQuery = db.query.journals.findMany({
   extras: {
     entryCount:
-      sql<number>`(select count(*) from ${entries} where ${entries.journalId} = ${journals.id})`.as(
+      sql<number>`(select count(*) from ${entries} where ${entries.journalId} = journals.id)`.as(
         "entry_count",
       ),
   },
