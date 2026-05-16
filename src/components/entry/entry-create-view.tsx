@@ -17,12 +17,19 @@ type Props = {
   values: Record<string, FieldValue>;
   /** フィールドに値を格納する関数 */
   setValue: (id: string, value: FieldValue) => void;
+  /** エントリー作成日(編集画面に使用する) */
+  createdAt?: number;
 };
 
 /**
  * エントリー作成画面
  */
-export function EntryCreateView({ id, values, setValue }: Props) {
+export function EntryCreateView({
+  id,
+  values,
+  setValue,
+  createdAt = undefined,
+}: Props) {
   const now = Date.now();
 
   const { data: fields } = useLiveQuery(getFieldsQuery(id));
@@ -39,7 +46,7 @@ export function EntryCreateView({ id, values, setValue }: Props) {
             listStyle("plain"),
           ]}
         >
-          <Section title={formatDate(now)}>
+          <Section title={createdAt ? formatDate(createdAt) : formatDate(now)}>
             {fields.map((field) => (
               <EntryFieldItem
                 key={field.id}

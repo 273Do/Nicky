@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import { db } from "@/db/client";
 
@@ -47,6 +47,34 @@ export const storeEntry = async (
     if (newValues.length > 0) {
       await tx.insert(entryValues).values(newValues);
     }
+  });
+};
+
+/**
+ * エントリーのフィールド値を更新する
+ * @param entryId エントリーID
+ * @param values 更新するフィールド値一覧
+ */
+export const updateEntryValues = async (
+  entryId: string,
+  values: { fieldId: string; value: string | null }[],
+): Promise<void> => {
+  await db.transaction(async (tx) => {
+    for (const { fieldId, value } of values) {
+      await tx
+        .update(entryValues)
+        .set({ value })
+        .where(
+          and(
+            eq(entryValues.entryId, entryId),
+            eq(entryValues.fieldId, fieldId),
+          ),
+        );
+    }
+    await tx
+      .update(entries)
+      .set({ updatedAt: Date.now() })
+      .where(eq(entries.id, entryId));
   });
 };
 
