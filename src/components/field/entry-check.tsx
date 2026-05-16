@@ -30,7 +30,7 @@ export function EntryCheck({
   onValueChange,
   edit = false,
 }: Props) {
-  const [check, setCheck] = useState(defaultValue);
+  const [check, setCheck] = useState<boolean>(defaultValue);
 
   const handlePress = () => {
     if (!edit) return;

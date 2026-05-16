@@ -11,19 +11,15 @@ import {
   deleteEntry,
   getEntryDetailQuery,
 } from "@/db/queries/entries";
-import { FieldObj } from "@/db/schemas";
-import {
-  deserializeValue,
-  FieldValue,
-  useEntry,
-} from "@/utils/entry/use-entry";
+import { buildEntryFormData } from "@/utils/entry/entry-form";
+import { useEntry } from "@/utils/entry/use-entry";
 
 /**
  * エントリー詳細
  */
 export default function EntryDetailScreen() {
   const router = useRouter();
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState<boolean>(false);
 
   const { id: entryId, journalName } = useLocalSearchParams<{
     id: string;
@@ -32,21 +28,9 @@ export default function EntryDetailScreen() {
 
   const { data: entry } = useLiveQuery(getEntryDetailQuery(entryId));
 
-  // entry.values からフィールド一覧と初期値を導出
-  const fields: FieldObj[] = entry
-    ? [...entry.values]
-        .sort((a, b) => a.field.sortOrder - b.field.sortOrder)
-        .map((v) => v.field)
-    : [];
-
-  const initialValues: Record<string, FieldValue> | null = entry
-    ? Object.fromEntries(
-        entry.values.map((v) => [
-          v.fieldId,
-          deserializeValue(v.value, v.field.type),
-        ]),
-      )
-    : null;
+  const { fields, initialValues } = entry
+    ? buildEntryFormData(entry)
+    : { fields: [], initialValues: null };
 
   const { valuesRef, setValue, updateEntry } = useEntry(fields, initialValues);
 
