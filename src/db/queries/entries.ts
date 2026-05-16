@@ -51,6 +51,15 @@ export const storeEntry = async (
 };
 
 /**
+ * エントリーをブックマーク登録・解除するクエリ
+ * @param entryId エントリーID
+ * @param bookmark ブックマークフラグ
+ */
+export const bookmarkEntry = async (entryId: string, bookmark: boolean) => {
+  await db.update(entries).set({ bookmark }).where(eq(entries.id, entryId));
+};
+
+/**
  * エントリー詳細を削除するクエリ
  * @param entryId エントリーID
  */

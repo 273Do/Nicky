@@ -2,7 +2,11 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 import { EntryDetailView } from "@/components/entry/entry-detail";
-import { deleteEntry, getEntryDetailQuery } from "@/db/queries/entries";
+import {
+  bookmarkEntry,
+  deleteEntry,
+  getEntryDetailQuery,
+} from "@/db/queries/entries";
 
 /**
  * エントリー詳細
@@ -16,6 +20,10 @@ export default function EntryDetailScreen() {
   }>();
 
   const { data: entry } = useLiveQuery(getEntryDetailQuery(entryId));
+
+  const handleBookmark = async () => {
+    if (entry) await bookmarkEntry(entry.id, !entry.bookmark);
+  };
 
   const handleDelete = async () => {
     await deleteEntry(entryId);
@@ -42,12 +50,10 @@ export default function EntryDetailScreen() {
                     type: "action",
                     icon: {
                       type: "sfSymbol",
-                      name: entry?.bookmark ? "bookmark.fill" : "bookmark",
+                      name: entry?.bookmark ? "bookmark.slash" : "bookmark",
                     },
-                    label: "Bookmark",
-                    onPress: () => {
-                      // Do something
-                    },
+                    label: entry?.bookmark ? "Unbookmark" : "Bookmark",
+                    onPress: handleBookmark,
                   },
                   {
                     type: "action",

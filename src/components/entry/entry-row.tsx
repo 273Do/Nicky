@@ -12,7 +12,7 @@ import {
 import { font, foregroundStyle, lineLimit } from "@expo/ui/swift-ui/modifiers";
 import { useRouter } from "expo-router";
 
-import { deleteEntry } from "@/db/queries/entries";
+import { bookmarkEntry, deleteEntry } from "@/db/queries/entries";
 import { formatDate } from "@/utils/date";
 import { PreviewEntryObj } from "@/utils/entry/preview";
 
@@ -71,9 +71,9 @@ export function EntryRow({ journalName, entry }: Props) {
       <ContextMenu.Items>
         <Button label="Edit" systemImage="ellipsis.circle" onPress={() => {}} />
         <Button
-          label="Bookmark"
+          label={entry.bookmark ? "Unbookmark" : "Bookmark"}
           systemImage={entry.bookmark ? "bookmark.slash" : "bookmark"}
-          onPress={() => {}}
+          onPress={async () => await bookmarkEntry(entry.id, !entry.bookmark)}
         />
         <Button
           label="Delete"
