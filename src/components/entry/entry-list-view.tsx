@@ -93,7 +93,7 @@ export function EntryListView({
       <Pressable
         onPress={() =>
           router.push(
-            `/(journal)/entry/create?jounalId=${journalId}&journalName=${journalName}`,
+            `/(journal)/entry/create?journalId=${journalId}&journalName=${journalName}`,
           )
         }
         style={styles.fab}

@@ -14,16 +14,16 @@ import { useEntry } from "@/utils/entry/use-entry";
 export default function EntryCreateScreen() {
   const router = useRouter();
 
-  const { jounalId, journalName } = useLocalSearchParams<{
-    jounalId: string;
+  const { journalId, journalName } = useLocalSearchParams<{
+    journalId: string;
     journalName: string;
   }>();
 
-  const { data: fields } = useLiveQuery(getFieldsQuery(jounalId));
+  const { data: fields } = useLiveQuery(getFieldsQuery(journalId));
   const { valuesRef, setValue, createEntry } = useEntry(fields);
 
   const handleEntryCreate = async () => {
-    const { id: newEntryId } = await createEntry(jounalId);
+    const { id: newEntryId } = await createEntry(journalId);
     router.replace(`/(journal)/entry/${newEntryId}?journalName=${journalName}`);
   };
 
@@ -51,7 +51,7 @@ export default function EntryCreateScreen() {
         }}
       />
       <EntryCreateView
-        id={jounalId}
+        id={journalId}
         values={valuesRef.current}
         setValue={setValue}
       />
