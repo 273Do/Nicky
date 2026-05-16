@@ -69,7 +69,15 @@ export function EntryRow({ journalName, entry }: Props) {
         </Button>
       </ContextMenu.Trigger>
       <ContextMenu.Items>
-        <Button label="Edit" systemImage="ellipsis.circle" onPress={() => {}} />
+        <Button
+          label="Edit"
+          systemImage="ellipsis.circle"
+          onPress={() =>
+            router.push(
+              `/(journal)/entry/${entry.id}?journalName=${journalName}&edit=true`,
+            )
+          }
+        />
         <Button
           label={entry.bookmark ? "Unbookmark" : "Bookmark"}
           systemImage={entry.bookmark ? "bookmark.slash" : "bookmark"}

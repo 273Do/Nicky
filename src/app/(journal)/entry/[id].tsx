@@ -19,12 +19,18 @@ import { useEntry } from "@/utils/entry/use-entry";
  */
 export default function EntryDetailScreen() {
   const router = useRouter();
-  const [editMode, setEditMode] = useState<boolean>(false);
 
-  const { id: entryId, journalName } = useLocalSearchParams<{
+  const {
+    id: entryId,
+    journalName,
+    edit,
+  } = useLocalSearchParams<{
     id: string;
     journalName: string;
+    edit: string;
   }>();
+
+  const [editMode, setEditMode] = useState<boolean>(Boolean(edit));
 
   const { data: entry } = useLiveQuery(getEntryDetailQuery(entryId));
 
