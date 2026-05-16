@@ -10,12 +10,25 @@ import { SortKey } from "@/utils/entry/consts";
  * ジャーナル詳細(エントリー一覧)
  */
 export default function JournalScreen() {
-  const { id: journalId, name } = useLocalSearchParams<{
+  const {
+    id: journalId,
+    name,
+    // edit,
+  } = useLocalSearchParams<{
     id: string;
     name: string;
+    edit: string;
   }>();
-  const [searchText, setSearchText] = useState<string>("");
-  const [sortKey, setSortKey] = useState<SortKey>("dateDesc");
+
+  // const [editMode, setEditMode] = useState<boolean>(Boolean(edit));
+
+  const [filter, setFilter] = useState<{
+    searchText: string;
+    sortKey: SortKey;
+  }>({
+    searchText: "",
+    sortKey: "dateDesc",
+  });
 
   const handleDeleteAll = async () => {
     await deleteAllEntries(journalId).catch(console.error);
@@ -30,8 +43,12 @@ export default function JournalScreen() {
           headerSearchBarOptions: {
             placeholder: "Search",
             hideWhenScrolling: false,
-            onChangeText: (e) => setSearchText(e.nativeEvent.text),
-            onCancelButtonPress: () => setSearchText(""),
+            onChangeText: (e) => {
+              const text = e.nativeEvent?.text ?? "";
+              setFilter((prev) => ({ ...prev, searchText: text }));
+            },
+            onCancelButtonPress: () =>
+              setFilter((prev) => ({ ...prev, searchText: "" })),
           },
           unstable_headerRightItems: () => [
             {
@@ -46,32 +63,37 @@ export default function JournalScreen() {
                   {
                     type: "action",
                     label: "Newest First",
-                    state: sortKey === "dateDesc" ? "on" : "off",
-                    onPress: () => setSortKey("dateDesc"),
+                    state: filter.sortKey === "dateDesc" ? "on" : "off",
+                    onPress: () =>
+                      setFilter((prev) => ({ ...prev, sortKey: "dateDesc" })),
                   },
                   {
                     type: "action",
                     label: "Oldest First",
-                    state: sortKey === "dateAsc" ? "on" : "off",
-                    onPress: () => setSortKey("dateAsc"),
+                    state: filter.sortKey === "dateAsc" ? "on" : "off",
+                    onPress: () =>
+                      setFilter((prev) => ({ ...prev, sortKey: "dateAsc" })),
                   },
                   {
                     type: "action",
                     label: "Title (A→Z)",
-                    state: sortKey === "titleAsc" ? "on" : "off",
-                    onPress: () => setSortKey("titleAsc"),
+                    state: filter.sortKey === "titleAsc" ? "on" : "off",
+                    onPress: () =>
+                      setFilter((prev) => ({ ...prev, sortKey: "titleAsc" })),
                   },
                   {
                     type: "action",
                     label: "Title (Z→A)",
-                    state: sortKey === "titleDesc" ? "on" : "off",
-                    onPress: () => setSortKey("titleDesc"),
+                    state: filter.sortKey === "titleDesc" ? "on" : "off",
+                    onPress: () =>
+                      setFilter((prev) => ({ ...prev, sortKey: "titleDesc" })),
                   },
                   {
                     type: "action",
                     label: "Bookmarked",
-                    state: sortKey === "bookmark" ? "on" : "off",
-                    onPress: () => setSortKey("bookmark"),
+                    state: filter.sortKey === "bookmark" ? "on" : "off",
+                    onPress: () =>
+                      setFilter((prev) => ({ ...prev, sortKey: "bookmark" })),
                   },
                 ],
               },
@@ -129,8 +151,8 @@ export default function JournalScreen() {
       <EntryListView
         journalId={journalId}
         journalName={name}
-        searchText={searchText}
-        sortKey={sortKey}
+        searchText={filter.searchText}
+        sortKey={filter.sortKey}
       />
     </>
   );
