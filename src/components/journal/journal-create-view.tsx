@@ -106,6 +106,7 @@ export function JournalCreateView({
               {/* ジャーナル名 */}
               <TextField
                 placeholder="Journal Name"
+                defaultValue={meta.name}
                 onValueChange={(value) =>
                   setMeta((prev) => ({ ...prev, name: value.slice(0, 10) }))
                 }
@@ -131,6 +132,7 @@ export function JournalCreateView({
                   />
                   <TextField
                     placeholder={`${FIELD_LABELS[field.type]} Field Name`}
+                    defaultValue={field.label}
                     onValueChange={(value) => renameField(field.id, value)}
                     modifiers={[frame({ maxWidth: 9999 })]}
                   />

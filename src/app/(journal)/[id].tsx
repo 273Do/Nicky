@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 import { EntryListView } from "@/components/entry/entry-list-view";
 import { deleteAllEntries } from "@/db/queries/entries";
@@ -10,17 +10,12 @@ import { SortKey } from "@/utils/entry/consts";
  * ジャーナル詳細(エントリー一覧)
  */
 export default function JournalScreen() {
-  const {
-    id: journalId,
-    name,
-    // edit,
-  } = useLocalSearchParams<{
+  const router = useRouter();
+
+  const { id: journalId, name } = useLocalSearchParams<{
     id: string;
     name: string;
-    edit: string;
   }>();
-
-  // const [editMode, setEditMode] = useState<boolean>(Boolean(edit));
 
   const [filter, setFilter] = useState<{
     searchText: string;
@@ -115,8 +110,7 @@ export default function JournalScreen() {
                     },
                     label: "Edit",
                     onPress: () => {
-                      // Do something
-                      console.log("Edit Journal");
+                      router.push(`/(journal)/edit?journalId=${journalId}`);
                     },
                   },
                   {

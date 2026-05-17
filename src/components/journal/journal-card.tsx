@@ -100,7 +100,9 @@ export function JournalCard({ journal }: Props) {
           <Button
             label="Edit"
             systemImage="ellipsis.circle"
-            onPress={() => {}}
+            onPress={() =>
+              router.push(`/(journal)/edit?journalId=${journalId}`)
+            }
           />
           <Button
             label="Delete"

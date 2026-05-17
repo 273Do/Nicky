@@ -39,10 +39,10 @@ export function EntryListView({
 }: Props) {
   const router = useRouter();
 
-  const { data: dbEntries } = useLiveQuery(getEntriesQuery(journalId));
+  const { data: entries } = useLiveQuery(getEntriesQuery(journalId));
 
   // エントリープレビュー一覧に変換
-  const previewEntries = dbEntries.map(buildPreviewEntry);
+  const previewEntries = entries.map(buildPreviewEntry);
 
   // 検索
   const filtered = searchText
