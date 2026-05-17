@@ -23,6 +23,7 @@ import {
 } from "@expo/ui/swift-ui/modifiers";
 
 import { FIELD_ICONS, FIELD_LABELS, FieldType } from "@/core/constants";
+import { isValidColor } from "@/utils/journal/color";
 import {
   JournalMetaObj,
   type FieldDraftObj,
@@ -30,19 +31,6 @@ import {
 
 import { FieldBottomSheet } from "./field-bottom-sheet";
 import { IconSelectBottomSheet } from "./icon-select-bottom-sheet";
-
-/**
- * 黒・白に近すぎる色を弾く（輝度が極端な色を除外）
- * @param hex "#RRGGBB" 形式の色文字列
- */
-function isValidColor(hex: string): boolean {
-  const num = parseInt(hex.replace("#", ""), 16);
-  const r = ((num >> 16) & 0xff) / 255;
-  const g = ((num >> 8) & 0xff) / 255;
-  const b = (num & 0xff) / 255;
-  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  return luminance > 0.05 && luminance < 0.9;
-}
 
 type Props = {
   /** フィールド一覧 */
@@ -73,8 +61,13 @@ export function JournalCreateView({
   meta,
   setMeta,
 }: Props) {
-  const [showFieldSheet, setShowFieldSheet] = useState(false);
-  const [showIconSheet, setShowIconSheet] = useState(false);
+  const [showSheet, setShowSheet] = useState<{
+    field: boolean;
+    icon: boolean;
+  }>({
+    field: false,
+    icon: false,
+  });
 
   return (
     <View style={{ flex: 1 }}>
@@ -95,7 +88,9 @@ export function JournalCreateView({
               <ZStack
                 modifiers={[
                   frame({ width: 32, height: 32 }),
-                  onTapGesture(() => setShowIconSheet(true)),
+                  onTapGesture(() =>
+                    setShowSheet((prev) => ({ ...prev, icon: true })),
+                  ),
                 ]}
               >
                 <RoundedRectangle
@@ -111,8 +106,9 @@ export function JournalCreateView({
               {/* ジャーナル名 */}
               <TextField
                 placeholder="Journal Name"
+                defaultValue={meta.name}
                 onValueChange={(value) =>
-                  setMeta((prev) => ({ ...prev, name: value }))
+                  setMeta((prev) => ({ ...prev, name: value.slice(0, 10) }))
                 }
                 modifiers={[frame({ maxWidth: 9999 })]}
               />
@@ -136,6 +132,7 @@ export function JournalCreateView({
                   />
                   <TextField
                     placeholder={`${FIELD_LABELS[field.type]} Field Name`}
+                    defaultValue={field.label}
                     onValueChange={(value) => renameField(field.id, value)}
                     modifiers={[frame({ maxWidth: 9999 })]}
                   />
@@ -156,22 +153,26 @@ export function JournalCreateView({
             <Button
               label="Add Field"
               systemImage="plus"
-              onPress={() => setShowFieldSheet(true)}
+              onPress={() => setShowSheet((prev) => ({ ...prev, field: true }))}
             />
           </Section>
         </List>
 
         {/* フィールド追加ボトムシート */}
         <FieldBottomSheet
-          isPresented={showFieldSheet}
-          onIsPresentedChange={setShowFieldSheet}
+          isPresented={showSheet.field}
+          onIsPresentedChange={(v) =>
+            setShowSheet((prev) => ({ ...prev, field: v }))
+          }
           onAdd={addField}
         />
 
         {/* アイコン選択ボトムシート */}
         <IconSelectBottomSheet
-          isPresented={showIconSheet}
-          onIsPresentedChange={setShowIconSheet}
+          isPresented={showSheet.icon}
+          onIsPresentedChange={(v) =>
+            setShowSheet((prev) => ({ ...prev, icon: v }))
+          }
           selectedIcon={meta.icon}
           selectedColor={meta.color}
           onSelectIcon={(icon) => setMeta((prev) => ({ ...prev, icon }))}

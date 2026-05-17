@@ -21,8 +21,8 @@ export default function AppTabs() {
         </NativeTabs.Trigger>
 
         <NativeTabs.Trigger name="explore">
-          <NativeTabs.Trigger.Label>Report</NativeTabs.Trigger.Label>
-          <NativeTabs.Trigger.Icon sf="chart.line.text.clipboard.fill" />
+          <NativeTabs.Trigger.Label>Insite</NativeTabs.Trigger.Label>
+          <NativeTabs.Trigger.Icon sf="waveform.path.ecg" />
         </NativeTabs.Trigger>
       </NativeTabs>
     </ThemeProvider>

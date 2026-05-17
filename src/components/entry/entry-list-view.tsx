@@ -1,18 +1,14 @@
 import { PlatformColor, Pressable, StyleSheet, View } from "react-native";
 
 import { Host, List, Section } from "@expo/ui/swift-ui";
-import {
-  frame,
-  headerProminence,
-  moveDisabled,
-} from "@expo/ui/swift-ui/modifiers";
+import { frame, headerProminence } from "@expo/ui/swift-ui/modifiers";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { GlassView } from "expo-glass-effect";
 import { useRouter } from "expo-router";
 import { SymbolView } from "expo-symbols";
 
-import type { SortKey } from "@/app/(journal)/[id]";
-import { getEntriesQuery } from "@/db/queries/entries";
+import { deleteEntry, getEntriesQuery } from "@/db/queries/entries";
+import { type SortKey } from "@/utils/entry/consts";
 import {
   buildPreviewEntry,
   groupByMonth,
@@ -23,7 +19,7 @@ import { EntryRow } from "./entry-row";
 
 type Props = {
   /** ジャーナル id */
-  id: string;
+  journalId: string;
   /** ジャーナル */
   journalName: string;
   /** 検索テキスト */
@@ -36,17 +32,17 @@ type Props = {
  * エントリー一覧画面
  */
 export function EntryListView({
-  id,
+  journalId,
   journalName,
   searchText = "",
   sortKey = "dateDesc",
 }: Props) {
   const router = useRouter();
 
-  const { data: dbEntries } = useLiveQuery(getEntriesQuery(id));
+  const { data: entries } = useLiveQuery(getEntriesQuery(journalId));
 
   // エントリープレビュー一覧に変換
-  const previewEntries = dbEntries.map(buildPreviewEntry);
+  const previewEntries = entries.map(buildPreviewEntry);
 
   // 検索
   const filtered = searchText
@@ -68,31 +64,44 @@ export function EntryListView({
         useViewportSizeMeasurement
       >
         <List modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 })]}>
-          <List.ForEach modifiers={[moveDisabled()]}>
-            {grouped.map(({ month, previewEntries }) => (
-              <Section
-                key={month}
-                title={month}
-                modifiers={[headerProminence("increased")]}
+          {grouped.map(({ month, previewEntries }) => (
+            <Section
+              key={month}
+              title={month}
+              modifiers={[headerProminence("increased")]}
+            >
+              <List.ForEach
+                onDelete={(indices) =>
+                  indices.forEach(
+                    async (i) => await deleteEntry(previewEntries[i].id),
+                  )
+                }
               >
-                {previewEntries.map((previewEntry) => (
-                  <EntryRow key={previewEntry.id} entry={previewEntry} />
+                {previewEntries.map((entry) => (
+                  <EntryRow
+                    key={entry.id}
+                    journalName={journalName}
+                    entry={entry}
+                  />
                 ))}
-              </Section>
-            ))}
-          </List.ForEach>
+              </List.ForEach>
+            </Section>
+          ))}
         </List>
       </Host>
 
       <Pressable
         onPress={() =>
-          router.push(`/(journal)/entry/create?id=${id}&name=${journalName}`)
+          router.push(
+            `/(journal)/entry/create?journalId=${journalId}&journalName=${journalName}`,
+          )
         }
         style={styles.fab}
       >
         <GlassView
           glassEffectStyle="regular"
           tintColor={PlatformColor("systemGra1y3") as unknown as string}
+          isInteractive
           style={styles.glassButton}
         >
           <SymbolView name="plus" tintColor={PlatformColor("label")} />

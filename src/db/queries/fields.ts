@@ -7,4 +7,5 @@ import { db } from "../client";
 export const getFieldsQuery = (journalId: string) =>
   db.query.fields.findMany({
     where: (fields, { eq }) => eq(fields.journalId, journalId),
+    orderBy: (fields, { asc }) => [asc(fields.sortOrder)],
   });

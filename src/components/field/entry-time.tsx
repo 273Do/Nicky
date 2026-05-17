@@ -26,7 +26,7 @@ export function EntryTime({
   onValueChange,
   edit = false,
 }: Props) {
-  const [time, setTime] = useState(defaultValue);
+  const [time, setTime] = useState<Date>(defaultValue);
 
   const handleChange = (value: Date) => {
     setTime(value);

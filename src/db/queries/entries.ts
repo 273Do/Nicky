@@ -1,3 +1,5 @@
+import { and, eq } from "drizzle-orm";
+
 import { db } from "@/db/client";
 
 import { entries, EntryObj, EntryValueObj, entryValues } from "../schemas";
@@ -46,6 +48,63 @@ export const storeEntry = async (
       await tx.insert(entryValues).values(newValues);
     }
   });
+};
+
+/**
+ * エントリーのフィールド値を更新する
+ * @param entryId エントリーID
+ * @param values 更新するフィールド値一覧
+ */
+export const updateEntryValues = async (
+  entryId: string,
+  values: { fieldId: string; value: string | null }[],
+): Promise<void> => {
+  await db.transaction(async (tx) => {
+    for (const { fieldId, value } of values) {
+      await tx
+        .update(entryValues)
+        .set({ value })
+        .where(
+          and(
+            eq(entryValues.entryId, entryId),
+            eq(entryValues.fieldId, fieldId),
+          ),
+        );
+    }
+    await tx
+      .update(entries)
+      .set({ updatedAt: Date.now() })
+      .where(eq(entries.id, entryId));
+  });
+};
+
+/**
+ * エントリーをブックマーク登録・解除するクエリ
+ * @param entryId エントリーID
+ * @param bookmark ブックマークフラグ
+ */
+export const bookmarkEntry = async (entryId: string, bookmark: boolean) => {
+  await db.update(entries).set({ bookmark }).where(eq(entries.id, entryId));
+};
+
+/**
+ * エントリー詳細を削除するクエリ
+ * @param entryId エントリーID
+ */
+export const deleteEntry = async (entryId: string) => {
+  await db.delete(entries).where(eq(entries.id, entryId));
+};
+
+/**
+ * 全てのエントリーを削除するクエリ
+ * @param journalId ジャーナルID
+ */
+export const deleteAllEntries = async (journalId?: string) => {
+  if (journalId) {
+    await db.delete(entries).where(eq(entries.journalId, journalId));
+  } else {
+    await db.delete(entries);
+  }
 };
 
 /** エントリー詳細の型 */

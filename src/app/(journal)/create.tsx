@@ -1,7 +1,6 @@
-import { PlatformColor, Pressable } from "react-native";
+import { Keyboard, PlatformColor } from "react-native";
 
 import { Stack, useRouter } from "expo-router";
-import { SymbolView } from "expo-symbols";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
 import { useJournalField } from "@/utils/journal/use-journal-field";
@@ -25,6 +24,7 @@ export default function JournalCreateScreen() {
   } = useJournalField();
 
   const handleJournalCreate = async () => {
+    Keyboard.dismiss();
     const { id: newJournalId, name } = await createJournal();
 
     // replace でスタックせずにジャーナル詳細画面からジャーナル一覧へ戻れるようにする
@@ -36,18 +36,18 @@ export default function JournalCreateScreen() {
       <Stack.Screen
         options={{
           title: "New Journal",
-          headerRight: () => (
-            <Pressable onPress={handleJournalCreate} disabled={formDisabled}>
-              <SymbolView
-                name="checkmark"
-                tintColor={
-                  formDisabled
-                    ? PlatformColor("tertiaryLabel")
-                    : PlatformColor("systemIndigo")
-                }
-              />
-            </Pressable>
-          ),
+          unstable_headerRightItems: () => [
+            {
+              type: "button",
+              label: "Save",
+              icon: { type: "sfSymbol", name: "checkmark" },
+              tintColor: formDisabled
+                ? PlatformColor("tertiaryLabel")
+                : PlatformColor("systemIndigo"),
+              disabled: formDisabled,
+              onPress: formDisabled ? () => {} : handleJournalCreate,
+            },
+          ],
         }}
       />
       <JournalCreateView

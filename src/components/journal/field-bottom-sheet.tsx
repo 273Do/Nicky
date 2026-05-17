@@ -12,8 +12,10 @@ import {
 import {
   foregroundStyle,
   frame,
+  padding,
   presentationDetents,
   presentationDragIndicator,
+  scrollDisabled,
 } from "@expo/ui/swift-ui/modifiers";
 
 import { FIELD_ICONS, FIELD_LABELS, FieldType } from "@/core/constants";
@@ -48,11 +50,12 @@ export function FieldBottomSheet({
     >
       <Group
         modifiers={[
-          presentationDetents(["medium"]),
+          presentationDetents([{ height: FIELD_TYPES.length * 54 + 12 }]),
+          padding({ horizontal: 8, top: -8 }),
           presentationDragIndicator("visible"),
         ]}
       >
-        <List>
+        <List modifiers={[scrollDisabled()]}>
           {FIELD_TYPES.map((type) => (
             <Button
               key={type}
