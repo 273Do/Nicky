@@ -4,7 +4,10 @@ import * as Crypto from "expo-crypto";
 import { SFSymbol } from "expo-symbols";
 
 import { FIELD_ICONS, FieldType, JOURNAL_ICONS } from "@/core/constants";
-import { storeJournal } from "@/db/queries/journals";
+import {
+  storeJournal,
+  updateJournal as updateJournalQuery,
+} from "@/db/queries/journals";
 import { FieldObj, JournalObj } from "@/db/schemas";
 
 /**
@@ -36,6 +39,8 @@ export const FIELD_TYPES = Object.keys(FIELD_ICONS) as FieldType[];
 
 /**
  * ジャーナルフィールドに関するフック
+ * @param meta ジャーナルのメタ情報(編集用)
+ * @param fields 現在のフィールド一覧(編集用)
  * @returns
  * - fields 現在のフィールド一覧
  * - addField 新規フィールドを追加する関数
@@ -45,18 +50,19 @@ export const FIELD_TYPES = Object.keys(FIELD_ICONS) as FieldType[];
  * - meta ジャーナルのメタ情報
  * - setMeta ジャーナルのメタ情報をセットする関数
  * - createJournal 新規ジャーナルを作成する関数
+ * - updateJournal ジャーナルを更新する関数
  * - formDisabled フォームが送信可能かどうかのフラグ
  */
-export const useJournalField = () => {
-  const [fields, setFields] = useState<FieldDraftObj[]>([]);
-
-  const initialState = {
-    name: "",
-    color: "#007AFF",
-    icon: JOURNAL_ICONS[0],
-  };
-
-  const [meta, setMeta] = useState<JournalMetaObj>(initialState);
+export const useJournalField = (initialData?: {
+  meta: JournalMetaObj;
+  fields: FieldDraftObj[];
+}) => {
+  const [fields, setFields] = useState<FieldDraftObj[]>(
+    initialData?.fields ?? [],
+  );
+  const [meta, setMeta] = useState<JournalMetaObj>(
+    initialData?.meta ?? { name: "", color: "#007AFF", icon: JOURNAL_ICONS[0] },
+  );
 
   /**
    * 新規フィールドを追加する
@@ -142,6 +148,21 @@ export const useJournalField = () => {
     return newJournal;
   };
 
+  /**
+   * 既存ジャーナルのメタ情報とフィールドをDBに更新する
+   * @param journalId ジャーナルID
+   */
+  const updateJournal = async (journalId: string): Promise<void> => {
+    const fieldUpdates: FieldWithSortObj[] = fields.map((field, i) => ({
+      id: field.id,
+      type: field.type,
+      label: field.label,
+      sortOrder: i,
+    }));
+
+    await updateJournalQuery(journalId, meta, fieldUpdates);
+  };
+
   return {
     fields,
     addField,
@@ -152,6 +173,7 @@ export const useJournalField = () => {
     meta,
     setMeta,
     createJournal,
+    updateJournal,
 
     formDisabled,
   };
