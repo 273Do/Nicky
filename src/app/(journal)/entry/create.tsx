@@ -1,8 +1,7 @@
-import { PlatformColor, Pressable } from "react-native";
+import { PlatformColor } from "react-native";
 
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { SymbolView } from "expo-symbols";
 
 import { EntryCreateView } from "@/components/entry/entry-create-view";
 import { getFieldsQuery } from "@/db/queries/fields";
@@ -33,21 +32,16 @@ export default function EntryCreateScreen() {
         options={{
           title: journalName,
           headerLargeTitleEnabled: true,
-          // headerTitle: () => (
-          //   <View style={styles.headerTitle}>
-          //     <RNText style={styles.title}>New Entry</RNText>
-          //     <RNText style={styles.subtitle}>{journalName}</RNText>
-          //   </View>
-          // ),
-          headerRight: () => (
-            // エントリー作成では disabled は設定しない
-            <Pressable onPress={handleEntryCreate}>
-              <SymbolView
-                name="checkmark"
-                tintColor={PlatformColor("systemIndigo")}
-              />
-            </Pressable>
-          ),
+          // エントリー作成では disabled は設定しない
+          unstable_headerRightItems: () => [
+            {
+              type: "button",
+              label: "Create New Entry",
+              icon: { type: "sfSymbol", name: "checkmark" },
+              tintColor: PlatformColor("systemIndigo"),
+              onPress: handleEntryCreate,
+            },
+          ],
         }}
       />
       <EntryCreateView
@@ -58,18 +52,3 @@ export default function EntryCreateScreen() {
     </>
   );
 }
-
-// const styles = StyleSheet.create({
-//   headerTitle: {
-//     alignItems: "center",
-//   },
-//   title: {
-//     fontSize: 17,
-//     fontWeight: "600",
-//     color: PlatformColor("label"),
-//   },
-//   subtitle: {
-//     fontSize: 14,
-//     color: PlatformColor("secondaryLabel"),
-//   },
-// });

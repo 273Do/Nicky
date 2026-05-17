@@ -1,7 +1,4 @@
-import { PlatformColor, Pressable } from "react-native";
-
 import { Stack, useRouter } from "expo-router";
-import { SymbolView } from "expo-symbols";
 
 import { JournalView } from "@/components/journal/journal-view";
 
@@ -17,14 +14,14 @@ export default function JournalListScreen() {
         options={{
           title: "Journal",
           headerLargeTitleEnabled: true,
-          headerRight: () => (
-            <Pressable onPress={() => router.push("/(journal)/create")}>
-              <SymbolView
-                name="folder.badge.plus"
-                tintColor={PlatformColor("label")}
-              />
-            </Pressable>
-          ),
+          unstable_headerRightItems: () => [
+            {
+              type: "button",
+              label: "Create New Journal",
+              icon: { type: "sfSymbol", name: "folder.badge.plus" },
+              onPress: () => router.push("/(journal)/create"),
+            },
+          ],
         }}
       />
       {/* TODO: 空の場合の処理を追加する */}
