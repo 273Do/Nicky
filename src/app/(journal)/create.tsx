@@ -1,4 +1,4 @@
-import { PlatformColor } from "react-native";
+import { Keyboard, PlatformColor } from "react-native";
 
 import { Stack, useRouter } from "expo-router";
 
@@ -24,6 +24,7 @@ export default function JournalCreateScreen() {
   } = useJournalField();
 
   const handleJournalCreate = async () => {
+    Keyboard.dismiss();
     const { id: newJournalId, name } = await createJournal();
 
     // replace でスタックせずにジャーナル詳細画面からジャーナル一覧へ戻れるようにする

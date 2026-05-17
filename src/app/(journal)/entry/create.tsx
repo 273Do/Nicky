@@ -1,4 +1,4 @@
-import { PlatformColor } from "react-native";
+import { Keyboard, PlatformColor } from "react-native";
 
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
@@ -22,6 +22,7 @@ export default function EntryCreateScreen() {
   const { valuesRef, setValue, createEntry } = useEntry(fields);
 
   const handleEntryCreate = async () => {
+    Keyboard.dismiss();
     const { id: newEntryId } = await createEntry(journalId);
     router.replace(`/(journal)/entry/${newEntryId}?journalName=${journalName}`);
   };

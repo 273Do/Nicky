@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PlatformColor } from "react-native";
+import { Keyboard, PlatformColor } from "react-native";
 
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
@@ -41,6 +41,7 @@ export default function EntryDetailScreen() {
   const { valuesRef, setValue, updateEntry } = useEntry(fields, initialValues);
 
   const handleSave = async () => {
+    Keyboard.dismiss();
     await updateEntry(entryId);
     setEditMode(false);
   };
