@@ -98,6 +98,12 @@ export const updateJournal = async (
         ),
       );
     }
+
+    // entries.updatedAt を touch して useLiveQuery に変更を伝播させる
+    await tx
+      .update(entries)
+      .set({ updatedAt: Date.now() })
+      .where(eq(entries.journalId, journalId));
   });
 };
 
