@@ -1,83 +1,15 @@
 import { useState } from "react";
 import { PlatformColor, View } from "react-native";
 
-import {
-  Host,
-  HStack,
-  RoundedRectangle,
-  ScrollView,
-  Spacer,
-  Text,
-  VStack,
-  ZStack,
-} from "@expo/ui/swift-ui";
-import {
-  font,
-  foregroundStyle,
-  frame,
-  padding,
-} from "@expo/ui/swift-ui/modifiers";
+import { Host, ScrollView, Spacer, Text, VStack } from "@expo/ui/swift-ui";
+import { font, padding } from "@expo/ui/swift-ui/modifiers";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { getJournalsQuery } from "@/db/queries/journals";
 
 import { JournalChipList } from "./journal-chip";
-
-type StatCardProps = {
-  label: string;
-  value: string;
-  unit: string;
-  accentColor: string;
-};
-
-function StatCard({ label, value, unit, accentColor }: StatCardProps) {
-  return (
-    <ZStack
-      alignment="topLeading"
-      modifiers={[frame({ maxWidth: 9999, height: 100 })]}
-    >
-      <RoundedRectangle
-        cornerRadius={16}
-        modifiers={[
-          frame({ maxWidth: 9999, maxHeight: 9999 }),
-          foregroundStyle(PlatformColor("secondarySystemGroupedBackground")),
-        ]}
-      />
-      <VStack
-        alignment="leading"
-        spacing={6}
-        modifiers={[padding({ horizontal: 16, vertical: 16 })]}
-      >
-        <Text
-          modifiers={[
-            font({ size: 12 }),
-            foregroundStyle({ type: "hierarchical", style: "secondary" }),
-          ]}
-        >
-          {label}
-        </Text>
-        <HStack spacing={3}>
-          <Text
-            modifiers={[
-              font({ size: 28, weight: "bold" }),
-              foregroundStyle(accentColor),
-            ]}
-          >
-            {value}
-          </Text>
-          <Text
-            modifiers={[
-              font({ size: 14 }),
-              foregroundStyle({ type: "hierarchical", style: "secondary" }),
-            ]}
-          >
-            {unit}
-          </Text>
-        </HStack>
-      </VStack>
-    </ZStack>
-  );
-}
+import { StatCard } from "./stat-card";
+import { WeeklySummaryCard } from "./weekly-summary-card";
 
 /**
  * インサイト画面
@@ -92,7 +24,8 @@ export function InsightsView() {
 
   const activeJournalData = journals.find((j) => j.id === activeJournalId);
   const entryCount = activeJournalData?.entryCount ?? 0;
-  const accentColor = activeJournalData?.color ?? "#000000";
+  const accentColor =
+    activeJournalData?.color ?? PlatformColor("systemIndigo").toString();
 
   return (
     <View style={{ flex: 1 }}>
@@ -116,9 +49,35 @@ export function InsightsView() {
             />
 
             <VStack
+              alignment="leading"
               spacing={12}
               modifiers={[padding({ horizontal: 16, bottom: 16 })]}
             >
+              <WeeklySummaryCard
+                timestamps={[
+                  Date.UTC(2026, 4, 14, 10, 0), // 木: 1件
+                  Date.UTC(2026, 4, 15, 8, 30), // 金: 2件
+                  Date.UTC(2026, 4, 15, 20, 0),
+                  Date.UTC(2026, 4, 16, 14, 15), // 土: 1件
+                  Date.UTC(2026, 4, 17, 9, 0), // 日: 2件
+                  Date.UTC(2026, 4, 17, 21, 30),
+                  Date.UTC(2026, 4, 18, 8, 0), // 月: 2件
+                  Date.UTC(2026, 4, 18, 19, 45),
+                  Date.UTC(2026, 4, 19, 7, 30), // 火: 1件
+                  Date.UTC(2026, 4, 20, 7, 20), // 水(今日): 3件
+                  Date.UTC(2026, 4, 20, 13, 0),
+                  Date.UTC(2026, 4, 20, 22, 10),
+                ]}
+                accentColor={accentColor}
+              />
+              <Text
+                modifiers={[
+                  padding({ leading: 16 }),
+                  font({ size: 24, weight: "semibold" }),
+                ]}
+              >
+                Field Stats
+              </Text>
               <StatCard
                 label="エントリー数"
                 value={String(entryCount)}
