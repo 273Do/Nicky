@@ -2,8 +2,6 @@ import { PlatformColor } from "react-native";
 
 import { HStack, Image, ScrollView, Spacer, Text } from "@expo/ui/swift-ui";
 import {
-  Animation,
-  animation,
   fixedSize,
   font,
   foregroundStyle,
@@ -62,7 +60,7 @@ export function JournalChipList({
       <HStack
         spacing={8}
         modifiers={[
-          padding({ leading: 16, vertical: 32 }),
+          padding({ leading: 16, top: 32, bottom: 16 }),
           fixedSize({ horizontal: true, vertical: false }),
         ]}
       >
@@ -73,7 +71,7 @@ export function JournalChipList({
               key={journal.id}
               modifiers={[
                 ...(isActive ? activeLabel(journal.color) : glassLabel),
-                animation(Animation.easeInOut({ duration: 0.3 }), isActive),
+                // animation(Animation.easeInOut({ duration: 0.3 }), isActive),
                 onTapGesture(() => onSelect(journal.id)),
               ]}
             >
@@ -86,7 +84,7 @@ export function JournalChipList({
                 }
                 size={14}
               />
-              <Spacer minLength={3} />
+              <Spacer minLength={4} />
               <Text>{journal.name}</Text>
             </HStack>
           );
