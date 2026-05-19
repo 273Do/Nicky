@@ -1,97 +1,51 @@
+import { useState } from "react";
 import { PlatformColor, View } from "react-native";
 
-import {
-  Host,
-  HStack,
-  ScrollView,
-  Spacer,
-  Text,
-  VStack,
-} from "@expo/ui/swift-ui";
-import {
-  fixedSize,
-  font,
-  foregroundStyle,
-  glassEffect,
-  onTapGesture,
-  padding,
-} from "@expo/ui/swift-ui/modifiers";
+import { Host, ScrollView, Spacer, Text, VStack } from "@expo/ui/swift-ui";
+import { padding } from "@expo/ui/swift-ui/modifiers";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
-const chipBase = [padding({ vertical: 6, horizontal: 10 }), font({ size: 14 })];
+import { getJournalsQuery } from "@/db/queries/journals";
 
-const glassLabel = [
-  ...chipBase,
-  glassEffect({
-    glass: { variant: "regular", interactive: true },
-    shape: "roundedRectangle",
-    cornerRadius: 100,
-  }),
-  foregroundStyle(PlatformColor("label")),
-  foregroundStyle({ type: "hierarchical", style: "secondary" }),
-];
-
-const activeLabel = [
-  ...chipBase,
-  glassEffect({
-    glass: {
-      variant: "regular",
-      interactive: true,
-      tint: PlatformColor("systemIndigo"),
-    },
-    shape: "roundedRectangle",
-    cornerRadius: 100,
-  }),
-];
+import { JournalChipList } from "./journal-chip";
 
 /**
  * インサイト画面
  */
 export function InsightsView() {
+  const { data: journals } = useLiveQuery(getJournalsQuery);
+
+  const [activeJournal, setActiveJournal] = useState<string>("");
+  const activeJournalId = activeJournal || (journals[0]?.id ?? "");
+
+  if (journals.length === 0) return null;
+
+  console.log(activeJournal);
+
   return (
     <View style={{ flex: 1 }}>
       <Host
         style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}
         useViewportSizeMeasurement
       >
-        <VStack
-          alignment="leading"
-          spacing={0}
-          modifiers={[padding({ top: -32 })]}
-        >
-          <ScrollView axes="horizontal" showsIndicators={false}>
-            <HStack
-              spacing={8}
-              modifiers={[
-                padding({ leading: 16, vertical: 32 }),
-                fixedSize({ horizontal: true, vertical: false }),
-              ]}
-            >
-              <Text modifiers={[...activeLabel, onTapGesture(() => {})]}>
-                journal title
-              </Text>
-              <Text modifiers={[...glassLabel, onTapGesture(() => {})]}>
-                journal title
-              </Text>
-              <Text modifiers={[...glassLabel, onTapGesture(() => {})]}>
-                journal title
-              </Text>
-              <Text modifiers={[...glassLabel, onTapGesture(() => {})]}>
-                journal title
-              </Text>
-              <Text modifiers={[...glassLabel, onTapGesture(() => {})]}>
-                journal title
-              </Text>
-              <Text modifiers={[...glassLabel, onTapGesture(() => {})]}>
-                journal title
-              </Text>
-              <Text modifiers={[...glassLabel, onTapGesture(() => {})]}>
-                journal title
-              </Text>
-            </HStack>
-          </ScrollView>
-          <Text>aa</Text>
-          <Spacer />
-        </VStack>
+        <ScrollView>
+          <VStack
+            alignment="leading"
+            spacing={0}
+            modifiers={[padding({ top: -32 })]}
+          >
+            <JournalChipList
+              journals={journals}
+              activeJournalId={activeJournalId}
+              onSelect={(id) => setActiveJournal(id)}
+            />
+
+            <VStack modifiers={[padding({ leading: 16, top: -16 })]}>
+              <Text>aa</Text>
+            </VStack>
+            <Spacer />
+          </VStack>
+        </ScrollView>
       </Host>
     </View>
   );
