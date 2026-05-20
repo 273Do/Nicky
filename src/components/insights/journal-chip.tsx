@@ -18,18 +18,18 @@ const chipBase = [padding({ vertical: 6, horizontal: 10 }), font({ size: 14 })];
 const glassLabel = [
   ...chipBase,
   glassEffect({
-    glass: { variant: "regular", interactive: true },
+    glass: { variant: "clear", interactive: true },
     shape: "roundedRectangle",
     cornerRadius: 100,
   }),
-  foregroundStyle({ type: "hierarchical", style: "secondary" }),
+  foregroundStyle(PlatformColor("systemGray")),
 ];
 
 const activeLabel = (color: string) => [
   ...chipBase,
   glassEffect({
     glass: {
-      variant: "regular",
+      variant: "clear",
       interactive: true,
       tint: color,
     },
