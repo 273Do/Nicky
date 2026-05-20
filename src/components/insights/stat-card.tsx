@@ -2,6 +2,7 @@ import { PlatformColor } from "react-native";
 
 import {
   HStack,
+  Image,
   RoundedRectangle,
   Spacer,
   Text,
@@ -17,6 +18,8 @@ import {
   padding,
 } from "@expo/ui/swift-ui/modifiers";
 
+import { FIELD_ICONS, FieldType } from "@/core/constants";
+
 type Props = {
   /** ラベル */
   label: string;
@@ -24,6 +27,8 @@ type Props = {
   value: string;
   /** 単位 */
   unit: string;
+  /** フィールドタイプ */
+  fieldType: FieldType;
   /** アクセントカラー */
   accentColor: string;
 };
@@ -31,7 +36,13 @@ type Props = {
 /**
  * ステータスカード
  */
-export function StatCard({ label, value, unit, accentColor }: Props) {
+export function StatCard({
+  label,
+  value,
+  unit,
+  fieldType,
+  accentColor,
+}: Props) {
   return (
     <ZStack
       alignment="topLeading"
@@ -53,14 +64,22 @@ export function StatCard({ label, value, unit, accentColor }: Props) {
         spacing={12}
         modifiers={[padding({ horizontal: 16, vertical: 16 })]}
       >
-        <Text
-          modifiers={[
-            font({ size: 15, weight: "bold" }),
-            foregroundStyle(accentColor),
-          ]}
-        >
-          {label}
-        </Text>
+        <HStack spacing={6}>
+          <Image
+            systemName={FIELD_ICONS[fieldType]}
+            color={accentColor}
+            size={20}
+            modifiers={[frame({ width: 24 })]}
+          />
+          <Text
+            modifiers={[
+              font({ size: 15, weight: "bold" }),
+              foregroundStyle(accentColor),
+            ]}
+          >
+            {label}
+          </Text>
+        </HStack>
         <Spacer />
         <HStack spacing={3} alignment="lastTextBaseline">
           <Text modifiers={[font({ size: 28, weight: "semibold" })]}>

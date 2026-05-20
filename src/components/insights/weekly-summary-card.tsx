@@ -3,6 +3,7 @@ import { PlatformColor } from "react-native";
 import {
   Chart,
   HStack,
+  Image,
   RoundedRectangle,
   Spacer,
   Text,
@@ -52,14 +53,22 @@ export function WeeklySummaryCard({ timestamps, accentColor }: Props) {
         spacing={12}
         modifiers={[padding({ horizontal: 16, vertical: 16 })]}
       >
-        <Text
-          modifiers={[
-            font({ size: 15, weight: "bold" }),
-            foregroundStyle(accentColor),
-          ]}
-        >
-          Weekly Summary
-        </Text>
+        <HStack spacing={6}>
+          <Image
+            systemName="calendar"
+            color={accentColor}
+            size={20}
+            modifiers={[frame({ width: 24 })]}
+          />
+          <Text
+            modifiers={[
+              font({ size: 15, weight: "bold" }),
+              foregroundStyle(accentColor),
+            ]}
+          >
+            Weekly Summary
+          </Text>
+        </HStack>
         <Spacer />
         <HStack alignment="bottom">
           <HStack spacing={3} alignment="lastTextBaseline">

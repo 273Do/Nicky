@@ -90,24 +90,28 @@ export function InsightsView() {
               label="エントリー数"
               value={String(entryCount)}
               unit="件"
+              fieldType={"number"}
               accentColor={accentColor}
             />
             <StatCard
               label="今週"
               value="7"
               unit="件"
+              fieldType={"text"}
               accentColor={accentColor}
             />
             <StatCard
               label="連続記録"
               value="5"
               unit="日"
+              fieldType={"date"}
               accentColor={accentColor}
             />
             <StatCard
               label="週平均"
               value="4.2"
               unit="件"
+              fieldType={"check"}
               accentColor={accentColor}
             />
           </Section>
