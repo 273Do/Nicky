@@ -49,7 +49,7 @@ export function StatCard({
       modifiers={[
         frame({ maxWidth: 9999, height: 140 }),
         listRowSeparator("hidden"),
-        listRowInsets({ top: 4, bottom: 8, leading: 16, trailing: 16 }),
+        listRowInsets({ top: 4, bottom: 6, leading: 16, trailing: 16 }),
       ]}
     >
       <RoundedRectangle

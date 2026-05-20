@@ -18,7 +18,7 @@ import {
   padding,
 } from "@expo/ui/swift-ui/modifiers";
 
-import { chartDateFormat } from "@/utils/date";
+import { chartDateFormat } from "@/utils/insights/chat-format";
 
 type Props = {
   /** 1週間分のエントリーの作成日時（unix ms） */
