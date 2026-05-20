@@ -3,6 +3,7 @@ import { PlatformColor } from "react-native";
 import {
   HStack,
   RoundedRectangle,
+  Spacer,
   Text,
   VStack,
   ZStack,
@@ -11,6 +12,8 @@ import {
   font,
   foregroundStyle,
   frame,
+  listRowInsets,
+  listRowSeparator,
   padding,
 } from "@expo/ui/swift-ui/modifiers";
 
@@ -32,7 +35,11 @@ export function StatCard({ label, value, unit, accentColor }: Props) {
   return (
     <ZStack
       alignment="topLeading"
-      modifiers={[frame({ maxWidth: 9999, height: 100 })]}
+      modifiers={[
+        frame({ maxWidth: 9999, height: 140 }),
+        listRowSeparator("hidden"),
+        listRowInsets({ top: 4, bottom: 8, leading: 16, trailing: 16 }),
+      ]}
     >
       <RoundedRectangle
         cornerRadius={28}
@@ -54,6 +61,7 @@ export function StatCard({ label, value, unit, accentColor }: Props) {
         >
           {label}
         </Text>
+        <Spacer />
         <HStack spacing={3} alignment="lastTextBaseline">
           <Text modifiers={[font({ size: 28, weight: "semibold" })]}>
             {value}

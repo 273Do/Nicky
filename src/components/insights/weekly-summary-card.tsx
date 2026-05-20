@@ -13,6 +13,7 @@ import {
   font,
   foregroundStyle,
   frame,
+  listRowInsets,
   padding,
 } from "@expo/ui/swift-ui/modifiers";
 
@@ -32,7 +33,13 @@ export function WeeklySummaryCard({ timestamps, accentColor }: Props) {
   const chartData = chartDateFormat(timestamps, accentColor);
 
   return (
-    <ZStack alignment="topLeading">
+    <ZStack
+      alignment="topLeading"
+      modifiers={[
+        frame({ maxWidth: 9999, height: 140 }),
+        listRowInsets({ top: 4, bottom: 4, leading: 16, trailing: 16 }),
+      ]}
+    >
       <RoundedRectangle
         cornerRadius={28}
         modifiers={[
@@ -53,6 +60,7 @@ export function WeeklySummaryCard({ timestamps, accentColor }: Props) {
         >
           Weekly Summary
         </Text>
+        <Spacer />
         <HStack alignment="bottom">
           <HStack spacing={3} alignment="lastTextBaseline">
             <Text modifiers={[font({ size: 28, weight: "semibold" })]}>
@@ -64,7 +72,7 @@ export function WeeklySummaryCard({ timestamps, accentColor }: Props) {
                 foregroundStyle({ type: "hierarchical", style: "secondary" }),
               ]}
             >
-              件 / 今週
+              件 / 週
             </Text>
           </HStack>
           <Spacer />

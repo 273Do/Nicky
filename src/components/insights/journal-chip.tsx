@@ -6,6 +6,7 @@ import {
   font,
   foregroundStyle,
   glassEffect,
+  listRowInsets,
   onTapGesture,
   padding,
 } from "@expo/ui/swift-ui/modifiers";
@@ -56,11 +57,23 @@ export function JournalChipList({
   onSelect,
 }: Props) {
   return (
-    <ScrollView axes="horizontal" showsIndicators={false}>
+    <ScrollView
+      axes="horizontal"
+      showsIndicators={false}
+      modifiers={[
+        padding({ top: -32, bottom: -32 }),
+        listRowInsets({
+          leading: 0.1,
+          trailing: 0.1,
+          top: 0,
+          bottom: 16,
+        }),
+      ]}
+    >
       <HStack
         spacing={8}
         modifiers={[
-          padding({ leading: 16, top: 32, bottom: 16 }),
+          padding({ leading: 16, trailing: 16, top: 32, bottom: 32 }),
           fixedSize({ horizontal: true, vertical: false }),
         ]}
       >
