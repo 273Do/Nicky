@@ -5,6 +5,7 @@ import { Host, List, Section, Text } from "@expo/ui/swift-ui";
 import {
   font,
   frame,
+  listRowBackground,
   listRowSeparator,
   listStyle,
   padding,
@@ -38,7 +39,6 @@ export function InsightsView() {
       <Host
         style={{
           flex: 1,
-          backgroundColor: PlatformColor("systemGroupedBackground"),
         }}
         useViewportSizeMeasurement
       >
@@ -56,6 +56,9 @@ export function InsightsView() {
                 onSelect={(id) => setActiveJournal(id)}
               />
             }
+            modifiers={[
+              listRowBackground(PlatformColor("systemGroupedBackground")),
+            ]}
           >
             <WeeklySummaryCard
               timestamps={[
