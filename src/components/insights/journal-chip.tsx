@@ -9,11 +9,14 @@ import {
   listRowInsets,
   onTapGesture,
   padding,
+  shadow,
 } from "@expo/ui/swift-ui/modifiers";
 
 import { JournalWithCountObj } from "@/db/queries/journals";
 
 const chipBase = [padding({ vertical: 6, horizontal: 10 }), font({ size: 14 })];
+
+const chipShadow = shadow({ radius: 20, color: "#00000020" });
 
 const glassLabel = [
   ...chipBase,
@@ -23,6 +26,7 @@ const glassLabel = [
     cornerRadius: 100,
   }),
   foregroundStyle(PlatformColor("systemGray")),
+  chipShadow,
 ];
 
 const activeLabel = (color: string) => [
@@ -37,6 +41,7 @@ const activeLabel = (color: string) => [
     cornerRadius: 100,
   }),
   foregroundStyle("white"),
+  chipShadow,
 ];
 
 type Props = {
