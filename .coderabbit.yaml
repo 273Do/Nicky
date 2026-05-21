@@ -1,0 +1,53 @@
+language: "ja"
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+
+  path_instructions:
+    - path: "**/*.{ts,tsx}"
+      instructions: |
+        # コーディング規約
+        - 型定義は `interface` ではなく `type` を使う
+        - Reactコンポーネントは `function` 宣言、それ以外は `const` で定義する
+        - import順: 外部パッケージ → `@/` → 相対パス の順で、グループ間は空行で区切る
+        - Props の各プロパティとエクスポートされる関数・コンポーネントには JSDoc（`/** ... */`）を記載する
+
+        # React / Hooks
+        - `useMemo` / `useCallback` を不必要に追加しない（React Compiler が有効なため）
+        - `useRef` + `initialized` フラグで初期化するフックを使うフォームは、再マウントが必要な場面（編集モード切替など）で別コンポーネントとして定義する
+        - `useLiveQuery` で `with:` を含むクエリは、ルートテーブル以外の変更を自動検知しない。関連テーブルの更新後はルートテーブルを touch する
+        - `useLiveQuery` に動的な引数を渡す場合は第2引数に依存配列を渡す
+
+        # TypeScript
+        - `any` を使わず、適切な型を定義する
+        - 型アサーション（`as`）は最小限にとどめ、型ガードで代替できる場合はそちらを使う
+        - 関数の戻り値型は推論可能な場合でも、公開APIには明示することを推奨する
+
+        # SwiftUI / UI
+        - アダプティブカラーは `PlatformColor` を使い、ハードコードした色値を直接指定しない
+        - タップ処理は `onPress` ではなく `onTapGesture` モディファイアを使う
+        - `Keyboard.dismiss()` はナビゲーションを伴う非同期処理の前に同期的に呼び出す
+        - `List` の中に `ScrollView` をネストしない
+        - ネイティブヘッダーのボタンは `unstable_headerRightItems` で定義する（`headerRight` + RN `Pressable` は使わない）
+
+    - path: "src/db/schemas/**"
+      instructions: |
+        - カラム名は camelCase で定義する（例: `sortOrder`, `createdAt`）
+        - スキーマファイルから React Native ランタイムパッケージを `import type` 以外でインポートしない
+        - IDの生成は `$defaultFn` ではなくアプリ層（`Crypto.randomUUID()`）で行う
+
+    - path: "src/db/queries/**"
+      instructions: |
+        - トランザクションで関連テーブルを更新する場合、`useLiveQuery` が検知できるようルートテーブルの `updatedAt` を touch する
+
+    - path: "drizzle/**"
+      instructions: |
+        - 自動生成ファイルのため手動編集しない。変更は `pnpm drizzle-kit generate` で生成する
