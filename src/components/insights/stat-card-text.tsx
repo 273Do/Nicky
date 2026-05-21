@@ -15,37 +15,48 @@ import {
   font,
   foregroundStyle,
   frame,
+  listRowBackground,
   listRowInsets,
+  listRowSeparator,
   padding,
 } from "@expo/ui/swift-ui/modifiers";
 
-import { EntryDetailObj } from "@/db/queries/entries";
-import { chartDateFormat } from "@/utils/insights/chart-format";
+import { FIELD_ICONS } from "@/core/constants";
+import { chartFieldValueFormat } from "@/utils/insights/chart-format";
+
+import { FieldValueEntry } from "./stat-filed-item";
 
 type Props = {
-  /** ジャーナルカラー */
+  /** ラベル */
+  label: string;
+  /** アクセントカラー */
   accentColor: string;
-  /** エントリー一覧 */
-  entries: EntryDetailObj[];
+  /** フィールド値一覧 */
+  fieldValues: FieldValueEntry[];
 };
 
 /**
- * 週間まとめカード（横軸: 曜日、縦軸: 時刻）
+ * ステータスカード - テキスト（平均文字数 + 折れ線グラフ）
  */
-export function WeeklySummaryCard({ accentColor, entries }: Props) {
-  const entryTimestamps = entries.map((e) => e.createdAt);
+export function StatCardText({ label, accentColor, fieldValues }: Props) {
+  const avgCharCount =
+    fieldValues.length > 0
+      ? Math.round(
+          fieldValues.reduce((sum, fv) => sum + (fv.value?.length ?? 0), 0) /
+            fieldValues.length,
+        )
+      : 0;
 
-  const { data: chartData, count } = chartDateFormat(
-    entryTimestamps,
-    accentColor,
-  );
+  const chartData = chartFieldValueFormat(fieldValues, accentColor);
 
   return (
     <ZStack
       alignment="topLeading"
       modifiers={[
         frame({ maxWidth: 9999, height: 140 }),
-        listRowInsets({ top: 4, bottom: 4, leading: 16, trailing: 16 }),
+        listRowSeparator("hidden"),
+        listRowInsets({ top: 4, bottom: 6, leading: 16, trailing: 16 }),
+        listRowBackground(PlatformColor("systemGroupedBackground")),
       ]}
     >
       <RoundedRectangle
@@ -62,7 +73,7 @@ export function WeeklySummaryCard({ accentColor, entries }: Props) {
       >
         <HStack spacing={6}>
           <Image
-            systemName="calendar"
+            systemName={FIELD_ICONS["text"]}
             color={accentColor}
             size={20}
             modifiers={[frame({ width: 24 })]}
@@ -73,30 +84,39 @@ export function WeeklySummaryCard({ accentColor, entries }: Props) {
               foregroundStyle(accentColor),
             ]}
           >
-            Total Entries
+            {label}
           </Text>
         </HStack>
         <HStack alignment="bottom">
-          <HStack spacing={3} alignment="lastTextBaseline">
-            <Text modifiers={[font({ size: 28, weight: "semibold" })]}>
-              {count}
-            </Text>
+          <VStack alignment="leading" spacing={2}>
             <Text
               modifiers={[
-                font({ size: 14 }),
+                font({ size: 12 }),
                 foregroundStyle({ type: "hierarchical", style: "secondary" }),
               ]}
             >
-              entries / wk
+              avg
             </Text>
-          </HStack>
+            <HStack spacing={3} alignment="lastTextBaseline">
+              <Text modifiers={[font({ size: 28, weight: "semibold" })]}>
+                {avgCharCount}
+              </Text>
+              <Text
+                modifiers={[
+                  font({ size: 14 }),
+                  foregroundStyle({ type: "hierarchical", style: "secondary" }),
+                ]}
+              >
+                chars
+              </Text>
+            </HStack>
+          </VStack>
           <Spacer />
           <Chart
             data={chartData}
-            type="point"
+            type="bar"
             animate
             showGrid={false}
-            pointStyle={{ pointSize: 36 }}
             modifiers={[
               frame({ width: 90, height: 72 }),
               background(PlatformColor("systemGroupedBackground")),
