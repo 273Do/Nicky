@@ -12,7 +12,7 @@ reviews:
     drafts: false
 
   path_instructions:
-    - path: "**/*.ts,**/*.tsx"
+    - path: "**/*.{ts,tsx}"
       instructions: |
         # コーディング規約
         - 型定義は `interface` ではなく `type` を使う
