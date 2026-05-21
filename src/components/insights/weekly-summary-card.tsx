@@ -11,7 +11,6 @@ import {
   ZStack,
 } from "@expo/ui/swift-ui";
 import {
-  background,
   font,
   foregroundStyle,
   frame,
@@ -57,7 +56,7 @@ export function WeeklySummaryCard({ accentColor, entries }: Props) {
       />
       <VStack
         alignment="leading"
-        spacing={12}
+        spacing={20}
         modifiers={[padding({ horizontal: 16, vertical: 16 })]}
       >
         <HStack spacing={6}>
@@ -97,10 +96,7 @@ export function WeeklySummaryCard({ accentColor, entries }: Props) {
             animate
             showGrid={false}
             pointStyle={{ pointSize: 36 }}
-            modifiers={[
-              frame({ width: 90, height: 72 }),
-              background(PlatformColor("systemGroupedBackground")),
-            ]}
+            modifiers={[frame({ width: 90, height: 64 })]}
           />
         </HStack>
       </VStack>
