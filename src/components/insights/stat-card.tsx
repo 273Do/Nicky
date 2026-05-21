@@ -81,19 +81,29 @@ export function StatCard({
           </Text>
         </HStack>
         <Spacer />
-        <HStack spacing={3} alignment="lastTextBaseline">
-          <Text modifiers={[font({ size: 28, weight: "semibold" })]}>
-            {value}
-          </Text>
+        <VStack alignment="leading">
           <Text
             modifiers={[
               font({ size: 14 }),
               foregroundStyle({ type: "hierarchical", style: "secondary" }),
             ]}
           >
-            {unit}
+            Average
           </Text>
-        </HStack>
+          <HStack spacing={3} alignment="lastTextBaseline">
+            <Text modifiers={[font({ size: 28, weight: "semibold" })]}>
+              {value}
+            </Text>
+            <Text
+              modifiers={[
+                font({ size: 14 }),
+                foregroundStyle({ type: "hierarchical", style: "secondary" }),
+              ]}
+            >
+              {unit}
+            </Text>
+          </HStack>
+        </VStack>
       </VStack>
     </ZStack>
   );

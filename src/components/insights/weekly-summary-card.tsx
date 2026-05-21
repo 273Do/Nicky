@@ -66,7 +66,7 @@ export function WeeklySummaryCard({ timestamps, accentColor }: Props) {
               foregroundStyle(accentColor),
             ]}
           >
-            Weekly Summary
+            Total Entries
           </Text>
         </HStack>
         <Spacer />
@@ -81,7 +81,7 @@ export function WeeklySummaryCard({ timestamps, accentColor }: Props) {
                 foregroundStyle({ type: "hierarchical", style: "secondary" }),
               ]}
             >
-              件 / 週
+              entries / wk
             </Text>
           </HStack>
           <Spacer />
