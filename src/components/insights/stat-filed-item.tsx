@@ -1,7 +1,7 @@
-import { FieldType } from "@/core/constants";
 import { EntryDetailObj } from "@/db/queries/entries";
 import { FieldObj } from "@/db/schemas";
 
+import { StatCardLongText } from "./stat-card-long-text";
 import { StatCardText } from "./stat-card-text";
 
 export type FieldValueEntry = {
@@ -31,9 +31,11 @@ export function StatFieldItem({ field, accentColor, entries }: Props) {
 
   const shared = { label: field.label, accentColor, fieldValues };
 
-  switch (field.type as FieldType) {
+  switch (field.type) {
     case "text":
       return <StatCardText {...shared} />;
+    case "longText":
+      return <StatCardLongText {...shared} />;
   }
   // switch (field.type as FieldType) {
   //   case "text":
