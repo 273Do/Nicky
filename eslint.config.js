@@ -17,6 +17,16 @@ module.exports = defineConfig([
       "unused-imports": unusedImports,
     },
     rules: {
+      // const 以外の型アサーションを禁止
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "TSAsExpression:not([typeAnnotation.typeName.name='const'])",
+          message:
+            "Type assertions using 'as' are not allowed. Use type guards or proper type definitions instead ('as const' is permitted).",
+        },
+      ],
       // Import/未使用変数
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": "off",
