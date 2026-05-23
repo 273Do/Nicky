@@ -32,10 +32,13 @@ export type FieldDraftObj = Omit<FieldObj, "journalId" | "sortOrder">;
  */
 export type FieldWithSortObj = Omit<FieldObj, "journalId">;
 
+const isFieldType = (value: string): value is FieldType => value in FIELD_ICONS;
+
 /**
  * 全 FieldType の配列
  */
-export const FIELD_TYPES = Object.keys(FIELD_ICONS) as FieldType[];
+export const FIELD_TYPES: FieldType[] =
+  Object.keys(FIELD_ICONS).filter(isFieldType);
 
 /**
  * ジャーナルフィールドに関するフック

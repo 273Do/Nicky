@@ -53,7 +53,7 @@ export const buildPreviewEntry = (entry: EntryDetailObj): PreviewEntryObj => {
 
   // 1つめのフィールドをタイトルに設定し、値がなければ作成日にフォールバック
   const titleFromField = sorted[0]
-    ? formatFieldValue(sorted[0].value, sorted[0].field.type as FieldType)
+    ? formatFieldValue(sorted[0].value, sorted[0].field.type)
     : "";
   const title = titleFromField || formatDate(new Date(createdAt));
 
