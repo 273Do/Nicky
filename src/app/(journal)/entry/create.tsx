@@ -40,6 +40,7 @@ export default function EntryCreateScreen() {
               label: "Create New Entry",
               icon: { type: "sfSymbol", name: "checkmark" },
               tintColor: PlatformColor("systemIndigo"),
+              variant: "prominent",
               onPress: handleEntryCreate,
             },
           ],

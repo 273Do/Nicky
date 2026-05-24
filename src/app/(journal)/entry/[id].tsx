@@ -74,6 +74,7 @@ export default function EntryDetailScreen() {
                     label: "Save",
                     icon: { type: "sfSymbol", name: "checkmark" },
                     tintColor: PlatformColor("systemIndigo"),
+                    variant: "prominent",
                     onPress: handleSave,
                   },
                 ]

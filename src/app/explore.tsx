@@ -3,7 +3,6 @@ import { PlatformColor, View } from "react-native";
 import { Host, VStack } from "@expo/ui/swift-ui";
 
 import { AllformList } from "@/components/all-form-list";
-import ChartDemo from "@/components/chart-demo";
 
 export default function ExploreScreen() {
   return (
@@ -14,7 +13,6 @@ export default function ExploreScreen() {
       >
         <VStack>
           <AllformList />
-          <ChartDemo />
         </VStack>
       </Host>
     </View>

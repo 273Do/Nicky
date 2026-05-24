@@ -9,11 +9,11 @@ Nicky is a React Native journaling app built with Expo and Expo Router. It featu
 ## Development Commands
 
 ```bash
-pnpm expo run:ios        # Build and run on iOS simulator
-pnpm expo start --clear  # Start Expo dev server (clear cache)
-pnpm lint                # Run ESLint
-pnpm lint-fix            # Run ESLint with auto-fix
-pnpm typecheck           # TypeScript type check
+pnpm expo run:ios          # Build and run on iOS simulator
+pnpm expo start --clear    # Start Expo dev server (clear cache)
+pnpm lint                  # Run ESLint
+pnpm lint-fix              # Run ESLint with auto-fix
+pnpm typecheck             # TypeScript type check
 pnpm drizzle-kit generate  # Generate migration files from schema
 ```
 
@@ -39,9 +39,11 @@ src/app/
     _layout.tsx                # Stack — scoped to journal tab
     index.tsx                  # Journal list  /
     create.tsx                 # Create journal  /create
+    edit.tsx                   # Edit journal  /edit?journalId=...
     [id].tsx                   # Entry list  /[id]
     entry/
-      [id].tsx                 # Entry detail  /entry/[id]
+      create.tsx               # Create entry  /entry/create?journalId=...&journalName=...
+      [id].tsx                 # Entry detail  /entry/[id]?journalName=...
   explore.tsx                  # Report tab
 ```
 
@@ -66,14 +68,65 @@ Drizzle ORM + expo-sqlite. Schema is split by domain in `src/db/schemas/`:
 **Drizzle config notes:**
 - Schema files must not import React Native packages (`expo-crypto`, `expo-symbols` runtime imports) — drizzle-kit runs in Node.js. Use `import type` for RN types.
 - `$defaultFn` with `Crypto.randomUUID()` cannot be used in schema — generate IDs at the application layer instead.
+- SQLite column names in Drizzle are **camelCase** (e.g. `sortOrder`, not `sort_order`). When writing raw SQL in `onConflictDoUpdate`, quote them: `excluded."sortOrder"`.
+
+### `useLiveQuery` Reactivity Rules
+
+`useLiveQuery` from `drizzle-orm/expo-sqlite` **only watches the root table** of a query — it does NOT automatically detect changes to tables joined via `with:`. The second argument is just `useEffect` deps, not additional table watchers.
+
+**Pattern used in this codebase:** When a transaction modifies a related table (e.g. `fields`), also `touch` the root-table row so `useLiveQuery` re-runs:
+
+```ts
+// In updateJournal — touch entries.updatedAt so entry-list useLiveQuery detects the change
+await tx.update(entries).set({ updatedAt: Date.now() }).where(eq(entries.journalId, journalId));
+```
+
+This means:
+- `getEntriesQuery` (`entries` root) re-runs after any `fields` or `entry_values` change because those transactions touch `entries.updatedAt`
+- `getFieldsQuery` (`fields` root) re-runs directly when `fields` is written — no touch needed
+
+### Sub-component Pattern for Forms with `useRef` State
+
+Hooks that use `useRef` + an `initialized` flag (e.g. `useEntry`, `useJournalField`) only initialize once per mount. To ensure they pick up fresh data when switching to edit mode, **mount the form as a separate child component** rather than toggling visibility on the parent:
+
+```tsx
+// ✅ Correct — EntryEditForm mounts fresh each time editMode becomes true
+{editMode && <EntryEditForm entry={entry} onSave={...} />}
+
+// ❌ Wrong — form is always mounted; useRef init won't re-run with new data
+<EntryCreateView ... />  // toggled visible/hidden
+```
+
+This pattern is used in `entry/[id].tsx` (`EntryEditForm`) and `edit.tsx` (`JournalEditForm`).
+
+### Field Value Serialization
+
+All field values are stored as `text | null` in `entry_values.value`. Serialization/deserialization lives in `src/utils/entry/use-entry.ts`:
+- `serializeValue(FieldValue) → string | null` — converts to DB text
+- `deserializeValue(string | null, FieldType) → FieldValue` — converts from DB text
+- `FieldType` values: `"text" | "longText" | "number" | "media" | "check" | "date" | "time" | "location"`
+- Dates/times are stored as millisecond timestamps (`String(date.getTime())`)
+
+`buildEntryFormData` in `src/utils/entry/entry-form.ts` extracts fields (sorted by `sortOrder`) and initial values from an `EntryDetailObj`.
+
+### Entry Preview Pipeline
+
+`EntryDetailObj` (raw DB join) → `PreviewEntryObj` (display) via `buildPreviewEntry` in `src/utils/entry/preview.ts`:
+- First field value = title (falls back to formatted `createdAt`)
+- Remaining field values joined with spaces = preview (also used for search)
+- Entries grouped by month for the list view (`groupByMonth`)
+
+### Keyboard Dismiss Rule
+
+Always call `Keyboard.dismiss()` **before** any `async` save operation that triggers navigation. Skipping this causes a `RemoteTextInput` session crash on iOS when the keyboard is mid-input as the screen unmounts.
 
 ### Key Technologies
 
 | Package | Usage |
 |---|---|
 | `expo-router` | File-based routing, `useRouter`, `useLocalSearchParams` |
-| `@expo/ui/swift-ui` | SwiftUI components: `Host`, `ZStack`, `VStack`, `Grid`, `ScrollView`, `List`, `Section`, `Button`, `Image`, `Text`, `RoundedRectangle`, `ColorPicker`, `BottomSheet` |
-| `@expo/ui/swift-ui/modifiers` | `frame`, `padding`, `foregroundStyle`, `onTapGesture`, `listStyle`, `presentationDetents`, `environment`, `fixedSize` |
+| `@expo/ui/swift-ui` | SwiftUI components: `Host`, `ZStack`, `VStack`, `HStack`, `Spacer`, `Grid`, `ScrollView`, `List`, `Section`, `Button`, `Image`, `Text`, `RoundedRectangle`, `ColorPicker`, `BottomSheet`, `ContextMenu` |
+| `@expo/ui/swift-ui/modifiers` | `frame`, `padding`, `foregroundStyle`, `onTapGesture`, `listStyle`, `presentationDetents`, `environment`, `fixedSize`, `font`, `lineLimit` |
 | `expo-router/unstable-native-tabs` | `NativeTabs` — iOS native tab bar |
 | `expo-symbols` | `SymbolView` — SF Symbols in RN (non-SwiftUI) header components |
 | `expo-sqlite` + `drizzle-orm` | Local SQLite persistence |
@@ -89,6 +142,7 @@ Drizzle ORM + expo-sqlite. Schema is split by domain in `src/db/schemas/`:
 - Adaptive colors: use `PlatformColor("label")` directly — no need for `useColorScheme`
 - `fixedSize()` on a component prevents it from stretching in an HStack, allowing siblings to fill remaining space
 - Gradients: `RoundedRectangle` + `foregroundStyle({ type: "linearGradient", ... })` + `clipShape` on parent `ZStack`
+- Native navigation bar buttons: use `unstable_headerRightItems` on `Stack.Screen` (not `headerRight` + RN `Pressable`)
 
 ### Naming Conventions
 
@@ -104,3 +158,4 @@ Drizzle ORM + expo-sqlite. Schema is split by domain in `src/db/schemas/`:
 - **TypeScript:** strict mode enabled
 - **Formatter:** Prettier (enforced via ESLint)
 - **React Compiler:** enabled — do not manually add `useMemo`/`useCallback` unless there is a specific reason
+- **Event handler note:** extract `e.nativeEvent.text` synchronously before passing to async state updaters (React synthetic event pooling)

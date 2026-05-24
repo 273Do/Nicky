@@ -44,6 +44,7 @@ export default function JournalCreateScreen() {
               tintColor: formDisabled
                 ? PlatformColor("tertiaryLabel")
                 : PlatformColor("systemIndigo"),
+              variant: formDisabled ? undefined : "prominent",
               disabled: formDisabled,
               onPress: formDisabled ? () => {} : handleJournalCreate,
             },

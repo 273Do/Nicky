@@ -20,8 +20,8 @@ export default function AppTabs() {
           <NativeTabs.Trigger.Icon sf="books.vertical.fill" />
         </NativeTabs.Trigger>
 
-        <NativeTabs.Trigger name="explore">
-          <NativeTabs.Trigger.Label>Insite</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger name="insights">
+          <NativeTabs.Trigger.Label>Insights</NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon sf="waveform.path.ecg" />
         </NativeTabs.Trigger>
       </NativeTabs>

@@ -6,7 +6,6 @@ import { EntryLongText } from "@/components/field/entry-long-text";
 import { EntryMedia } from "@/components/field/entry-media";
 import { EntryText } from "@/components/field/entry-text";
 import { EntryTime } from "@/components/field/entry-time";
-import { FieldType } from "@/core/constants";
 import type { FieldObj } from "@/db/schemas";
 import { type FieldValue } from "@/utils/entry/use-entry";
 
@@ -39,19 +38,49 @@ export function EntryFieldItem({
     edit,
   };
 
-  switch (field.type as FieldType) {
+  switch (field.type) {
     case "text":
-      return <EntryText {...shared} defaultValue={value as string} />;
+      return (
+        <EntryText
+          {...shared}
+          defaultValue={typeof value === "string" ? value : undefined}
+        />
+      );
     case "longText":
-      return <EntryLongText {...shared} defaultValue={value as string} />;
+      return (
+        <EntryLongText
+          {...shared}
+          defaultValue={typeof value === "string" ? value : undefined}
+        />
+      );
     case "number":
-      return <EntryNumber {...shared} defaultValue={(value ?? 0) as number} />;
+      return (
+        <EntryNumber
+          {...shared}
+          defaultValue={typeof value === "number" ? value : undefined}
+        />
+      );
     case "check":
-      return <EntryCheck {...shared} defaultValue={value as boolean} />;
+      return (
+        <EntryCheck
+          {...shared}
+          defaultValue={typeof value === "boolean" ? value : undefined}
+        />
+      );
     case "date":
-      return <EntryDate {...shared} defaultValue={value as Date} />;
+      return (
+        <EntryDate
+          {...shared}
+          defaultValue={value instanceof Date ? value : undefined}
+        />
+      );
     case "time":
-      return <EntryTime {...shared} defaultValue={value as Date} />;
+      return (
+        <EntryTime
+          {...shared}
+          defaultValue={value instanceof Date ? value : undefined}
+        />
+      );
     case "media":
       return <EntryMedia {...shared} />;
     case "location":
