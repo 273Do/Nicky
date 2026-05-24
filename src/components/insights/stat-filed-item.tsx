@@ -9,7 +9,9 @@ import { StatCardText } from "./stat-card-text";
 import { StatCardTime } from "./stat-card-time";
 
 export type FieldValueEntry = {
+  /** エントリーの作成日時 */
   createdAt: number;
+  /** DB に格納されたフィールド値 */
   value: string | null;
 };
 

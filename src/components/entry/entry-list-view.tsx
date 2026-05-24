@@ -100,7 +100,7 @@ export function EntryListView({
       >
         <GlassView
           glassEffectStyle="regular"
-          tintColor={PlatformColor("systemGra1y3").toString()}
+          tintColor={PlatformColor("systemGray3").toString()}
           isInteractive
           style={styles.glassButton}
         >
