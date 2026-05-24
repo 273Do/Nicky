@@ -21,6 +21,7 @@ import {
 import { SFSymbol } from "expo-symbols";
 
 import { JOURNAL_ICONS } from "@/core/constants";
+import { chunkArray } from "@/utils/chunk-array";
 
 type Props = {
   /** ボトムシートの表示状態 */
@@ -51,10 +52,7 @@ export function IconSelectBottomSheet({
   onSelectIcon,
   onSelectColor,
 }: Props) {
-  const rows: SFSymbol[][] = [];
-  for (let i = 0; i < JOURNAL_ICONS.length; i += COLUMNS) {
-    rows.push(JOURNAL_ICONS.slice(i, i + COLUMNS));
-  }
+  const rows = chunkArray(JOURNAL_ICONS, COLUMNS);
 
   return (
     <BottomSheet

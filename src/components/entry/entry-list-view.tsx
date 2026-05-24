@@ -2,18 +2,13 @@ import { PlatformColor, Pressable, StyleSheet, View } from "react-native";
 
 import { Host, List, Section } from "@expo/ui/swift-ui";
 import { frame, headerProminence } from "@expo/ui/swift-ui/modifiers";
-import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { GlassView } from "expo-glass-effect";
 import { useRouter } from "expo-router";
 import { SymbolView } from "expo-symbols";
 
-import { deleteEntry, getEntriesQuery } from "@/db/queries/entries";
+import { deleteEntry } from "@/db/queries/entries";
 import { type SortKey } from "@/utils/entry/consts";
-import {
-  buildPreviewEntry,
-  groupByMonth,
-  sortEntries,
-} from "@/utils/entry/preview";
+import { useEntryList } from "@/utils/entry/use-entry-list";
 
 import { EntryRow } from "./entry-row";
 
@@ -39,23 +34,7 @@ export function EntryListView({
 }: Props) {
   const router = useRouter();
 
-  const { data: entries } = useLiveQuery(getEntriesQuery(journalId));
-
-  // エントリープレビュー一覧に変換
-  const previewEntries = entries.map(buildPreviewEntry);
-
-  // 検索
-  const filtered = searchText
-    ? previewEntries.filter(
-        (e) => e.title.includes(searchText) || e.preview.includes(searchText),
-      )
-    : previewEntries;
-
-  // 並び替え
-  const sorted = sortEntries(filtered, sortKey);
-
-  // 月毎にグループ分け
-  const grouped = groupByMonth(sorted);
+  const { grouped } = useEntryList({ journalId, searchText, sortKey });
 
   return (
     <View style={{ flex: 1 }}>

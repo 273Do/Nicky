@@ -2,22 +2,15 @@ import { PlatformColor, View } from "react-native";
 
 import { Grid, Host, ScrollView, VStack } from "@expo/ui/swift-ui";
 import { padding } from "@expo/ui/swift-ui/modifiers";
-import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { JournalCard } from "@/components/journal/journal-card";
-import { getJournalsQuery } from "@/db/queries/journals";
-import { chunkArray } from "@/utils/chunk-array";
+import { useJournalList } from "@/utils/journal/use-journal-list";
 
 /**
  * ジャーナル一覧画面
  */
 export function JournalView() {
-  const { data } = useLiveQuery(getJournalsQuery);
-
-  const journals = data ?? [];
-
-  // ジャーナルを2列にまとめる
-  const rows = chunkArray(journals, 2);
+  const { rows } = useJournalList();
 
   return (
     <View style={{ flex: 1 }}>

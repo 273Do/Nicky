@@ -13,6 +13,7 @@ import { frame, listStyle } from "@expo/ui/swift-ui/modifiers";
 
 import { EntryDetailObj } from "@/db/queries/entries";
 import { formatDate } from "@/utils/date";
+import { deserializeValue } from "@/utils/entry/use-entry";
 
 import { EntryFieldItem } from "./entry-field-item";
 
@@ -60,7 +61,11 @@ export function EntryDetailView({ entry }: Props) {
             }
           >
             {sorted.map((v) => (
-              <EntryFieldItem key={v.id} field={v.field} value={v.value} />
+              <EntryFieldItem
+                key={v.id}
+                field={v.field}
+                value={deserializeValue(v.value, v.field.type)}
+              />
             ))}
           </Section>
         </List>

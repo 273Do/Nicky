@@ -1,10 +1,11 @@
 import { useState } from "react";
 
-import { DatePicker, Text, VStack } from "@expo/ui/swift-ui";
-import { font, foregroundStyle } from "@expo/ui/swift-ui/modifiers";
+import { DatePicker, Text } from "@expo/ui/swift-ui";
 
 import { FIELD_LABELS } from "@/core/constants";
 import { formatDate } from "@/utils/date";
+
+import { FieldWrapper } from "./field-wrapper";
 
 type Props = {
   /** フィールドラベル */
@@ -34,15 +35,7 @@ export function EntryDate({
   };
 
   return (
-    <VStack alignment="leading" spacing={4}>
-      <Text
-        modifiers={[
-          font({ size: 14, weight: "bold" }),
-          foregroundStyle({ type: "hierarchical", style: "secondary" }),
-        ]}
-      >
-        {label}
-      </Text>
+    <FieldWrapper label={label}>
       {edit ? (
         <DatePicker
           title={FIELD_LABELS.date}
@@ -53,6 +46,6 @@ export function EntryDate({
       ) : (
         <Text>{formatDate(date)}</Text>
       )}
-    </VStack>
+    </FieldWrapper>
   );
 }

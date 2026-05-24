@@ -1,9 +1,11 @@
 import { useRef, useState } from "react";
 
-import { Text, TextField, type TextFieldRef, VStack } from "@expo/ui/swift-ui";
-import { font, foregroundStyle, frame } from "@expo/ui/swift-ui/modifiers";
+import { Text, TextField, type TextFieldRef } from "@expo/ui/swift-ui";
+import { frame } from "@expo/ui/swift-ui/modifiers";
 
 import { FIELD_LABELS } from "@/core/constants";
+
+import { FieldWrapper } from "./field-wrapper";
 
 type Props = {
   /** フィールドラベル */
@@ -28,39 +30,34 @@ export function EntryNumber({
   const [number, setNumber] = useState<number | undefined>(defaultValue);
   const numberFieldRef = useRef<TextFieldRef>(null);
 
+  /**
+   * 値が変更された時に発火する関数
+   * @param v 数値
+   */
+  const handleValueChange = (v: string) => {
+    const cleaned = v.replace(/[^0-9.]/g, "").replace(/^(\d*\.?\d*).*/, "$1");
+
+    if (cleaned !== v) numberFieldRef.current?.setText(cleaned);
+
+    const parsed = cleaned === "" || cleaned === "." ? 0 : parseFloat(cleaned);
+
+    setNumber(parsed);
+    onValueChange?.(parsed);
+  };
+
   return (
-    <VStack alignment="leading" spacing={4}>
-      <Text
-        modifiers={[
-          font({ size: 14, weight: "bold" }),
-          foregroundStyle({
-            type: "hierarchical",
-            style: "secondary",
-          }),
-        ]}
-      >
-        {label}
-      </Text>
+    <FieldWrapper label={label}>
       {edit ? (
         <TextField
           ref={numberFieldRef}
           placeholder={FIELD_LABELS.number}
-          defaultValue={String(number)}
-          onValueChange={(v) => {
-            const cleaned = v
-              .replace(/[^0-9.]/g, "")
-              .replace(/^(\d*\.?\d*).*/, "$1");
-            if (cleaned !== v) numberFieldRef.current?.setText(cleaned);
-            const parsed =
-              cleaned === "" || cleaned === "." ? 0 : parseFloat(cleaned);
-            setNumber(parsed);
-            onValueChange?.(parsed);
-          }}
+          defaultValue={String(number ?? "")}
+          onValueChange={handleValueChange}
           modifiers={[frame({ maxWidth: 9999 })]}
         />
       ) : (
-        <Text>{String(number)}</Text>
+        <Text>{String(number ?? "")}</Text>
       )}
-    </VStack>
+    </FieldWrapper>
   );
 }

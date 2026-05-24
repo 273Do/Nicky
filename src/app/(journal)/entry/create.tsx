@@ -18,7 +18,7 @@ export default function EntryCreateScreen() {
     journalName: string;
   }>();
 
-  const { data: fields } = useLiveQuery(getFieldsQuery(journalId));
+  const { data: fields } = useLiveQuery(getFieldsQuery(journalId), [journalId]);
   const { valuesRef, setValue, createEntry } = useEntry(fields);
 
   const handleEntryCreate = async () => {
