@@ -67,7 +67,7 @@ export function StatCardLongText({ label, accentColor, fieldValues }: Props) {
       />
       <VStack
         alignment="leading"
-        spacing={20}
+        spacing={16}
         modifiers={[padding({ horizontal: 16, vertical: 16 })]}
       >
         <HStack spacing={6}>
@@ -86,7 +86,7 @@ export function StatCardLongText({ label, accentColor, fieldValues }: Props) {
             {label}
           </Text>
         </HStack>
-        <HStack alignment="bottom">
+        <HStack alignment="lastTextBaseline">
           <VStack alignment="leading" spacing={2}>
             <Text
               modifiers={[

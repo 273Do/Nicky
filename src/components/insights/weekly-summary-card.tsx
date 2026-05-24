@@ -56,7 +56,7 @@ export function WeeklySummaryCard({ accentColor, entries }: Props) {
       />
       <VStack
         alignment="leading"
-        spacing={20}
+        spacing={16}
         modifiers={[padding({ horizontal: 16, vertical: 16 })]}
       >
         <HStack spacing={6}>
@@ -75,7 +75,7 @@ export function WeeklySummaryCard({ accentColor, entries }: Props) {
             Total Entries
           </Text>
         </HStack>
-        <HStack alignment="bottom">
+        <HStack alignment="lastTextBaseline">
           <HStack spacing={3} alignment="lastTextBaseline">
             <Text modifiers={[font({ size: 28, weight: "semibold" })]}>
               {count}

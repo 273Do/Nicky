@@ -27,9 +27,6 @@ export function StatsList({ activeJournalId, accentColor }: Props) {
     activeJournalId,
   ]);
 
-  console.log(entries);
-  console.log(fields);
-
   return (
     <>
       <Text

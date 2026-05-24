@@ -40,6 +40,12 @@ const isFieldType = (value: string): value is FieldType => value in FIELD_ICONS;
 export const FIELD_TYPES: FieldType[] =
   Object.keys(FIELD_ICONS).filter(isFieldType);
 
+const defaultMeta: JournalMetaObj = {
+  name: "",
+  color: "#6d7ce1",
+  icon: JOURNAL_ICONS[0],
+};
+
 /**
  * ジャーナルフィールドに関するフック
  * @param meta ジャーナルのメタ情報(編集用)
@@ -64,7 +70,7 @@ export const useJournalField = (initialData?: {
     initialData?.fields ?? [],
   );
   const [meta, setMeta] = useState<JournalMetaObj>(
-    initialData?.meta ?? { name: "", color: "#007AFF", icon: JOURNAL_ICONS[0] },
+    initialData?.meta ?? defaultMeta,
   );
 
   /**
