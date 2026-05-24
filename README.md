@@ -1,3 +1,9 @@
+# Nicky
+
+🚧 Nicky is a native iOS mobile app that lets you customize, manage, and share your own personal journal.
+
+<img src="docs/screenshots/app-images.svg" />
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
