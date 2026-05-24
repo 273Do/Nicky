@@ -30,27 +30,33 @@ export function EntryNumber({
   const [number, setNumber] = useState<number | undefined>(defaultValue);
   const numberFieldRef = useRef<TextFieldRef>(null);
 
+  /**
+   * 値が変更された時に発火する関数
+   * @param v 数値
+   */
+  const handleValueChange = (v: string) => {
+    const cleaned = v.replace(/[^0-9.]/g, "").replace(/^(\d*\.?\d*).*/, "$1");
+
+    if (cleaned !== v) numberFieldRef.current?.setText(cleaned);
+
+    const parsed = cleaned === "" || cleaned === "." ? 0 : parseFloat(cleaned);
+
+    setNumber(parsed);
+    onValueChange?.(parsed);
+  };
+
   return (
     <FieldWrapper label={label}>
       {edit ? (
         <TextField
           ref={numberFieldRef}
           placeholder={FIELD_LABELS.number}
-          defaultValue={String(number)}
-          onValueChange={(v) => {
-            const cleaned = v
-              .replace(/[^0-9.]/g, "")
-              .replace(/^(\d*\.?\d*).*/, "$1");
-            if (cleaned !== v) numberFieldRef.current?.setText(cleaned);
-            const parsed =
-              cleaned === "" || cleaned === "." ? 0 : parseFloat(cleaned);
-            setNumber(parsed);
-            onValueChange?.(parsed);
-          }}
+          defaultValue={String(number ?? "")}
+          onValueChange={handleValueChange}
           modifiers={[frame({ maxWidth: 9999 })]}
         />
       ) : (
-        <Text>{String(number)}</Text>
+        <Text>{String(number ?? "")}</Text>
       )}
     </FieldWrapper>
   );
