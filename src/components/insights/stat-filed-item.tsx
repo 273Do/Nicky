@@ -1,8 +1,12 @@
 import { EntryDetailObj } from "@/db/queries/entries";
 import { FieldObj } from "@/db/schemas";
 
+import { StatCardCheck } from "./stat-card-check";
+import { StatCardDate } from "./stat-card-date";
 import { StatCardLongText } from "./stat-card-long-text";
+import { StatCardNumber } from "./stat-card-number";
 import { StatCardText } from "./stat-card-text";
+import { StatCardTime } from "./stat-card-time";
 
 export type FieldValueEntry = {
   createdAt: number;
@@ -36,23 +40,13 @@ export function StatFieldItem({ field, accentColor, entries }: Props) {
       return <StatCardText {...shared} />;
     case "longText":
       return <StatCardLongText {...shared} />;
+    case "number":
+      return <StatCardNumber {...shared} />;
+    case "check":
+      return <StatCardCheck {...shared} />;
+    case "date":
+      return <StatCardDate {...shared} />;
+    case "time":
+      return <StatCardTime {...shared} />;
   }
-  // switch (field.type as FieldType) {
-  //   case "text":
-  //     return <EntryText {...shared} defaultValue={value as string} />;
-  //   case "longText":
-  //     return <EntryLongText {...shared} defaultValue={value as string} />;
-  //   case "number":
-  //     return <EntryNumber {...shared} defaultValue={(value ?? 0) as number} />;
-  //   case "check":
-  //     return <EntryCheck {...shared} defaultValue={value as boolean} />;
-  //   case "date":
-  //     return <EntryDate {...shared} defaultValue={value as Date} />;
-  //   case "time":
-  //     return <EntryTime {...shared} defaultValue={value as Date} />;
-  //   case "media":
-  //     return <EntryMedia {...shared} />;
-  //   case "location":
-  //     return <EntryLocation {...shared} />;
-  // }
 }
