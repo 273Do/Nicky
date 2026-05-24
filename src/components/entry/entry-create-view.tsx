@@ -32,7 +32,7 @@ export function EntryCreateView({
 }: Props) {
   const now = Date.now();
 
-  const { data: fields } = useLiveQuery(getFieldsQuery(id));
+  const { data: fields } = useLiveQuery(getFieldsQuery(id), [id]);
 
   return (
     <View style={{ flex: 1 }}>

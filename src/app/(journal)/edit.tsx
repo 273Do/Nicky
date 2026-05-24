@@ -93,7 +93,9 @@ function JournalEditForm({ journal }: FormProps) {
  */
 export default function JournalEditScreen() {
   const { journalId } = useLocalSearchParams<{ journalId: string }>();
-  const { data: journal } = useLiveQuery(getJournalDetailQuery(journalId));
+  const { data: journal } = useLiveQuery(getJournalDetailQuery(journalId), [
+    journalId,
+  ]);
 
   return <>{journal && <JournalEditForm journal={journal} />}</>;
 }
