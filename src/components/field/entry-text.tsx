@@ -1,7 +1,9 @@
-import { Text, TextField, VStack } from "@expo/ui/swift-ui";
-import { font, foregroundStyle, frame } from "@expo/ui/swift-ui/modifiers";
+import { Text, TextField } from "@expo/ui/swift-ui";
+import { frame } from "@expo/ui/swift-ui/modifiers";
 
 import { FIELD_LABELS } from "@/core/constants";
+
+import { FieldWrapper } from "./field-wrapper";
 
 type Props = {
   /** フィールドラベル */
@@ -24,18 +26,7 @@ export function EntryText({
   edit = false,
 }: Props) {
   return (
-    <VStack alignment="leading" spacing={4}>
-      <Text
-        modifiers={[
-          font({ size: 14, weight: "bold" }),
-          foregroundStyle({
-            type: "hierarchical",
-            style: "secondary",
-          }),
-        ]}
-      >
-        {label}
-      </Text>
+    <FieldWrapper label={label}>
       {edit ? (
         <TextField
           placeholder={FIELD_LABELS.text}
@@ -46,6 +37,6 @@ export function EntryText({
       ) : (
         <Text>{defaultValue}</Text>
       )}
-    </VStack>
+    </FieldWrapper>
   );
 }
