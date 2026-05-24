@@ -23,7 +23,9 @@ export function useEntryList({
   searchText = "",
   sortKey = "dateDesc",
 }: Params) {
-  const { data: entries } = useLiveQuery(getEntriesQuery(journalId));
+  const { data: entries } = useLiveQuery(getEntriesQuery(journalId), [
+    journalId,
+  ]);
 
   const previewEntries = entries.map(buildPreviewEntry);
 

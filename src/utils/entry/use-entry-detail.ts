@@ -16,7 +16,7 @@ import { useEntry } from "./use-entry";
  * @param entryId エントリー id
  */
 export function useEntryDetail(entryId: string) {
-  const { data: entry } = useLiveQuery(getEntryDetailQuery(entryId));
+  const { data: entry } = useLiveQuery(getEntryDetailQuery(entryId), [entryId]);
 
   const { fields, initialValues } = entry
     ? buildEntryFormData(entry)
