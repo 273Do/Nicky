@@ -1,18 +1,11 @@
 import { useState } from "react";
-import { Keyboard, PlatformColor } from "react-native";
+import { PlatformColor } from "react-native";
 
-import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 import { EntryCreateView } from "@/components/entry/entry-create-view";
 import { EntryDetailView } from "@/components/entry/entry-detail";
-import {
-  bookmarkEntry,
-  deleteEntry,
-  getEntryDetailQuery,
-} from "@/db/queries/entries";
-import { buildEntryFormData } from "@/utils/entry/entry-form";
-import { useEntry } from "@/utils/entry/use-entry";
+import { useEntryDetail } from "@/utils/entry/use-entry-detail";
 
 /**
  * エントリー詳細
@@ -32,26 +25,16 @@ export default function EntryDetailScreen() {
 
   const [editMode, setEditMode] = useState<boolean>(Boolean(edit));
 
-  const { data: entry } = useLiveQuery(getEntryDetailQuery(entryId));
-
-  const { fields, initialValues } = entry
-    ? buildEntryFormData(entry)
-    : { fields: [], initialValues: null };
-
-  const { valuesRef, setValue, updateEntry } = useEntry(fields, initialValues);
+  const { entry, valuesRef, setValue, save, bookmark, remove } =
+    useEntryDetail(entryId);
 
   const handleSave = async () => {
-    Keyboard.dismiss();
-    await updateEntry(entryId);
+    await save();
     setEditMode(false);
   };
 
-  const handleBookmark = async () => {
-    if (entry) await bookmarkEntry(entry.id, !entry.bookmark);
-  };
-
   const handleDelete = async () => {
-    await deleteEntry(entryId);
+    await remove();
     router.back();
   };
 
@@ -94,7 +77,7 @@ export default function EntryDetailScreen() {
                               : "bookmark",
                           },
                           label: entry?.bookmark ? "Unbookmark" : "Bookmark",
-                          onPress: handleBookmark,
+                          onPress: bookmark,
                         },
                         {
                           type: "action",
