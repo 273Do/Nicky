@@ -10,8 +10,6 @@ import { fields } from "./fields";
 import { journals } from "./journals";
 
 /**
-
-/**
  * エントリーテーブル
  */
 export const entries = sqliteTable("entries", {

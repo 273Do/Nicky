@@ -30,7 +30,7 @@ export function EntryLocation({ label, edit = false }: Props) {
       </Text>
       {edit ? (
         <HStack>
-          <Text>Media</Text>
+          <Text>Location</Text>
           <Spacer />
           <Button
             modifiers={[
@@ -61,7 +61,7 @@ export function EntryLocation({ label, edit = false }: Props) {
               foregroundStyle({ type: "hierarchical", style: "tertiary" }),
             ]}
           >
-            未設定
+            Not set
           </Text>
         </HStack>
       )}

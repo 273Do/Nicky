@@ -62,9 +62,9 @@ function JournalEditForm({ journal }: FormProps) {
           headerLargeTitleEnabled: false,
           unstable_headerRightItems: () => [
             {
-              type: "button" as const,
+              type: "button",
               label: "Save",
-              icon: { type: "sfSymbol" as const, name: "checkmark" },
+              icon: { type: "sfSymbol", name: "checkmark" },
               tintColor: formDisabled
                 ? PlatformColor("tertiaryLabel")
                 : PlatformColor("systemIndigo"),
