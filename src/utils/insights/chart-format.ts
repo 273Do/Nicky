@@ -59,7 +59,7 @@ export const chartDateFormat = (
 };
 
 /**
- * 過去7日間のフィールド値を棒グラフ用にフォーマットする関数
+ * 数値フィールドの値を棒グラフ用にフォーマット（1日の平均値）
  * @param fieldValues フィールド値一覧
  * @param accentColor 今日のバーに使うアクセントカラー
  */
@@ -101,6 +101,8 @@ export const chartNumberFormat = (
 
 /**
  * チェックフィールドの値を棒グラフ用にフォーマット（1日のチェック数）
+ * @param fieldValues フィールド値一覧
+ * @param accentColor 今日のバーに使うアクセントカラー
  */
 export const chartCheckFormat = (
   fieldValues: FieldValueEntry[],
@@ -136,6 +138,8 @@ export const chartCheckFormat = (
 /**
  * 日付・時刻フィールドの値を散布図用にフォーマット
  * y軸は時間（0〜24の小数）
+ * @param fieldValues フィールド値一覧
+ * @param accentColor 今日のポイントに使うアクセントカラー
  */
 export const chartTimeScatterFormat = (
   fieldValues: FieldValueEntry[],

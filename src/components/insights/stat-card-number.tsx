@@ -26,8 +26,11 @@ import { chartNumberFormat } from "@/utils/insights/chart-format";
 import { FieldValueEntry } from "./stat-filed-item";
 
 type Props = {
+  /** ラベル */
   label: string;
+  /** アクセントカラー */
   accentColor: string;
+  /** フィールド値一覧 */
   fieldValues: FieldValueEntry[];
 };
 
