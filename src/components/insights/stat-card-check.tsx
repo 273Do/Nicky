@@ -114,10 +114,10 @@ export function StatCardCheck({ label, accentColor, fieldValues }: Props) {
           <Spacer />
           <Chart
             data={chartData}
-            type="bar"
+            type="point"
             animate
             showGrid={false}
-            barStyle={{ cornerRadius: 3 }}
+            pointStyle={{ pointSize: 36 }}
             modifiers={[frame({ width: 90, height: 64 })]}
           />
         </HStack>
