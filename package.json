@@ -15,7 +15,7 @@
     "prepare": "vp config"
   },
   "dependencies": {
-    "@expo/ui": "~55.0.12",
+    "@expo/ui": "~55.0.17",
     "@react-navigation/bottom-tabs": "^7.15.5",
     "@react-navigation/elements": "^2.9.10",
     "@react-navigation/native": "^7.1.33",
