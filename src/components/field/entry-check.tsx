@@ -24,12 +24,7 @@ type Props = {
 /**
  * チェックフィールド
  */
-export function EntryCheck({
-  label,
-  defaultValue = false,
-  onValueChange,
-  edit = false,
-}: Props) {
+export function EntryCheck({ label, defaultValue = false, onValueChange, edit = false }: Props) {
   const [check, setCheck] = useState<boolean>(defaultValue);
 
   const handlePress = () => {
@@ -52,11 +47,7 @@ export function EntryCheck({
       <HStack spacing={12}>
         <Image
           systemName={check ? "checkmark.circle.fill" : "circle"}
-          color={
-            check
-              ? PlatformColor("systemIndigo")
-              : PlatformColor("tertiaryLabel")
-          }
+          color={check ? PlatformColor("systemIndigo") : PlatformColor("tertiaryLabel")}
           size={22}
         />
         <Text

@@ -15,20 +15,14 @@ type Params = {
  * エントリー一覧を取得し、フィルターまで行うフック
  */
 export function useEntryList({ journalId, bookmarkOnly = false }: Params) {
-  const { data: entries } = useLiveQuery(getEntriesQuery(journalId), [
-    journalId,
-  ]);
+  const { data: entries } = useLiveQuery(getEntriesQuery(journalId), [journalId]);
 
   const previewEntries = entries.map(buildPreviewEntry);
 
-  const filtered = bookmarkOnly
-    ? previewEntries.filter((e) => e.bookmark)
-    : previewEntries;
+  const filtered = bookmarkOnly ? previewEntries.filter((e) => e.bookmark) : previewEntries;
 
   // デフォルトは新しい順
-  const sorted = [...filtered].sort(
-    (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
-  );
+  const sorted = [...filtered].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
   return { entries: sorted };
 }

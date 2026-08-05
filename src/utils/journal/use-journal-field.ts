@@ -4,10 +4,7 @@ import * as Crypto from "expo-crypto";
 import { SFSymbol } from "expo-symbols";
 
 import { FIELD_ICONS, FieldType, JOURNAL_ICONS } from "@/core/constants";
-import {
-  storeJournal,
-  updateJournal as updateJournalQuery,
-} from "@/db/queries/journals";
+import { storeJournal, updateJournal as updateJournalQuery } from "@/db/queries/journals";
 import { FieldObj, JournalObj } from "@/db/schemas";
 
 /**
@@ -37,8 +34,7 @@ const isFieldType = (value: string): value is FieldType => value in FIELD_ICONS;
 /**
  * 全 FieldType の配列
  */
-export const FIELD_TYPES: FieldType[] =
-  Object.keys(FIELD_ICONS).filter(isFieldType);
+export const FIELD_TYPES: FieldType[] = Object.keys(FIELD_ICONS).filter(isFieldType);
 
 const defaultMeta: JournalMetaObj = {
   name: "",
@@ -66,12 +62,8 @@ export const useJournalField = (initialData?: {
   meta: JournalMetaObj;
   fields: FieldDraftObj[];
 }) => {
-  const [fields, setFields] = useState<FieldDraftObj[]>(
-    initialData?.fields ?? [],
-  );
-  const [meta, setMeta] = useState<JournalMetaObj>(
-    initialData?.meta ?? defaultMeta,
-  );
+  const [fields, setFields] = useState<FieldDraftObj[]>(initialData?.fields ?? []);
+  const [meta, setMeta] = useState<JournalMetaObj>(initialData?.meta ?? defaultMeta);
 
   /**
    * 新規フィールドを追加する
@@ -93,9 +85,7 @@ export const useJournalField = (initialData?: {
    */
   const renameField = (id: string, newLabel: string): void => {
     setFields((prev) =>
-      prev.map((field) =>
-        field.id === id ? { ...field, label: newLabel } : field,
-      ),
+      prev.map((field) => (field.id === id ? { ...field, label: newLabel } : field)),
     );
   };
 

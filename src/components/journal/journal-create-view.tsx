@@ -24,10 +24,7 @@ import {
 
 import { FIELD_ICONS, FIELD_LABELS, FieldType } from "@/core/constants";
 import { isValidColor } from "@/utils/journal/color";
-import {
-  JournalMetaObj,
-  type FieldDraftObj,
-} from "@/utils/journal/use-journal-field";
+import { JournalMetaObj, type FieldDraftObj } from "@/utils/journal/use-journal-field";
 
 import { FieldBottomSheet } from "./field-bottom-sheet";
 import { IconSelectBottomSheet } from "./icon-select-bottom-sheet";
@@ -88,9 +85,7 @@ export function JournalCreateView({
               <ZStack
                 modifiers={[
                   frame({ width: 32, height: 32 }),
-                  onTapGesture(() =>
-                    setShowSheet((prev) => ({ ...prev, icon: true })),
-                  ),
+                  onTapGesture(() => setShowSheet((prev) => ({ ...prev, icon: true }))),
                 ]}
               >
                 <RoundedRectangle
@@ -119,11 +114,7 @@ export function JournalCreateView({
           <Section title="Fields">
             <List.ForEach onMove={moveField} onDelete={deleteField}>
               {fields.map((field) => (
-                <HStack
-                  key={field.id}
-                  spacing={16}
-                  modifiers={[listRowInsets({ leading: 16 })]}
-                >
+                <HStack key={field.id} spacing={16} modifiers={[listRowInsets({ leading: 16 })]}>
                   <Image
                     systemName={FIELD_ICONS[field.type]}
                     color={PlatformColor("systemIndigo")}
@@ -141,10 +132,7 @@ export function JournalCreateView({
                     systemName="line.3.horizontal"
                     color={PlatformColor("tertiaryLabel")}
                     size={22}
-                    modifiers={[
-                      frame({ width: 28 }),
-                      padding({ trailing: 14 }),
-                    ]}
+                    modifiers={[frame({ width: 28 }), padding({ trailing: 14 })]}
                   />
                 </HStack>
               ))}
@@ -161,18 +149,14 @@ export function JournalCreateView({
         {/* フィールド追加ボトムシート */}
         <FieldBottomSheet
           isPresented={showSheet.field}
-          onIsPresentedChange={(v) =>
-            setShowSheet((prev) => ({ ...prev, field: v }))
-          }
+          onIsPresentedChange={(v) => setShowSheet((prev) => ({ ...prev, field: v }))}
           onAdd={addField}
         />
 
         {/* アイコン選択ボトムシート */}
         <IconSelectBottomSheet
           isPresented={showSheet.icon}
-          onIsPresentedChange={(v) =>
-            setShowSheet((prev) => ({ ...prev, icon: v }))
-          }
+          onIsPresentedChange={(v) => setShowSheet((prev) => ({ ...prev, icon: v }))}
           selectedIcon={meta.icon}
           selectedColor={meta.color}
           onSelectIcon={(icon) => setMeta((prev) => ({ ...prev, icon }))}

@@ -19,12 +19,7 @@ type Props = {
 /**
  * テキストフィールド
  */
-export function EntryText({
-  label,
-  defaultValue = "",
-  onValueChange,
-  edit = false,
-}: Props) {
+export function EntryText({ label, defaultValue = "", onValueChange, edit = false }: Props) {
   return (
     <FieldWrapper label={label}>
       {edit ? (

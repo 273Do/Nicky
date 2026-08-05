@@ -24,12 +24,7 @@ type Props = {
 /**
  * エントリー作成画面
  */
-export function EntryCreateView({
-  id,
-  values,
-  setValue,
-  createdAt = undefined,
-}: Props) {
+export function EntryCreateView({ id, values, setValue, createdAt }: Props) {
   const now = Date.now();
 
   const { data: fields } = useLiveQuery(getFieldsQuery(id), [id]);
@@ -40,12 +35,7 @@ export function EntryCreateView({
         style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}
         useViewportSizeMeasurement
       >
-        <List
-          modifiers={[
-            frame({ maxWidth: 9999, maxHeight: 9999 }),
-            listStyle("plain"),
-          ]}
-        >
+        <List modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 }), listStyle("plain")]}>
           <Section title={createdAt ? formatDate(createdAt) : formatDate(now)}>
             {fields.map((field) => (
               <EntryFieldItem

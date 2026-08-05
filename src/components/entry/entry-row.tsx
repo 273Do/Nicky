@@ -1,14 +1,6 @@
 import { PlatformColor } from "react-native";
 
-import {
-  Button,
-  ContextMenu,
-  HStack,
-  Image,
-  Spacer,
-  Text,
-  VStack,
-} from "@expo/ui/swift-ui";
+import { Button, ContextMenu, HStack, Image, Spacer, Text, VStack } from "@expo/ui/swift-ui";
 import { font, foregroundStyle, lineLimit } from "@expo/ui/swift-ui/modifiers";
 import { useRouter } from "expo-router";
 
@@ -34,37 +26,21 @@ export function EntryRow({ journalName, entry }: Props) {
     <ContextMenu>
       <ContextMenu.Trigger>
         <Button
-          modifiers={[
-            foregroundStyle({ type: "hierarchical", style: "primary" }),
-          ]}
-          onPress={() =>
-            router.push(
-              `/(journal)/entry/${entry.id}?journalName=${journalName}`,
-            )
-          }
+          modifiers={[foregroundStyle({ type: "hierarchical", style: "primary" })]}
+          onPress={() => router.push(`/(journal)/entry/${entry.id}?journalName=${journalName}`)}
         >
           <VStack alignment="leading" spacing={2}>
             <HStack alignment="center" spacing={6}>
-              <Text
-                modifiers={[font({ size: 18, weight: "bold" }), lineLimit(1)]}
-              >
+              <Text modifiers={[font({ size: 18, weight: "bold" }), lineLimit(1)]}>
                 {entry.title}
               </Text>
               <Spacer />
               {entry.bookmark && (
-                <Image
-                  systemName="bookmark.fill"
-                  size={14}
-                  color={PlatformColor("systemIndigo")}
-                />
+                <Image systemName="bookmark.fill" size={14} color={PlatformColor("systemIndigo")} />
               )}
             </HStack>
-            <Text modifiers={[font({ size: 14 }), secondary, lineLimit(1)]}>
-              {entry.preview}
-            </Text>
-            <Text modifiers={[font({ size: 13 }), secondary]}>
-              {formatDate(entry.createdAt)}
-            </Text>
+            <Text modifiers={[font({ size: 14 }), secondary, lineLimit(1)]}>{entry.preview}</Text>
+            <Text modifiers={[font({ size: 13 }), secondary]}>{formatDate(entry.createdAt)}</Text>
           </VStack>
         </Button>
       </ContextMenu.Trigger>
@@ -73,9 +49,7 @@ export function EntryRow({ journalName, entry }: Props) {
           label="Edit"
           systemImage="ellipsis.circle"
           onPress={() =>
-            router.push(
-              `/(journal)/entry/${entry.id}?journalName=${journalName}&edit=true`,
-            )
+            router.push(`/(journal)/entry/${entry.id}?journalName=${journalName}&edit=true`)
           }
         />
         <Button

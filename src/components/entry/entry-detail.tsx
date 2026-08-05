@@ -1,14 +1,6 @@
 import { PlatformColor, View } from "react-native";
 
-import {
-  Host,
-  HStack,
-  Image,
-  List,
-  Section,
-  Spacer,
-  Text,
-} from "@expo/ui/swift-ui";
+import { Host, HStack, Image, List, Section, Spacer, Text } from "@expo/ui/swift-ui";
 import { frame, listStyle } from "@expo/ui/swift-ui/modifiers";
 
 import { EntryDetailObj } from "@/db/queries/entries";
@@ -26,9 +18,7 @@ type Props = {
  * エントリー詳細画面
  */
 export function EntryDetailView({ entry }: Props) {
-  const sorted = [...entry.values].sort(
-    (a, b) => a.field.sortOrder - b.field.sortOrder,
-  );
+  const sorted = [...entry.values].sort((a, b) => a.field.sortOrder - b.field.sortOrder);
 
   return (
     <View style={{ flex: 1 }}>
@@ -39,12 +29,7 @@ export function EntryDetailView({ entry }: Props) {
         }}
         useViewportSizeMeasurement
       >
-        <List
-          modifiers={[
-            frame({ maxWidth: 9999, maxHeight: 9999 }),
-            listStyle("plain"),
-          ]}
-        >
+        <List modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 }), listStyle("plain")]}>
           <Section
             header={
               <HStack>

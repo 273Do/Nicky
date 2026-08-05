@@ -88,11 +88,7 @@ export default function JournalScreen() {
       />
       {/* TODO: 空の場合の処理を追加する */}
       {/* エントリー一覧にはheaderTitleのデータは含まないので src/app/(journal)/entry/[id].tsx と混同しないように。 */}
-      <EntryListView
-        activeJournalId={journalId}
-        journalName={name}
-        bookmarkOnly={bookmarkOnly}
-      />
+      <EntryListView activeJournalId={journalId} journalName={name} bookmarkOnly={bookmarkOnly} />
     </>
   );
 }

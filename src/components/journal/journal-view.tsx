@@ -22,11 +22,7 @@ export function JournalView() {
         useViewportSizeMeasurement
       >
         <ScrollView showsIndicators={false}>
-          <VStack
-            alignment="leading"
-            spacing={0}
-            modifiers={[padding({ horizontal: 16 })]}
-          >
+          <VStack alignment="leading" spacing={0} modifiers={[padding({ horizontal: 16 })]}>
             <Grid
               verticalSpacing={10}
               horizontalSpacing={10}

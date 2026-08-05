@@ -1,11 +1,7 @@
 import { PlatformColor } from "react-native";
 
 import { Button, HStack, Image, Spacer, Text, VStack } from "@expo/ui/swift-ui";
-import {
-  buttonStyle,
-  font,
-  foregroundStyle,
-} from "@expo/ui/swift-ui/modifiers";
+import { buttonStyle, font, foregroundStyle } from "@expo/ui/swift-ui/modifiers";
 
 type Props = {
   /** フィールドラベル */
@@ -51,16 +47,8 @@ export function EntryLocation({ label, edit = false }: Props) {
         </HStack>
       ) : (
         <HStack spacing={6}>
-          <Image
-            systemName="mappin.and.ellipse"
-            color={PlatformColor("tertiaryLabel")}
-            size={16}
-          />
-          <Text
-            modifiers={[
-              foregroundStyle({ type: "hierarchical", style: "tertiary" }),
-            ]}
-          >
+          <Image systemName="mappin.and.ellipse" color={PlatformColor("tertiaryLabel")} size={16} />
+          <Text modifiers={[foregroundStyle({ type: "hierarchical", style: "tertiary" })]}>
             Not set
           </Text>
         </HStack>

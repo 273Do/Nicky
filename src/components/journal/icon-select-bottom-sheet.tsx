@@ -55,16 +55,8 @@ export function IconSelectBottomSheet({
   const rows = chunkArray(JOURNAL_ICONS, COLUMNS);
 
   return (
-    <BottomSheet
-      isPresented={isPresented}
-      onIsPresentedChange={onIsPresentedChange}
-    >
-      <Group
-        modifiers={[
-          presentationDetents(["medium"]),
-          presentationDragIndicator("visible"),
-        ]}
-      >
+    <BottomSheet isPresented={isPresented} onIsPresentedChange={onIsPresentedChange}>
+      <Group modifiers={[presentationDetents(["medium"]), presentationDragIndicator("visible")]}>
         <ScrollView>
           {/* カラーピッカー */}
           <ZStack>
@@ -113,9 +105,7 @@ export function IconSelectBottomSheet({
                     />
                     <Image
                       systemName={icon}
-                      color={
-                        selectedIcon === icon ? "white" : PlatformColor("label")
-                      }
+                      color={selectedIcon === icon ? "white" : PlatformColor("label")}
                       size={24}
                     />
                   </ZStack>

@@ -4,7 +4,6 @@
  */
 
 import "@/global.css";
-
 import { Platform } from "react-native";
 
 export const Colors = {
@@ -24,7 +23,7 @@ export const Colors = {
   },
 } as const;
 
-export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
+export type ThemeColor = keyof typeof Colors.light;
 
 export const Fonts = Platform.select({
   ios: {

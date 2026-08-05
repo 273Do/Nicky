@@ -21,12 +21,7 @@ type Props = {
 /**
  * 数値フィールド
  */
-export function EntryNumber({
-  label,
-  defaultValue,
-  onValueChange,
-  edit = false,
-}: Props) {
+export function EntryNumber({ label, defaultValue, onValueChange, edit = false }: Props) {
   const [number, setNumber] = useState<number | undefined>(defaultValue);
   const numberFieldRef = useRef<TextFieldRef>(null);
 

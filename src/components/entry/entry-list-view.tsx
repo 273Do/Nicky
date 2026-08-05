@@ -46,12 +46,7 @@ export function EntryListView({
   return (
     <View style={{ flex: 1 }}>
       <Host style={{ flex: 1 }} useViewportSizeMeasurement>
-        <List
-          modifiers={[
-            frame({ maxWidth: 9999, maxHeight: 9999 }),
-            listStyle("plain"),
-          ]}
-        >
+        <List modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 }), listStyle("plain")]}>
           <Section
             header={
               journals && onSelectJournal ? (
@@ -64,16 +59,10 @@ export function EntryListView({
             }
           >
             <List.ForEach
-              onDelete={(indices) =>
-                indices.forEach(async (i) => await deleteEntry(entries[i].id))
-              }
+              onDelete={(indices) => indices.forEach(async (i) => await deleteEntry(entries[i].id))}
             >
               {entries.map((entry) => (
-                <EntryRow
-                  key={entry.id}
-                  journalName={journalName}
-                  entry={entry}
-                />
+                <EntryRow key={entry.id} journalName={journalName} entry={entry} />
               ))}
             </List.ForEach>
           </Section>

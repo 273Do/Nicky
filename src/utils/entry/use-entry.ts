@@ -39,10 +39,7 @@ const serializeValue = (value: FieldValue): string | null => {
  * @param value DB の値
  * @param type フィールドタイプ
  */
-export const deserializeValue = (
-  value: string | null,
-  type: FieldType,
-): FieldValue => {
+export const deserializeValue = (value: string | null, type: FieldType): FieldValue => {
   if (value === null) return getDefaultValue(type);
   switch (type) {
     case "number":
@@ -71,23 +68,18 @@ export const deserializeValue = (
  * - createEntry 新規エントリーをDBに保存する関数
  * - updateEntry 既存エントリーをDBに更新する関数
  */
-export const useEntry = (
-  fields: FieldObj[],
-  initialValues?: Record<string, FieldValue> | null,
-) => {
+export const useEntry = (fields: FieldObj[], initialValues?: Record<string, FieldValue> | null) => {
   const valuesRef = useRef<Record<string, FieldValue>>({});
   const initialized = useRef(false);
 
   if (!initialized.current && fields && fields.length > 0) {
     const isCreateMode = initialValues === undefined;
-    const isEditModeReady =
-      initialValues !== null && initialValues !== undefined;
+    const isEditModeReady = initialValues !== null && initialValues !== undefined;
 
     if (isCreateMode || isEditModeReady) {
       initialized.current = true;
       valuesRef.current =
-        initialValues ??
-        Object.fromEntries(fields.map((f) => [f.id, getDefaultValue(f.type)]));
+        initialValues ?? Object.fromEntries(fields.map((f) => [f.id, getDefaultValue(f.type)]));
     }
   }
 
@@ -134,12 +126,10 @@ export const useEntry = (
    * @param entryId エントリー id
    */
   const updateEntry = async (entryId: string): Promise<void> => {
-    const values = Object.entries(valuesRef.current).map(
-      ([fieldId, value]) => ({
-        fieldId,
-        value: serializeValue(value),
-      }),
-    );
+    const values = Object.entries(valuesRef.current).map(([fieldId, value]) => ({
+      fieldId,
+      value: serializeValue(value),
+    }));
     await updateEntryValues(entryId, values);
   };
 

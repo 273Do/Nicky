@@ -16,13 +16,10 @@ export default function JournalScreen() {
   const { data: journals } = useLiveQuery(getJournalsQuery);
   const journalList: JournalWithCountObj[] = journals ?? [];
 
-  const [selectedJournalId, setSelectedJournalId] = useState<string | null>(
-    null,
-  );
+  const [selectedJournalId, setSelectedJournalId] = useState<string | null>(null);
 
   // 選択中のジャーナル（未選択 or 存在しない場合は先頭）
-  const activeJournal =
-    journalList.find((j) => j.id === selectedJournalId) ?? journalList[0];
+  const activeJournal = journalList.find((j) => j.id === selectedJournalId) ?? journalList[0];
 
   const [bookmarkOnly, setBookmarkOnly] = useState(false);
 
@@ -62,9 +59,7 @@ export default function JournalScreen() {
                             name: "bookmark" as const,
                           },
                           label: "Bookmarked Only",
-                          state: bookmarkOnly
-                            ? ("on" as const)
-                            : ("off" as const),
+                          state: bookmarkOnly ? ("on" as const) : ("off" as const),
                           onPress: () => setBookmarkOnly((prev) => !prev),
                         },
                         {
@@ -75,9 +70,7 @@ export default function JournalScreen() {
                           },
                           label: "Edit",
                           onPress: () => {
-                            router.push(
-                              `/(journal)/edit?journalId=${activeJournal.id}`,
-                            );
+                            router.push(`/(journal)/edit?journalId=${activeJournal.id}`);
                           },
                         },
                         {

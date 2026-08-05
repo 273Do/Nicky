@@ -1,11 +1,4 @@
-import {
-  Button,
-  ContextMenu,
-  Image,
-  RoundedRectangle,
-  Text,
-  ZStack,
-} from "@expo/ui/swift-ui";
+import { Button, ContextMenu, Image, RoundedRectangle, Text, ZStack } from "@expo/ui/swift-ui";
 import {
   clipShape,
   font,
@@ -41,9 +34,7 @@ export function JournalCard({ journal }: Props) {
             modifiers={[
               frame({ height: 85 }),
               clipShape("roundedRectangle", 20),
-              onTapGesture(() =>
-                router.push(`/(journal)/${journalId}?name=${name}`),
-              ),
+              onTapGesture(() => router.push(`/(journal)/${journalId}?name=${name}`)),
             ]}
           >
             <RoundedRectangle
@@ -100,9 +91,7 @@ export function JournalCard({ journal }: Props) {
           <Button
             label="Edit"
             systemImage="ellipsis.circle"
-            onPress={() =>
-              router.push(`/(journal)/edit?journalId=${journalId}`)
-            }
+            onPress={() => router.push(`/(journal)/edit?journalId=${journalId}`)}
           />
           <Button
             label="Delete"
