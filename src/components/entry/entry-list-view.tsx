@@ -6,7 +6,7 @@ import { GlassView } from "expo-glass-effect";
 import { useRouter } from "expo-router";
 import { SymbolView } from "expo-symbols";
 
-import { JournalChipList } from "@/components/insights/journal-chip";
+import { JournalChipList } from "@/components/journal/journal-chip";
 import { deleteEntry } from "@/db/queries/entries";
 import { type JournalWithCountObj } from "@/db/queries/journals";
 import { type SortKey } from "@/utils/entry/consts";
@@ -70,9 +70,7 @@ export function EntryListView({
           >
             <List.ForEach
               onDelete={(indices) =>
-                indices.forEach(
-                  async (i) => await deleteEntry(entries[i].id),
-                )
+                indices.forEach(async (i) => await deleteEntry(entries[i].id))
               }
             >
               {entries.map((entry) => (
