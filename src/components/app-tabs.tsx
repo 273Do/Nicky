@@ -16,9 +16,9 @@ export default function AppTabs() {
           <NativeTabs.Trigger.Icon sf="books.vertical.fill" />
         </NativeTabs.Trigger>
 
-        <NativeTabs.Trigger name="insights">
-          <NativeTabs.Trigger.Label>Insights</NativeTabs.Trigger.Label>
-          <NativeTabs.Trigger.Icon sf="waveform.path.ecg" />
+        <NativeTabs.Trigger name="days">
+          <NativeTabs.Trigger.Label>Days</NativeTabs.Trigger.Label>
+          <NativeTabs.Trigger.Icon sf="calendar.day.timeline.leading" />
         </NativeTabs.Trigger>
 
         <NativeTabs.Trigger name="search" role="search">
