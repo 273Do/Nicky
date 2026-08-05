@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   fab: {
     position: "absolute",
     bottom: 102,
-    right: 16,
+    right: 22,
   },
   glassButton: {
     width: 62,
