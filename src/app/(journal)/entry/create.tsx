@@ -46,11 +46,7 @@ export default function EntryCreateScreen() {
           ],
         }}
       />
-      <EntryCreateView
-        id={journalId}
-        values={valuesRef.current}
-        setValue={setValue}
-      />
+      <EntryCreateView id={journalId} values={valuesRef.current} setValue={setValue} />
     </>
   );
 }

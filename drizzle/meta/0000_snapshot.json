@@ -50,12 +50,8 @@
           "name": "entries_journalId_journals_id_fk",
           "tableFrom": "entries",
           "tableTo": "journals",
-          "columnsFrom": [
-            "journalId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["journalId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -99,10 +95,7 @@
       "indexes": {
         "entry_field_unique": {
           "name": "entry_field_unique",
-          "columns": [
-            "entryId",
-            "fieldId"
-          ],
+          "columns": ["entryId", "fieldId"],
           "isUnique": true
         }
       },
@@ -111,12 +104,8 @@
           "name": "entry_values_entryId_entries_id_fk",
           "tableFrom": "entry_values",
           "tableTo": "entries",
-          "columnsFrom": [
-            "entryId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["entryId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -124,12 +113,8 @@
           "name": "entry_values_fieldId_fields_id_fk",
           "tableFrom": "entry_values",
           "tableTo": "fields",
-          "columnsFrom": [
-            "fieldId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["fieldId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -183,12 +168,8 @@
           "name": "fields_journalId_journals_id_fk",
           "tableFrom": "fields",
           "tableTo": "journals",
-          "columnsFrom": [
-            "journalId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["journalId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }

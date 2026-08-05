@@ -18,10 +18,7 @@ export const buildEntryFormData = (
     .map((v) => v.field);
 
   const initialValues = Object.fromEntries(
-    entry.values.map((v) => [
-      v.fieldId,
-      deserializeValue(v.value, v.field.type),
-    ]),
+    entry.values.map((v) => [v.fieldId, deserializeValue(v.value, v.field.type)]),
   );
 
   return { fields, initialValues };

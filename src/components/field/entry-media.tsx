@@ -1,11 +1,7 @@
 import { PlatformColor } from "react-native";
 
 import { Button, HStack, Image, Spacer, Text, VStack } from "@expo/ui/swift-ui";
-import {
-  buttonStyle,
-  font,
-  foregroundStyle,
-} from "@expo/ui/swift-ui/modifiers";
+import { buttonStyle, font, foregroundStyle } from "@expo/ui/swift-ui/modifiers";
 
 type Props = {
   /** フィールドラベル */
@@ -39,19 +35,11 @@ export function EntryMedia({ label, edit = false }: Props) {
             ]}
             onPress={() => {}}
           >
-            <Image
-              systemName="photo.badge.plus"
-              color={PlatformColor("systemIndigo")}
-              size={18}
-            />
+            <Image systemName="photo.badge.plus" color={PlatformColor("systemIndigo")} size={18} />
           </Button>
         </HStack>
       ) : (
-        <Image
-          systemName="photo"
-          color={PlatformColor("tertiaryLabel")}
-          size={40}
-        />
+        <Image systemName="photo" color={PlatformColor("tertiaryLabel")} size={40} />
       )}
     </VStack>
   );

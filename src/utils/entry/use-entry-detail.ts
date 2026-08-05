@@ -2,11 +2,7 @@ import { Keyboard } from "react-native";
 
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
-import {
-  bookmarkEntry,
-  deleteEntry,
-  getEntryDetailQuery,
-} from "@/db/queries/entries";
+import { bookmarkEntry, deleteEntry, getEntryDetailQuery } from "@/db/queries/entries";
 
 import { buildEntryFormData } from "./entry-form";
 import { useEntry } from "./use-entry";

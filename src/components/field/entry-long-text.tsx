@@ -19,12 +19,7 @@ type Props = {
 /**
  * ロングテキストフィールド
  */
-export function EntryLongText({
-  label,
-  defaultValue = "",
-  onValueChange,
-  edit = false,
-}: Props) {
+export function EntryLongText({ label, defaultValue = "", onValueChange, edit = false }: Props) {
   return (
     <FieldWrapper label={label}>
       {edit ? (

@@ -21,10 +21,7 @@ export type PreviewEntryObj = {
  * @param value 値
  * @param type フィールドタイプ
  */
-export const formatFieldValue = (
-  value: string | null,
-  type: FieldType,
-): string => {
+export const formatFieldValue = (value: string | null, type: FieldType): string => {
   if (!value) return "";
   switch (type) {
     case "date":
@@ -46,14 +43,10 @@ export const buildPreviewEntry = (entry: EntryDetailObj): PreviewEntryObj => {
   const { id, createdAt, bookmark, values } = entry;
 
   // フィールド順に並び替え
-  const sorted = [...values].sort(
-    (a, b) => a.field.sortOrder - b.field.sortOrder,
-  );
+  const sorted = [...values].sort((a, b) => a.field.sortOrder - b.field.sortOrder);
 
   // 1つめのフィールドをタイトルに設定し、値がなければ作成日にフォールバック
-  const titleFromField = sorted[0]
-    ? formatFieldValue(sorted[0].value, sorted[0].field.type)
-    : "";
+  const titleFromField = sorted[0] ? formatFieldValue(sorted[0].value, sorted[0].field.type) : "";
   const title = titleFromField || formatDate(new Date(createdAt));
 
   // プレビューは2つ目以降のフィールドを順に並べる
@@ -71,4 +64,3 @@ export const buildPreviewEntry = (entry: EntryDetailObj): PreviewEntryObj => {
     bookmark,
   };
 };
-

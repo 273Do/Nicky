@@ -30,9 +30,7 @@ export const chartDateFormat = (
     const label = DAY_LABELS[(day.getDay() + 6) % 7];
     const color = isToday ? accentColor : PlatformColor("systemGray3");
 
-    const dayTimestamps = timestamps.filter(
-      (ts) => new Date(ts).toDateString() === dayStr,
-    );
+    const dayTimestamps = timestamps.filter((ts) => new Date(ts).toDateString() === dayStr);
 
     count += dayTimestamps.length;
 
@@ -77,13 +75,11 @@ export const chartNumberFormat = (
     const isToday = i === 6;
 
     const dayEntries = fieldValues.filter(
-      (fv) =>
-        new Date(fv.createdAt).toDateString() === dayStr && fv.value !== null,
+      (fv) => new Date(fv.createdAt).toDateString() === dayStr && fv.value !== null,
     );
     const avgY =
       dayEntries.length > 0
-        ? dayEntries.reduce((sum, fv) => sum + Number(fv.value ?? "0"), 0) /
-          dayEntries.length
+        ? dayEntries.reduce((sum, fv) => sum + Number(fv.value ?? "0"), 0) / dayEntries.length
         : 0;
 
     return {
@@ -117,9 +113,7 @@ export const chartCheckFormat = (
     const dayStr = day.toDateString();
     const isToday = i === 6;
 
-    const dayEntries = fieldValues.filter(
-      (fv) => new Date(fv.createdAt).toDateString() === dayStr,
-    );
+    const dayEntries = fieldValues.filter((fv) => new Date(fv.createdAt).toDateString() === dayStr);
     const checkCount = dayEntries.filter((fv) => fv.value === "true").length;
 
     return {
@@ -159,8 +153,7 @@ export const chartTimeScatterFormat = (
     const color = isToday ? accentColor : PlatformColor("systemGray3");
 
     const dayEntries = fieldValues.filter(
-      (fv) =>
-        new Date(fv.createdAt).toDateString() === dayStr && fv.value !== null,
+      (fv) => new Date(fv.createdAt).toDateString() === dayStr && fv.value !== null,
     );
 
     if (dayEntries.length === 0) {
@@ -202,13 +195,10 @@ export const chartFieldValueFormat = (
     const dayStr = day.toDateString();
     const isToday = i === 6;
 
-    const dayEntries = fieldValues.filter(
-      (fv) => new Date(fv.createdAt).toDateString() === dayStr,
-    );
+    const dayEntries = fieldValues.filter((fv) => new Date(fv.createdAt).toDateString() === dayStr);
     const avgY =
       dayEntries.length > 0
-        ? dayEntries.reduce((sum, fv) => sum + (fv.value?.length ?? 0), 0) /
-          dayEntries.length
+        ? dayEntries.reduce((sum, fv) => sum + (fv.value?.length ?? 0), 0) / dayEntries.length
         : 0;
 
     return {

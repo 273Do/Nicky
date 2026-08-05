@@ -43,9 +43,7 @@ export const storeJournal = async (
     if (newFields.length > 0) {
       await tx
         .insert(fields)
-        .values(
-          newFields.map((field) => ({ ...field, journalId: newJournal.id })),
-        );
+        .values(newFields.map((field) => ({ ...field, journalId: newJournal.id })));
     }
   });
 };
@@ -100,10 +98,7 @@ export const updateJournal = async (
     }
 
     // entries.updatedAt を touch して useLiveQuery に変更を伝播させる
-    await tx
-      .update(entries)
-      .set({ updatedAt: Date.now() })
-      .where(eq(entries.journalId, journalId));
+    await tx.update(entries).set({ updatedAt: Date.now() }).where(eq(entries.journalId, journalId));
   });
 };
 

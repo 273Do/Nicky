@@ -1,6 +1,7 @@
+import type { SFSymbol } from "expo-symbols";
+
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import type { SFSymbol } from "expo-symbols";
 
 import { entries } from "./entries";
 import { fields } from "./fields";

@@ -6,14 +6,9 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { JournalCreateView } from "@/components/journal/journal-create-view";
 import { getJournalDetailQuery } from "@/db/queries/journals";
 import { FieldObj } from "@/db/schemas";
-import {
-  FieldDraftObj,
-  useJournalField,
-} from "@/utils/journal/use-journal-field";
+import { FieldDraftObj, useJournalField } from "@/utils/journal/use-journal-field";
 
-type JournalDetail = NonNullable<
-  Awaited<ReturnType<typeof getJournalDetailQuery>>
->;
+type JournalDetail = NonNullable<Awaited<ReturnType<typeof getJournalDetailQuery>>>;
 
 type FormProps = {
   journal: JournalDetail;
@@ -93,9 +88,7 @@ function JournalEditForm({ journal }: FormProps) {
  */
 export default function JournalEditScreen() {
   const { journalId } = useLocalSearchParams<{ journalId: string }>();
-  const { data: journal } = useLiveQuery(getJournalDetailQuery(journalId), [
-    journalId,
-  ]);
+  const { data: journal } = useLiveQuery(getJournalDetailQuery(journalId), [journalId]);
 
   return <>{journal && <JournalEditForm journal={journal} />}</>;
 }

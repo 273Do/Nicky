@@ -25,8 +25,7 @@ export default function EntryDetailScreen() {
 
   const [editMode, setEditMode] = useState<boolean>(Boolean(edit));
 
-  const { entry, valuesRef, setValue, save, bookmark, remove } =
-    useEntryDetail(entryId);
+  const { entry, valuesRef, setValue, save, bookmark, remove } = useEntryDetail(entryId);
 
   const handleSave = async () => {
     await save();
@@ -72,9 +71,7 @@ export default function EntryDetailScreen() {
                           type: "action",
                           icon: {
                             type: "sfSymbol",
-                            name: entry?.bookmark
-                              ? "bookmark.slash"
-                              : "bookmark",
+                            name: entry?.bookmark ? "bookmark.slash" : "bookmark",
                           },
                           label: entry?.bookmark ? "Unbookmark" : "Bookmark",
                           onPress: bookmark,

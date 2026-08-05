@@ -24,63 +24,32 @@ type Props = {
  * フィールドタイプによってコンポーネントを切り替えるコンポーネント
  * React Compiler がこの単位で再レンダリングを最適化する
  */
-export function EntryFieldItem({
-  field,
-  value,
-  setValue,
-  edit = false,
-}: Props) {
+export function EntryFieldItem({ field, value, setValue, edit = false }: Props) {
   const shared = {
     label: field.label,
-    onValueChange: setValue
-      ? <T extends FieldValue>(v: T) => setValue(field.id, v)
-      : undefined,
+    onValueChange: setValue ? <T extends FieldValue>(v: T) => setValue(field.id, v) : undefined,
     edit,
   };
 
   switch (field.type) {
     case "text":
-      return (
-        <EntryText
-          {...shared}
-          defaultValue={typeof value === "string" ? value : undefined}
-        />
-      );
+      return <EntryText {...shared} defaultValue={typeof value === "string" ? value : undefined} />;
     case "longText":
       return (
-        <EntryLongText
-          {...shared}
-          defaultValue={typeof value === "string" ? value : undefined}
-        />
+        <EntryLongText {...shared} defaultValue={typeof value === "string" ? value : undefined} />
       );
     case "number":
       return (
-        <EntryNumber
-          {...shared}
-          defaultValue={typeof value === "number" ? value : undefined}
-        />
+        <EntryNumber {...shared} defaultValue={typeof value === "number" ? value : undefined} />
       );
     case "check":
       return (
-        <EntryCheck
-          {...shared}
-          defaultValue={typeof value === "boolean" ? value : undefined}
-        />
+        <EntryCheck {...shared} defaultValue={typeof value === "boolean" ? value : undefined} />
       );
     case "date":
-      return (
-        <EntryDate
-          {...shared}
-          defaultValue={value instanceof Date ? value : undefined}
-        />
-      );
+      return <EntryDate {...shared} defaultValue={value instanceof Date ? value : undefined} />;
     case "time":
-      return (
-        <EntryTime
-          {...shared}
-          defaultValue={value instanceof Date ? value : undefined}
-        />
-      );
+      return <EntryTime {...shared} defaultValue={value instanceof Date ? value : undefined} />;
     case "media":
       return <EntryMedia {...shared} />;
     case "location":

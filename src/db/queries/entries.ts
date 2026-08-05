@@ -37,10 +37,7 @@ export const getEntryDetailQuery = (entryId: string) =>
  * @param newEntry エントリー本体
  * @param newValues エントリー値一覧
  */
-export const storeEntry = async (
-  newEntry: EntryObj,
-  newValues: EntryValueObj[],
-): Promise<void> => {
+export const storeEntry = async (newEntry: EntryObj, newValues: EntryValueObj[]): Promise<void> => {
   await db.transaction(async (tx) => {
     await tx.insert(entries).values(newEntry);
 
@@ -64,17 +61,9 @@ export const updateEntryValues = async (
       await tx
         .update(entryValues)
         .set({ value })
-        .where(
-          and(
-            eq(entryValues.entryId, entryId),
-            eq(entryValues.fieldId, fieldId),
-          ),
-        );
+        .where(and(eq(entryValues.entryId, entryId), eq(entryValues.fieldId, fieldId)));
     }
-    await tx
-      .update(entries)
-      .set({ updatedAt: Date.now() })
-      .where(eq(entries.id, entryId));
+    await tx.update(entries).set({ updatedAt: Date.now() }).where(eq(entries.id, entryId));
   });
 };
 
@@ -108,6 +97,4 @@ export const deleteAllEntries = async (journalId?: string) => {
 };
 
 /** エントリー詳細の型 */
-export type EntryDetailObj = Awaited<
-  ReturnType<typeof getEntriesQuery>
->[number];
+export type EntryDetailObj = Awaited<ReturnType<typeof getEntriesQuery>>[number];

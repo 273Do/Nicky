@@ -56,11 +56,7 @@ type Props = {
 /**
  * 表示するジャーナルの統計を選択するチップ
  */
-export function JournalChipList({
-  journals,
-  activeJournalId,
-  onSelect,
-}: Props) {
+export function JournalChipList({ journals, activeJournalId, onSelect }: Props) {
   return (
     <ScrollView
       axes="horizontal"
@@ -95,11 +91,7 @@ export function JournalChipList({
             >
               <Image
                 systemName={journal.icon}
-                color={
-                  isActive
-                    ? PlatformColor("white")
-                    : PlatformColor("systemGray")
-                }
+                color={isActive ? PlatformColor("white") : PlatformColor("systemGray")}
                 size={14}
               />
               <Spacer minLength={4} />

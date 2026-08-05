@@ -1,14 +1,6 @@
 import { PlatformColor } from "react-native";
 
-import {
-  BottomSheet,
-  Button,
-  Group,
-  HStack,
-  Image,
-  List,
-  Text,
-} from "@expo/ui/swift-ui";
+import { BottomSheet, Button, Group, HStack, Image, List, Text } from "@expo/ui/swift-ui";
 import {
   foregroundStyle,
   frame,
@@ -33,21 +25,14 @@ type Props = {
 /**
  * フィールド追加ボトムシート
  */
-export function FieldBottomSheet({
-  isPresented,
-  onIsPresentedChange,
-  onAdd,
-}: Props) {
+export function FieldBottomSheet({ isPresented, onIsPresentedChange, onAdd }: Props) {
   const handlePress = (type: FieldType) => {
     onAdd(type);
     onIsPresentedChange(false);
   };
 
   return (
-    <BottomSheet
-      isPresented={isPresented}
-      onIsPresentedChange={onIsPresentedChange}
-    >
+    <BottomSheet isPresented={isPresented} onIsPresentedChange={onIsPresentedChange}>
       <Group
         modifiers={[
           presentationDetents([{ height: FIELD_TYPES.length * 54 + 12 }]),
@@ -59,9 +44,7 @@ export function FieldBottomSheet({
           {FIELD_TYPES.map((type) => (
             <Button
               key={type}
-              modifiers={[
-                foregroundStyle({ type: "hierarchical", style: "primary" }),
-              ]}
+              modifiers={[foregroundStyle({ type: "hierarchical", style: "primary" })]}
               onPress={() => handlePress(type)}
             >
               <HStack spacing={12}>
