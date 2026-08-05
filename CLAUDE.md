@@ -55,17 +55,18 @@ src/app/
 
 Drizzle ORM + expo-sqlite. Schema is split by domain in `src/db/schemas/`:
 
-| File | Tables |
-|---|---|
-| `journals.ts` | `journals` |
-| `fields.ts` | `fields` (field definitions per journal) |
-| `entries.ts` | `entries`, `entry_values` |
+| File          | Tables                                   |
+| ------------- | ---------------------------------------- |
+| `journals.ts` | `journals`                               |
+| `fields.ts`   | `fields` (field definitions per journal) |
+| `entries.ts`  | `entries`, `entry_values`                |
 
 `src/db/schemas/index.ts` re-exports all schemas. `src/components/drizzle-provider.tsx` opens the DB, runs migrations via `useMigrations`, and exports `db`.
 
 **Adding a schema change:** edit the relevant schema file → `pnpm drizzle-kit generate` → commit the generated files in `drizzle/`.
 
 **Drizzle config notes:**
+
 - Schema files must not import React Native packages (`expo-crypto`, `expo-symbols` runtime imports) — drizzle-kit runs in Node.js. Use `import type` for RN types.
 - `$defaultFn` with `Crypto.randomUUID()` cannot be used in schema — generate IDs at the application layer instead.
 - SQLite column names in Drizzle are **camelCase** (e.g. `sortOrder`, not `sort_order`). When writing raw SQL in `onConflictDoUpdate`, quote them: `excluded."sortOrder"`.
@@ -82,6 +83,7 @@ await tx.update(entries).set({ updatedAt: Date.now() }).where(eq(entries.journal
 ```
 
 This means:
+
 - `getEntriesQuery` (`entries` root) re-runs after any `fields` or `entry_values` change because those transactions touch `entries.updatedAt`
 - `getFieldsQuery` (`fields` root) re-runs directly when `fields` is written — no touch needed
 
@@ -102,6 +104,7 @@ This pattern is used in `entry/[id].tsx` (`EntryEditForm`) and `edit.tsx` (`Jour
 ### Field Value Serialization
 
 All field values are stored as `text | null` in `entry_values.value`. Serialization/deserialization lives in `src/utils/entry/use-entry.ts`:
+
 - `serializeValue(FieldValue) → string | null` — converts to DB text
 - `deserializeValue(string | null, FieldType) → FieldValue` — converts from DB text
 - `FieldType` values: `"text" | "longText" | "number" | "media" | "check" | "date" | "time" | "location"`
@@ -112,6 +115,7 @@ All field values are stored as `text | null` in `entry_values.value`. Serializat
 ### Entry Preview Pipeline
 
 `EntryDetailObj` (raw DB join) → `PreviewEntryObj` (display) via `buildPreviewEntry` in `src/utils/entry/preview.ts`:
+
 - First field value = title (falls back to formatted `createdAt`)
 - Remaining field values joined with spaces = preview (also used for search)
 - Entries grouped by month for the list view (`groupByMonth`)
@@ -122,16 +126,16 @@ Always call `Keyboard.dismiss()` **before** any `async` save operation that trig
 
 ### Key Technologies
 
-| Package | Usage |
-|---|---|
-| `expo-router` | File-based routing, `useRouter`, `useLocalSearchParams` |
-| `@expo/ui/swift-ui` | SwiftUI components: `Host`, `ZStack`, `VStack`, `HStack`, `Spacer`, `Grid`, `ScrollView`, `List`, `Section`, `Button`, `Image`, `Text`, `RoundedRectangle`, `ColorPicker`, `BottomSheet`, `ContextMenu` |
-| `@expo/ui/swift-ui/modifiers` | `frame`, `padding`, `foregroundStyle`, `onTapGesture`, `listStyle`, `presentationDetents`, `environment`, `fixedSize`, `font`, `lineLimit` |
-| `expo-router/unstable-native-tabs` | `NativeTabs` — iOS native tab bar |
-| `expo-symbols` | `SymbolView` — SF Symbols in RN (non-SwiftUI) header components |
-| `expo-sqlite` + `drizzle-orm` | Local SQLite persistence |
-| `expo-crypto` | `Crypto.randomUUID()` for ID generation at the app layer |
-| `PlatformColor` | Adaptive system colors: `"label"`, `"systemBackground"`, `"systemIndigo"` |
+| Package                            | Usage                                                                                                                                                                                                   |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `expo-router`                      | File-based routing, `useRouter`, `useLocalSearchParams`                                                                                                                                                 |
+| `@expo/ui/swift-ui`                | SwiftUI components: `Host`, `ZStack`, `VStack`, `HStack`, `Spacer`, `Grid`, `ScrollView`, `List`, `Section`, `Button`, `Image`, `Text`, `RoundedRectangle`, `ColorPicker`, `BottomSheet`, `ContextMenu` |
+| `@expo/ui/swift-ui/modifiers`      | `frame`, `padding`, `foregroundStyle`, `onTapGesture`, `listStyle`, `presentationDetents`, `environment`, `fixedSize`, `font`, `lineLimit`                                                              |
+| `expo-router/unstable-native-tabs` | `NativeTabs` — iOS native tab bar                                                                                                                                                                       |
+| `expo-symbols`                     | `SymbolView` — SF Symbols in RN (non-SwiftUI) header components                                                                                                                                         |
+| `expo-sqlite` + `drizzle-orm`      | Local SQLite persistence                                                                                                                                                                                |
+| `expo-crypto`                      | `Crypto.randomUUID()` for ID generation at the app layer                                                                                                                                                |
+| `PlatformColor`                    | Adaptive system colors: `"label"`, `"systemBackground"`, `"systemIndigo"`                                                                                                                               |
 
 ### SwiftUI Component Rules
 
@@ -146,10 +150,10 @@ Always call `Keyboard.dismiss()` **before** any `async` save operation that trig
 
 ### Naming Conventions
 
-| Term | Meaning |
-|---|---|
+| Term    | Meaning                                             |
+| ------- | --------------------------------------------------- |
 | Journal | A category/collection (shown as a card in the grid) |
-| Entry | An individual record within a journal |
+| Entry   | An individual record within a journal               |
 
 ## Code Style
 
@@ -159,3 +163,24 @@ Always call `Keyboard.dismiss()` **before** any `async` save operation that trig
 - **Formatter:** Prettier (enforced via ESLint)
 - **React Compiler:** enabled — do not manually add `useMemo`/`useCallback` unless there is a specific reason
 - **Event handler note:** extract `e.nativeEvent.text` synchronously before passing to async state updaters (React synthetic event pooling)
+
+<!--VITE PLUS START-->
+
+# Using Vite+, the Unified Toolchain for the Web
+
+This project is using Vite+, a unified toolchain built on top of Vite, Rolldown, Vitest, tsdown, Oxlint, Oxfmt, and Vite Task. Vite+ wraps runtime management, package management, and frontend tooling in a single global CLI called `vp`. Vite+ is distinct from Vite, and it invokes Vite through `vp dev` and `vp build`. Run `vp help` to print a list of commands and `vp <command> --help` for information about a specific command.
+
+Docs are local at `node_modules/vite-plus/docs` or online at https://viteplus.dev/guide/.
+
+## Built-in Commands vs Scripts
+
+`vp <name>` runs a built-in command. `vp run <name>` runs a `package.json` script or a `vite.config.ts` task. Scripts cannot overwrite built-ins, so `vp dev` and `vp run dev` may do different things. Check `package.json` and `vite.config.ts` first, and run `vp run <name>` when the project defines a script or task with that name.
+
+## Review Checklist
+
+- [ ] Run `vp install` after pulling remote changes and before getting started.
+- [ ] Run `vp check` and `vp test` to format, lint, type check and test changes.
+- [ ] Check if there are `vite.config.ts` tasks or `package.json` scripts necessary for validation, run via `vp run <script>`.
+- [ ] If setup, runtime, or package-manager behavior looks wrong, run `vp env doctor` and include its output when asking for help.
+
+<!--VITE PLUS END-->
