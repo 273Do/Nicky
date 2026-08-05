@@ -6,7 +6,6 @@ import { Stack, useRouter } from "expo-router";
 import { EntryListView } from "@/components/entry/entry-list-view";
 import { deleteAllEntries } from "@/db/queries/entries";
 import { getJournalsQuery, JournalWithCountObj } from "@/db/queries/journals";
-import { SortKey } from "@/utils/entry/consts";
 
 /**
  * ジャーナル画面（チップ切り替え + エントリー一覧）
@@ -25,13 +24,7 @@ export default function JournalScreen() {
   const activeJournal =
     journalList.find((j) => j.id === selectedJournalId) ?? journalList[0];
 
-  const [filter, setFilter] = useState<{
-    searchText: string;
-    sortKey: SortKey;
-  }>({
-    searchText: "",
-    sortKey: "dateDesc",
-  });
+  const [bookmarkOnly, setBookmarkOnly] = useState(false);
 
   const handleDeleteAll = async () => {
     if (!activeJournal) return;
@@ -55,83 +48,6 @@ export default function JournalScreen() {
               ? [
                   {
                     type: "menu" as const,
-                    label: "Sort",
-                    icon: {
-                      type: "sfSymbol" as const,
-                      name: "arrow.up.arrow.down" as const,
-                    },
-                    menu: {
-                      items: [
-                        {
-                          type: "action" as const,
-                          label: "Newest First",
-                          state:
-                            filter.sortKey === "dateDesc"
-                              ? ("on" as const)
-                              : ("off" as const),
-                          onPress: () =>
-                            setFilter((prev) => ({
-                              ...prev,
-                              sortKey: "dateDesc",
-                            })),
-                        },
-                        {
-                          type: "action" as const,
-                          label: "Oldest First",
-                          state:
-                            filter.sortKey === "dateAsc"
-                              ? ("on" as const)
-                              : ("off" as const),
-                          onPress: () =>
-                            setFilter((prev) => ({
-                              ...prev,
-                              sortKey: "dateAsc",
-                            })),
-                        },
-                        {
-                          type: "action" as const,
-                          label: "Title (A→Z)",
-                          state:
-                            filter.sortKey === "titleAsc"
-                              ? ("on" as const)
-                              : ("off" as const),
-                          onPress: () =>
-                            setFilter((prev) => ({
-                              ...prev,
-                              sortKey: "titleAsc",
-                            })),
-                        },
-                        {
-                          type: "action" as const,
-                          label: "Title (Z→A)",
-                          state:
-                            filter.sortKey === "titleDesc"
-                              ? ("on" as const)
-                              : ("off" as const),
-                          onPress: () =>
-                            setFilter((prev) => ({
-                              ...prev,
-                              sortKey: "titleDesc",
-                            })),
-                        },
-                        {
-                          type: "action" as const,
-                          label: "Bookmarked",
-                          state:
-                            filter.sortKey === "bookmark"
-                              ? ("on" as const)
-                              : ("off" as const),
-                          onPress: () =>
-                            setFilter((prev) => ({
-                              ...prev,
-                              sortKey: "bookmark",
-                            })),
-                        },
-                      ],
-                    },
-                  },
-                  {
-                    type: "menu" as const,
                     label: "Options",
                     icon: {
                       type: "sfSymbol" as const,
@@ -139,6 +55,18 @@ export default function JournalScreen() {
                     },
                     menu: {
                       items: [
+                        {
+                          type: "action" as const,
+                          icon: {
+                            type: "sfSymbol" as const,
+                            name: "bookmark" as const,
+                          },
+                          label: "Bookmarked Only",
+                          state: bookmarkOnly
+                            ? ("on" as const)
+                            : ("off" as const),
+                          onPress: () => setBookmarkOnly((prev) => !prev),
+                        },
                         {
                           type: "action" as const,
                           icon: {
@@ -187,8 +115,7 @@ export default function JournalScreen() {
           activeJournalId={activeJournal.id}
           onSelectJournal={setSelectedJournalId}
           journalName={activeJournal.name}
-          searchText={filter.searchText}
-          sortKey={filter.sortKey}
+          bookmarkOnly={bookmarkOnly}
         />
       ) : null}
     </>

@@ -2,7 +2,6 @@ import { FieldType } from "@/core/constants";
 import { EntryDetailObj } from "@/db/queries/entries";
 
 import { formatDate, formatTime } from "../date";
-import { SortKey } from "./consts";
 
 export type PreviewEntryObj = {
   /** エントリー id */
@@ -73,31 +72,3 @@ export const buildPreviewEntry = (entry: EntryDetailObj): PreviewEntryObj => {
   };
 };
 
-/**
- * エントリーを並び替える
- * @param previewEntries プレビューエントリー一覧
- * @param sortKey ソートキー
- */
-export const sortEntries = (
-  previewEntries: PreviewEntryObj[],
-  sortKey: SortKey,
-): PreviewEntryObj[] => {
-  switch (sortKey) {
-    case "dateDesc":
-      return [...previewEntries].sort(
-        (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
-      );
-    case "dateAsc":
-      return [...previewEntries].sort(
-        (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
-      );
-    case "titleAsc":
-      return [...previewEntries].sort((a, b) => a.title.localeCompare(b.title));
-    case "titleDesc":
-      return [...previewEntries].sort((a, b) => b.title.localeCompare(a.title));
-    case "bookmark":
-      return [...previewEntries].sort(
-        (a, b) => (b.bookmark ? 1 : 0) - (a.bookmark ? 1 : 0),
-      );
-  }
-};

@@ -24,6 +24,10 @@ export default function AppTabs() {
           <NativeTabs.Trigger.Label>Insights</NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon sf="waveform.path.ecg" />
         </NativeTabs.Trigger>
+
+        <NativeTabs.Trigger name="search" role="search">
+          <NativeTabs.Trigger.Label>Search</NativeTabs.Trigger.Label>
+        </NativeTabs.Trigger>
       </NativeTabs>
     </ThemeProvider>
   );

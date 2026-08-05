@@ -1,40 +1,34 @@
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { getEntriesQuery } from "@/db/queries/entries";
-import { type SortKey } from "@/utils/entry/consts";
 
-import { buildPreviewEntry, sortEntries } from "./preview";
+import { buildPreviewEntry } from "./preview";
 
 type Params = {
   /** ジャーナル id */
   journalId: string;
-  /** 検索テキスト */
-  searchText?: string;
-  /** ソートキー */
-  sortKey?: SortKey;
+  /** ブックマークのみ表示 */
+  bookmarkOnly?: boolean;
 };
 
 /**
- * エントリー一覧を取得し、検索・ソートまで行うフック
+ * エントリー一覧を取得し、フィルターまで行うフック
  */
-export function useEntryList({
-  journalId,
-  searchText = "",
-  sortKey = "dateDesc",
-}: Params) {
+export function useEntryList({ journalId, bookmarkOnly = false }: Params) {
   const { data: entries } = useLiveQuery(getEntriesQuery(journalId), [
     journalId,
   ]);
 
   const previewEntries = entries.map(buildPreviewEntry);
 
-  const filtered = searchText
-    ? previewEntries.filter(
-        (e) => e.title.includes(searchText) || e.preview.includes(searchText),
-      )
+  const filtered = bookmarkOnly
+    ? previewEntries.filter((e) => e.bookmark)
     : previewEntries;
 
-  const sorted = sortEntries(filtered, sortKey);
+  // デフォルトは新しい順
+  const sorted = [...filtered].sort(
+    (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+  );
 
   return { entries: sorted };
 }
