@@ -25,4 +25,4 @@ jobs:
         run: vp check
 
       - name: Type check
-        run: vp typecheck
+        run: vp run typecheck
