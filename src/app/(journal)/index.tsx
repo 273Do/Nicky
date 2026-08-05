@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { Alert, Button, Host, Text } from "@expo/ui/swift-ui";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useRouter } from "expo-router";
 
@@ -22,11 +23,7 @@ export default function JournalScreen() {
   const activeJournal = journalList.find((j) => j.id === selectedJournalId) ?? journalList[0];
 
   const [bookmarkOnly, setBookmarkOnly] = useState(false);
-
-  const handleDeleteAll = async () => {
-    if (!activeJournal) return;
-    await deleteAllEntries(activeJournal.id).catch(console.error);
-  };
+  const [showDeleteAllAlert, setShowDeleteAllAlert] = useState(false);
 
   return (
     <>
@@ -56,10 +53,9 @@ export default function JournalScreen() {
                           type: "action" as const,
                           icon: {
                             type: "sfSymbol" as const,
-                            name: "bookmark" as const,
+                            name: bookmarkOnly ? ("bookmark.fill" as const) : ("bookmark" as const),
                           },
-                          label: "Bookmarked Only",
-                          state: bookmarkOnly ? ("on" as const) : ("off" as const),
+                          label: bookmarkOnly ? "Show All" : "Bookmarked Only",
                           onPress: () => setBookmarkOnly((prev) => !prev),
                         },
                         {
@@ -80,8 +76,9 @@ export default function JournalScreen() {
                             name: "square.and.arrow.up.on.square" as const,
                           },
                           label: "Export",
+                          state: "off" as const,
                           onPress: () => {
-                            // Do something
+                            console.log("Export", activeJournal?.name);
                           },
                         },
                         {
@@ -91,8 +88,9 @@ export default function JournalScreen() {
                             type: "sfSymbol" as const,
                             name: "trash" as const,
                           },
+                          state: "off" as const,
                           destructive: true,
-                          onPress: handleDeleteAll,
+                          onPress: () => setShowDeleteAllAlert(true),
                         },
                       ],
                     },
@@ -111,6 +109,31 @@ export default function JournalScreen() {
           bookmarkOnly={bookmarkOnly}
         />
       ) : null}
+
+      <Host matchContents>
+        <Alert
+          title={`Delete All "${activeJournal?.name}" Entries`}
+          isPresented={showDeleteAllAlert}
+          onIsPresentedChange={setShowDeleteAllAlert}
+        >
+          <Alert.Trigger>
+            <Text>{""}</Text>
+          </Alert.Trigger>
+          <Alert.Message>
+            <Text>All entries in this journal will be permanently deleted.</Text>
+          </Alert.Message>
+          <Alert.Actions>
+            <Button label="Cancel" role="cancel" />
+            <Button
+              label="Delete All"
+              role="destructive"
+              onPress={() => {
+                if (activeJournal) deleteAllEntries(activeJournal.id).catch(console.error);
+              }}
+            />
+          </Alert.Actions>
+        </Alert>
+      </Host>
     </>
   );
 }
