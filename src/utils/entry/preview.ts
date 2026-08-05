@@ -1,7 +1,7 @@
 import { FieldType } from "@/core/constants";
 import { EntryDetailObj } from "@/db/queries/entries";
 
-import { formatDate, formatTime, formatYearMonth } from "../date";
+import { formatDate, formatTime } from "../date";
 import { SortKey } from "./consts";
 
 export type PreviewEntryObj = {
@@ -102,24 +102,3 @@ export const sortEntries = (
   }
 };
 
-/**
- * 月毎にエントリー一覧を分割する関数
- * @param previewEntries プレビューエントリー一覧
- */
-export const groupByMonth = (
-  previewEntries: PreviewEntryObj[],
-): { month: string; previewEntries: PreviewEntryObj[] }[] => {
-  const map = new Map<string, PreviewEntryObj[]>();
-
-  for (const entry of previewEntries) {
-    const key = `${entry.createdAt.getFullYear()}-${entry.createdAt.getMonth()}`;
-
-    if (!map.has(key)) map.set(key, []);
-    map.get(key)!.push(entry);
-  }
-
-  return Array.from(map.entries()).map(([, previewEntries]) => ({
-    month: formatYearMonth(previewEntries[0].createdAt),
-    previewEntries,
-  }));
-};

@@ -3,7 +3,7 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { getEntriesQuery } from "@/db/queries/entries";
 import { type SortKey } from "@/utils/entry/consts";
 
-import { buildPreviewEntry, groupByMonth, sortEntries } from "./preview";
+import { buildPreviewEntry, sortEntries } from "./preview";
 
 type Params = {
   /** ジャーナル id */
@@ -15,8 +15,7 @@ type Params = {
 };
 
 /**
- * エントリー一覧を取得し、検索・ソート・月別グループ化まで行うフック
- * @param grouped グループ化されたエントリー
+ * エントリー一覧を取得し、検索・ソートまで行うフック
  */
 export function useEntryList({
   journalId,
@@ -36,7 +35,6 @@ export function useEntryList({
     : previewEntries;
 
   const sorted = sortEntries(filtered, sortKey);
-  const grouped = groupByMonth(sorted);
 
-  return { grouped };
+  return { entries: sorted };
 }

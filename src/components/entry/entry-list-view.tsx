@@ -1,7 +1,7 @@
 import { PlatformColor, Pressable, StyleSheet, View } from "react-native";
 
-import { Host, List, Section, Text } from "@expo/ui/swift-ui";
-import { font, frame, listStyle, padding } from "@expo/ui/swift-ui/modifiers";
+import { Host, List, Section } from "@expo/ui/swift-ui";
+import { frame, listStyle } from "@expo/ui/swift-ui/modifiers";
 import { GlassView } from "expo-glass-effect";
 import { useRouter } from "expo-router";
 import { SymbolView } from "expo-symbols";
@@ -42,7 +42,7 @@ export function EntryListView({
 }: Props) {
   const router = useRouter();
 
-  const { grouped } = useEntryList({
+  const { entries } = useEntryList({
     journalId: activeJournalId,
     searchText,
     sortKey,
@@ -68,37 +68,21 @@ export function EntryListView({
               ) : undefined
             }
           >
-            {grouped.map(({ month, previewEntries }) => (
-              <Section
-                key={month}
-                header={
-                  <Text
-                    modifiers={[
-                      font({ size: 20, weight: "bold" }),
-                      padding({ bottom: 4 }),
-                    ]}
-                  >
-                    {month}
-                  </Text>
-                }
-              >
-                <List.ForEach
-                  onDelete={(indices) =>
-                    indices.forEach(
-                      async (i) => await deleteEntry(previewEntries[i].id),
-                    )
-                  }
-                >
-                  {previewEntries.map((entry) => (
-                    <EntryRow
-                      key={entry.id}
-                      journalName={journalName}
-                      entry={entry}
-                    />
-                  ))}
-                </List.ForEach>
-              </Section>
-            ))}
+            <List.ForEach
+              onDelete={(indices) =>
+                indices.forEach(
+                  async (i) => await deleteEntry(entries[i].id),
+                )
+              }
+            >
+              {entries.map((entry) => (
+                <EntryRow
+                  key={entry.id}
+                  journalName={journalName}
+                  entry={entry}
+                />
+              ))}
+            </List.ForEach>
           </Section>
         </List>
       </Host>
