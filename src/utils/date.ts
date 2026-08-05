@@ -23,15 +23,3 @@ export const formatTime = (date: Date | number): string => {
     minute: "2-digit",
   }).format(date);
 };
-
-/**
- * 年月を "2026年5月" / "May 2026" などロケールに応じた形式でフォーマットする関数
- * @param date フォーマットする日付
- * @returns フォーマットされた年月文字列
- */
-export const formatYearMonth = (date: Date | number): string => {
-  return new Intl.DateTimeFormat(undefined, {
-    year: "numeric",
-    month: "long",
-  }).format(date);
-};
