@@ -36,7 +36,7 @@ export default defineConfig({
   },
   lint: {
     plugins: ["oxc", "typescript", "unicorn", "react", "import"],
-    jsPlugins: ["eslint-plugin-expo", "eslint-plugin-prettier"],
+    jsPlugins: ["eslint-plugin-prettier"],
     categories: {
       correctness: "warn",
     },
@@ -1277,9 +1277,6 @@ export default defineConfig({
       "react/no-unknown-property": "warn",
       "react/no-unsafe": "off",
       "react/require-render-return": "error",
-      "expo/use-dom-exports": ["error"],
-      "expo/no-env-var-destructuring": ["error"],
-      "expo/no-dynamic-env-var": ["error"],
       "prettier/prettier": "error",
       "react/rules-of-hooks": "error",
     },
