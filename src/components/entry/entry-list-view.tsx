@@ -24,6 +24,8 @@ type Props = {
   journalName: string;
   /** ブックマークのみ表示 */
   bookmarkOnly?: boolean;
+  /** 初期表示時にチップリスト末尾へスクロール */
+  scrollToEnd?: boolean;
 };
 
 /**
@@ -35,6 +37,7 @@ export function EntryListView({
   onSelectJournal,
   journalName,
   bookmarkOnly = false,
+  scrollToEnd,
 }: Props) {
   const router = useRouter();
 
@@ -54,6 +57,7 @@ export function EntryListView({
                   journals={journals}
                   activeJournalId={activeJournalId}
                   onSelect={onSelectJournal}
+                  scrollToEnd={scrollToEnd}
                 />
               ) : undefined
             }

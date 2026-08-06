@@ -52,22 +52,20 @@ type Props = {
   activeJournalId: string;
   /** 表示するジャーナルをセットする関数 */
   onSelect: (id: string) => void;
+  /** 初期表示時に末尾へスクロール */
+  scrollToEnd?: boolean;
 };
 
 /**
  * 表示するジャーナルの統計を選択するチップ
  */
-export function JournalChipList({ journals, activeJournalId, onSelect }: Props) {
-  const activeIndex = journals.findIndex((j) => j.id === activeJournalId);
-  const ratio = journals.length > 1 ? activeIndex / (journals.length - 1) : 0;
-  const anchor = ratio <= 0.33 ? "leading" : ratio <= 0.67 ? "center" : "trailing";
-
+export function JournalChipList({ journals, activeJournalId, onSelect, scrollToEnd }: Props) {
   return (
     <ScrollView
       axes="horizontal"
       showsIndicators={false}
       modifiers={[
-        defaultScrollAnchor(anchor),
+        ...(scrollToEnd ? [defaultScrollAnchor("trailing")] : []),
         padding({ top: -32, bottom: -32 }),
         listRowInsets({
           leading: 0.1,

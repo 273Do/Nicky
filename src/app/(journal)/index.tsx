@@ -110,6 +110,7 @@ export default function JournalScreen() {
           onSelectJournal={setSelectedJournalId}
           journalName={activeJournal.name}
           bookmarkOnly={bookmarkOnly}
+          scrollToEnd={!!createdSelectedId}
         />
       ) : null}
 
