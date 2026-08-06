@@ -103,7 +103,7 @@ export function JournalCreateView({
                 placeholder="Journal Name"
                 defaultValue={meta.name}
                 onValueChange={(value) =>
-                  setMeta((prev) => ({ ...prev, name: value.slice(0, 10) }))
+                  setMeta((prev) => ({ ...prev, name: value.slice(0, 20) }))
                 }
                 modifiers={[frame({ maxWidth: 9999 })]}
               />

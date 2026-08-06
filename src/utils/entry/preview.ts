@@ -46,7 +46,16 @@ export const buildPreviewEntry = (entry: EntryDetailObj): PreviewEntryObj => {
   const sorted = [...values].sort((a, b) => a.field.sortOrder - b.field.sortOrder);
 
   // 1つめのフィールドをタイトルに設定し、値がなければ作成日にフォールバック
-  const titleFromField = sorted[0] ? formatFieldValue(sorted[0].value, sorted[0].field.type) : "";
+  const first = sorted[0];
+  let titleFromField = "";
+  if (first) {
+    if (first.field.type === "check") {
+      titleFromField = first.value === "true" ? `${first.field.label}: ✓` : first.field.label;
+    } else {
+      titleFromField = formatFieldValue(first.value, first.field.type);
+    }
+  }
+
   const title = titleFromField || formatDate(new Date(createdAt));
 
   // プレビューは2つ目以降のフィールドを順に並べる

@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
+import { Alert, Button, Host, Text } from "@expo/ui/swift-ui";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { Stack, useRouter } from "expo-router";
+import { Stack, useFocusEffect, useRouter } from "expo-router";
 
 import { EntryListView } from "@/components/entry/entry-list-view";
 import { deleteAllEntries } from "@/db/queries/entries";
 import { getJournalsQuery, JournalWithCountObj } from "@/db/queries/journals";
+import { consumeCreatedJournalId } from "@/utils/journal/created-journal";
 
 /**
  * ジャーナル画面（チップ切り替え + エントリー一覧）
@@ -17,16 +19,28 @@ export default function JournalScreen() {
   const journalList: JournalWithCountObj[] = journals ?? [];
 
   const [selectedJournalId, setSelectedJournalId] = useState<string | null>(null);
+  const [chipScrollKey, setChipScrollKey] = useState(0);
+
+  // 作成直後のフォーカス復帰時に ID を受け取る（useRef で二重消費を防ぐ）
+  const consumed = useRef(false);
+  useFocusEffect(() => {
+    if (consumed.current) return;
+    const id = consumeCreatedJournalId();
+    if (id) {
+      setSelectedJournalId(id);
+      setChipScrollKey((k) => k + 1);
+      consumed.current = true;
+    }
+    return () => {
+      consumed.current = false;
+    };
+  });
 
   // 選択中のジャーナル（未選択 or 存在しない場合は先頭）
   const activeJournal = journalList.find((j) => j.id === selectedJournalId) ?? journalList[0];
 
   const [bookmarkOnly, setBookmarkOnly] = useState(false);
-
-  const handleDeleteAll = async () => {
-    if (!activeJournal) return;
-    await deleteAllEntries(activeJournal.id).catch(console.error);
-  };
+  const [showDeleteAllAlert, setShowDeleteAllAlert] = useState(false);
 
   return (
     <>
@@ -35,12 +49,6 @@ export default function JournalScreen() {
           title: "Journal",
           headerLargeTitleEnabled: true,
           unstable_headerRightItems: () => [
-            {
-              type: "button",
-              label: "Create New Journal",
-              icon: { type: "sfSymbol", name: "folder.badge.plus" },
-              onPress: () => router.push("/(journal)/create"),
-            },
             ...(activeJournal
               ? [
                   {
@@ -56,10 +64,9 @@ export default function JournalScreen() {
                           type: "action" as const,
                           icon: {
                             type: "sfSymbol" as const,
-                            name: "bookmark" as const,
+                            name: bookmarkOnly ? ("bookmark.fill" as const) : ("bookmark" as const),
                           },
-                          label: "Bookmarked Only",
-                          state: bookmarkOnly ? ("on" as const) : ("off" as const),
+                          label: bookmarkOnly ? "Show All" : "Bookmarked Only",
                           onPress: () => setBookmarkOnly((prev) => !prev),
                         },
                         {
@@ -80,8 +87,9 @@ export default function JournalScreen() {
                             name: "square.and.arrow.up.on.square" as const,
                           },
                           label: "Export",
+                          state: "off" as const,
                           onPress: () => {
-                            // Do something
+                            console.log("Export", activeJournal?.name);
                           },
                         },
                         {
@@ -91,14 +99,21 @@ export default function JournalScreen() {
                             type: "sfSymbol" as const,
                             name: "trash" as const,
                           },
+                          state: "off" as const,
                           destructive: true,
-                          onPress: handleDeleteAll,
+                          onPress: () => setShowDeleteAllAlert(true),
                         },
                       ],
                     },
                   },
                 ]
               : []),
+            {
+              type: "button",
+              label: "Create New Journal",
+              icon: { type: "sfSymbol", name: "folder.badge.plus" },
+              onPress: () => router.push("/(journal)/create"),
+            },
           ],
         }}
       />
@@ -109,8 +124,34 @@ export default function JournalScreen() {
           onSelectJournal={setSelectedJournalId}
           journalName={activeJournal.name}
           bookmarkOnly={bookmarkOnly}
+          chipScrollKey={chipScrollKey}
         />
       ) : null}
+
+      <Host matchContents>
+        <Alert
+          title={`Delete All "${activeJournal?.name}" Entries`}
+          isPresented={showDeleteAllAlert}
+          onIsPresentedChange={setShowDeleteAllAlert}
+        >
+          <Alert.Trigger>
+            <Text>{""}</Text>
+          </Alert.Trigger>
+          <Alert.Message>
+            <Text>All entries in this journal will be permanently deleted.</Text>
+          </Alert.Message>
+          <Alert.Actions>
+            <Button label="Cancel" role="cancel" />
+            <Button
+              label="Delete All"
+              role="destructive"
+              onPress={() => {
+                if (activeJournal) deleteAllEntries(activeJournal.id).catch(console.error);
+              }}
+            />
+          </Alert.Actions>
+        </Alert>
+      </Host>
     </>
   );
 }

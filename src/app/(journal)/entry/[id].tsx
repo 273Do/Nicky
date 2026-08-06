@@ -78,7 +78,7 @@ export default function EntryDetailScreen() {
                         },
                         {
                           type: "action",
-                          label: "Delete",
+                          label: "Delete Entry",
                           icon: { type: "sfSymbol", name: "trash" },
                           destructive: true,
                           onPress: handleDelete,

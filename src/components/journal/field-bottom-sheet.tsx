@@ -28,7 +28,6 @@ type Props = {
 export function FieldBottomSheet({ isPresented, onIsPresentedChange, onAdd }: Props) {
   const handlePress = (type: FieldType) => {
     onAdd(type);
-    onIsPresentedChange(false);
   };
 
   return (
