@@ -48,7 +48,10 @@ export function EntryListView({
 
   return (
     <View style={{ flex: 1 }}>
-      <Host style={{ flex: 1 }} useViewportSizeMeasurement>
+      <Host
+        style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}
+        useViewportSizeMeasurement
+      >
         <List modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 }), listStyle("plain")]}>
           <Section
             header={

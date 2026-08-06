@@ -39,7 +39,7 @@ const chipShadow = shadow({ radius: 20, color: "#00000020" });
 const glassLabel = [
   ...chipBase,
   glassEffect({
-    glass: { variant: "clear", interactive: true },
+    glass: { variant: "regular", interactive: true },
     shape: "roundedRectangle",
     cornerRadius: 100,
   }),
@@ -51,7 +51,7 @@ const activeLabel = (color: string) => [
   ...chipBase,
   glassEffect({
     glass: {
-      variant: "clear",
+      variant: "regular",
       interactive: true,
       tint: color,
     },
