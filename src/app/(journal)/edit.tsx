@@ -65,14 +65,39 @@ function JournalEditForm({ journal }: FormProps) {
           headerLargeTitleEnabled: false,
           unstable_headerRightItems: () => [
             {
-              type: "button",
-              label: "Delete All Entries",
+              type: "menu" as const,
+              label: "Options",
               icon: {
-                type: "sfSymbol",
-                name: "trash",
+                type: "sfSymbol" as const,
+                name: "ellipsis" as const,
               },
-              tintColor: PlatformColor("systemRed"),
-              onPress: () => setShowDeleteAllAlert(true),
+              menu: {
+                items: [
+                  {
+                    type: "action" as const,
+                    icon: {
+                      type: "sfSymbol" as const,
+                      name: "square.and.arrow.up" as const,
+                    },
+                    label: "Export",
+                    state: "off" as const,
+                    onPress: () => {
+                      console.log("Export", journal.name);
+                    },
+                  },
+                  {
+                    type: "action" as const,
+                    label: "Delete Journal",
+                    icon: {
+                      type: "sfSymbol" as const,
+                      name: "trash" as const,
+                    },
+                    state: "off" as const,
+                    destructive: true,
+                    onPress: () => setShowDeleteAllAlert(true),
+                  },
+                ],
+              },
             },
             {
               type: "button",

@@ -49,12 +49,6 @@ export default function JournalScreen() {
           title: "Journal",
           headerLargeTitleEnabled: true,
           unstable_headerRightItems: () => [
-            {
-              type: "button",
-              label: "Create New Journal",
-              icon: { type: "sfSymbol", name: "folder.badge.plus" },
-              onPress: () => router.push("/(journal)/create"),
-            },
             ...(activeJournal
               ? [
                   {
@@ -114,6 +108,12 @@ export default function JournalScreen() {
                   },
                 ]
               : []),
+            {
+              type: "button",
+              label: "Create New Journal",
+              icon: { type: "sfSymbol", name: "folder.badge.plus" },
+              onPress: () => router.push("/(journal)/create"),
+            },
           ],
         }}
       />
