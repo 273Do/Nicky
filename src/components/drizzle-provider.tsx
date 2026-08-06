@@ -4,6 +4,7 @@ import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 
 import { db, expoDb } from "@/db/client";
+import { seed } from "@/db/seed";
 
 import migrations from "../../drizzle/migrations";
 
@@ -28,6 +29,8 @@ export function DrizzleProvider({ children }: Props) {
   }
 
   if (!success) return null;
+
+  if (__DEV__) seed();
 
   return <>{children}</>;
 }
