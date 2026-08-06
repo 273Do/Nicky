@@ -2,6 +2,7 @@ import { PlatformColor } from "react-native";
 
 import { HStack, Image, ScrollView, Spacer, Text } from "@expo/ui/swift-ui";
 import {
+  defaultScrollAnchor,
   fixedSize,
   font,
   foregroundStyle,
@@ -57,11 +58,16 @@ type Props = {
  * 表示するジャーナルの統計を選択するチップ
  */
 export function JournalChipList({ journals, activeJournalId, onSelect }: Props) {
+  const activeIndex = journals.findIndex((j) => j.id === activeJournalId);
+  const ratio = journals.length > 1 ? activeIndex / (journals.length - 1) : 0;
+  const anchor = ratio <= 0.33 ? "leading" : ratio <= 0.67 ? "center" : "trailing";
+
   return (
     <ScrollView
       axes="horizontal"
       showsIndicators={false}
       modifiers={[
+        defaultScrollAnchor(anchor),
         padding({ top: -32, bottom: -32 }),
         listRowInsets({
           leading: 0.1,

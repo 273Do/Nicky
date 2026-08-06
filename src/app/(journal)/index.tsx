@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { Alert, Button, Host, Text } from "@expo/ui/swift-ui";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { Stack, useRouter } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 import { EntryListView } from "@/components/entry/entry-list-view";
 import { deleteAllEntries } from "@/db/queries/entries";
@@ -13,11 +13,14 @@ import { getJournalsQuery, JournalWithCountObj } from "@/db/queries/journals";
  */
 export default function JournalScreen() {
   const router = useRouter();
+  const { createdSelectedId } = useLocalSearchParams<{ createdSelectedId?: string }>();
 
   const { data: journals } = useLiveQuery(getJournalsQuery);
   const journalList: JournalWithCountObj[] = journals ?? [];
 
-  const [selectedJournalId, setSelectedJournalId] = useState<string | null>(null);
+  const [selectedJournalId, setSelectedJournalId] = useState<string | null>(
+    createdSelectedId ?? null,
+  );
 
   // 選択中のジャーナル（未選択 or 存在しない場合は先頭）
   const activeJournal = journalList.find((j) => j.id === selectedJournalId) ?? journalList[0];
