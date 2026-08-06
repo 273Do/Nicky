@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
@@ -28,9 +28,15 @@ export function DrizzleProvider({ children }: Props) {
     throw migrateError;
   }
 
-  if (!success) return null;
+  const seeded = useRef(false);
+  useEffect(() => {
+    if (__DEV__ && success && !seeded.current) {
+      seeded.current = true;
+      seed().catch(console.error);
+    }
+  }, [success]);
 
-  if (__DEV__) seed();
+  if (!success) return null;
 
   return <>{children}</>;
 }
