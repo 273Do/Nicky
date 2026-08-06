@@ -1,26 +1,40 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { Alert, Button, Host, Text } from "@expo/ui/swift-ui";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useFocusEffect, useRouter } from "expo-router";
 
 import { EntryListView } from "@/components/entry/entry-list-view";
 import { deleteAllEntries } from "@/db/queries/entries";
 import { getJournalsQuery, JournalWithCountObj } from "@/db/queries/journals";
+import { consumeCreatedJournalId } from "@/utils/journal/created-journal";
 
 /**
  * ジャーナル画面（チップ切り替え + エントリー一覧）
  */
 export default function JournalScreen() {
   const router = useRouter();
-  const { createdSelectedId } = useLocalSearchParams<{ createdSelectedId?: string }>();
 
   const { data: journals } = useLiveQuery(getJournalsQuery);
   const journalList: JournalWithCountObj[] = journals ?? [];
 
-  const [selectedJournalId, setSelectedJournalId] = useState<string | null>(
-    createdSelectedId ?? null,
-  );
+  const [selectedJournalId, setSelectedJournalId] = useState<string | null>(null);
+  const [chipScrollKey, setChipScrollKey] = useState(0);
+
+  // 作成直後のフォーカス復帰時に ID を受け取る（useRef で二重消費を防ぐ）
+  const consumed = useRef(false);
+  useFocusEffect(() => {
+    if (consumed.current) return;
+    const id = consumeCreatedJournalId();
+    if (id) {
+      setSelectedJournalId(id);
+      setChipScrollKey((k) => k + 1);
+      consumed.current = true;
+    }
+    return () => {
+      consumed.current = false;
+    };
+  });
 
   // 選択中のジャーナル（未選択 or 存在しない場合は先頭）
   const activeJournal = journalList.find((j) => j.id === selectedJournalId) ?? journalList[0];
@@ -110,7 +124,7 @@ export default function JournalScreen() {
           onSelectJournal={setSelectedJournalId}
           journalName={activeJournal.name}
           bookmarkOnly={bookmarkOnly}
-          scrollToEnd={!!createdSelectedId}
+          chipScrollKey={chipScrollKey}
         />
       ) : null}
 

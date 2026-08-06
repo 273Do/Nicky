@@ -1,4 +1,4 @@
-import { PlatformColor } from "react-native";
+import { PlatformColor, useWindowDimensions } from "react-native";
 
 import { HStack, Image, ScrollView, Spacer, Text } from "@expo/ui/swift-ui";
 import {
@@ -10,12 +10,29 @@ import {
   listRowInsets,
   onTapGesture,
   padding,
+  scrollDisabled,
   shadow,
 } from "@expo/ui/swift-ui/modifiers";
 
 import { JournalWithCountObj } from "@/db/queries/journals";
 
-const chipBase = [padding({ vertical: 6, horizontal: 10 }), font({ size: 14 })];
+const CHIP_H_PAD = 10;
+const CHIP_ICON = 14;
+const CHIP_GAP = 4;
+const CHIP_SPACING = 8;
+const LIST_H_PAD = 16;
+const AVG_CHAR_W = 9;
+
+/** チップ全体の推定幅 */
+const estimateWidth = (journals: JournalWithCountObj[]) => {
+  const chips = journals.reduce(
+    (s, j) => s + CHIP_H_PAD * 2 + CHIP_ICON + CHIP_GAP + j.name.length * AVG_CHAR_W,
+    0,
+  );
+  return LIST_H_PAD * 2 + chips + Math.max(0, journals.length - 1) * CHIP_SPACING;
+};
+
+const chipBase = [padding({ vertical: 6, horizontal: CHIP_H_PAD }), font({ size: 14 })];
 
 const chipShadow = shadow({ radius: 20, color: "#00000020" });
 
@@ -60,12 +77,16 @@ type Props = {
  * 表示するジャーナルの統計を選択するチップ
  */
 export function JournalChipList({ journals, activeJournalId, onSelect, scrollToEnd }: Props) {
+  const { width: screenWidth } = useWindowDimensions();
+  const fitsOnScreen = estimateWidth(journals) <= screenWidth;
+
   return (
     <ScrollView
       axes="horizontal"
       showsIndicators={false}
       modifiers={[
-        ...(scrollToEnd ? [defaultScrollAnchor("trailing")] : []),
+        scrollDisabled(fitsOnScreen),
+        ...(scrollToEnd && !fitsOnScreen ? [defaultScrollAnchor("trailing")] : []),
         padding({ top: -32, bottom: -32 }),
         listRowInsets({
           leading: 0.1,
@@ -76,9 +97,9 @@ export function JournalChipList({ journals, activeJournalId, onSelect, scrollToE
       ]}
     >
       <HStack
-        spacing={8}
+        spacing={CHIP_SPACING}
         modifiers={[
-          padding({ leading: 16, trailing: 16, top: 32, bottom: 32 }),
+          padding({ leading: LIST_H_PAD, trailing: LIST_H_PAD, top: 32, bottom: 32 }),
           fixedSize({ horizontal: true, vertical: false }),
         ]}
       >
@@ -89,16 +110,15 @@ export function JournalChipList({ journals, activeJournalId, onSelect, scrollToE
               key={journal.id}
               modifiers={[
                 ...(isActive ? activeLabel(journal.color) : glassLabel),
-                // animation(Animation.easeInOut({ duration: 0.3 }), isActive),
                 onTapGesture(() => onSelect(journal.id)),
               ]}
             >
               <Image
                 systemName={journal.icon}
                 color={isActive ? PlatformColor("white") : PlatformColor("systemGray")}
-                size={14}
+                size={CHIP_ICON}
               />
-              <Spacer minLength={4} />
+              <Spacer minLength={CHIP_GAP} />
               <Text>{journal.name}</Text>
             </HStack>
           );

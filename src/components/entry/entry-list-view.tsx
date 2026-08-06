@@ -24,8 +24,8 @@ type Props = {
   journalName: string;
   /** ブックマークのみ表示 */
   bookmarkOnly?: boolean;
-  /** 初期表示時にチップリスト末尾へスクロール */
-  scrollToEnd?: boolean;
+  /** チップリストの再マウント用キー（作成後にスクロール位置をリセット） */
+  chipScrollKey?: number;
 };
 
 /**
@@ -37,7 +37,7 @@ export function EntryListView({
   onSelectJournal,
   journalName,
   bookmarkOnly = false,
-  scrollToEnd,
+  chipScrollKey = 0,
 }: Props) {
   const router = useRouter();
 
@@ -54,10 +54,11 @@ export function EntryListView({
             header={
               journals && onSelectJournal ? (
                 <JournalChipList
+                  key={chipScrollKey}
                   journals={journals}
                   activeJournalId={activeJournalId}
                   onSelect={onSelectJournal}
-                  scrollToEnd={scrollToEnd}
+                  scrollToEnd={chipScrollKey > 0}
                 />
               ) : undefined
             }
