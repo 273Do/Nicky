@@ -61,6 +61,46 @@ Drizzle ORM + expo-sqlite. Schema is split by domain in `src/db/schemas/`:
 | `fields.ts`   | `fields` (field definitions per journal) |
 | `entries.ts`  | `entries`, `entry_values`                |
 
+```mermaid
+erDiagram
+    journals {
+        TEXT id PK
+        TEXT name
+        TEXT icon
+        TEXT color
+        INTEGER createdAt
+        INTEGER updatedAt
+    }
+
+    fields {
+        TEXT id PK
+        TEXT journalId FK
+        TEXT type
+        TEXT label
+        INTEGER sortOrder
+    }
+
+    entries {
+        TEXT id PK
+        TEXT journalId FK
+        INTEGER bookmark
+        INTEGER createdAt
+        INTEGER updatedAt
+    }
+
+    entry_values {
+        TEXT id PK
+        TEXT entryId FK
+        TEXT fieldId FK
+        TEXT value
+    }
+
+    journals ||--o{ fields : "has"
+    journals ||--o{ entries : "has"
+    entries ||--o{ entry_values : "has"
+    fields ||--o{ entry_values : "has"
+```
+
 `src/db/schemas/index.ts` re-exports all schemas. `src/components/drizzle-provider.tsx` opens the DB, runs migrations via `useMigrations`, and exports `db`.
 
 **Adding a schema change:** edit the relevant schema file → `pnpm drizzle-kit generate` → commit the generated files in `drizzle/`.
