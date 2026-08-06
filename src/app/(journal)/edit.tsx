@@ -1,10 +1,12 @@
+import { useState } from "react";
 import { Keyboard, PlatformColor } from "react-native";
 
+import { Alert, Button, Host, Text } from "@expo/ui/swift-ui";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
-import { getJournalDetailQuery } from "@/db/queries/journals";
+import { deleteJournal, getJournalDetailQuery } from "@/db/queries/journals";
 import { FieldObj } from "@/db/schemas";
 import { FieldDraftObj, useJournalField } from "@/utils/journal/use-journal-field";
 
@@ -19,6 +21,7 @@ type FormProps = {
  */
 function JournalEditForm({ journal }: FormProps) {
   const router = useRouter();
+  const [showDeleteAllAlert, setShowDeleteAllAlert] = useState(false);
 
   const { name, icon, color } = journal;
 
@@ -49,6 +52,11 @@ function JournalEditForm({ journal }: FormProps) {
     router.back();
   };
 
+  const handleDelete = async () => {
+    await deleteJournal(journal.id);
+    router.back();
+  };
+
   return (
     <>
       <Stack.Screen
@@ -56,6 +64,41 @@ function JournalEditForm({ journal }: FormProps) {
           title: journal.name,
           headerLargeTitleEnabled: false,
           unstable_headerRightItems: () => [
+            {
+              type: "menu" as const,
+              label: "Options",
+              icon: {
+                type: "sfSymbol" as const,
+                name: "ellipsis" as const,
+              },
+              menu: {
+                items: [
+                  {
+                    type: "action" as const,
+                    icon: {
+                      type: "sfSymbol" as const,
+                      name: "square.and.arrow.up" as const,
+                    },
+                    label: "Export",
+                    state: "off" as const,
+                    onPress: () => {
+                      console.log("Export", journal.name);
+                    },
+                  },
+                  {
+                    type: "action" as const,
+                    label: "Delete Journal",
+                    icon: {
+                      type: "sfSymbol" as const,
+                      name: "trash" as const,
+                    },
+                    state: "off" as const,
+                    destructive: true,
+                    onPress: () => setShowDeleteAllAlert(true),
+                  },
+                ],
+              },
+            },
             {
               type: "button",
               label: "Save",
@@ -79,6 +122,25 @@ function JournalEditForm({ journal }: FormProps) {
         meta={meta}
         setMeta={setMeta}
       />
+
+      <Host matchContents>
+        <Alert
+          title={`Delete "${journal.name}" Journal`}
+          isPresented={showDeleteAllAlert}
+          onIsPresentedChange={setShowDeleteAllAlert}
+        >
+          <Alert.Trigger>
+            <Text>{""}</Text>
+          </Alert.Trigger>
+          <Alert.Message>
+            <Text>All entries in this journal will be permanently deleted.</Text>
+          </Alert.Message>
+          <Alert.Actions>
+            <Button label="Cancel" role="cancel" />
+            <Button label="Delete" role="destructive" onPress={handleDelete} />
+          </Alert.Actions>
+        </Alert>
+      </Host>
     </>
   );
 }

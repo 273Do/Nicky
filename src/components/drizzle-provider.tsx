@@ -1,9 +1,10 @@
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 
 import { db, expoDb } from "@/db/client";
+import { seed } from "@/db/seed";
 
 import migrations from "../../drizzle/migrations";
 
@@ -26,6 +27,14 @@ export function DrizzleProvider({ children }: Props) {
     console.error("Migration Error:", migrateError);
     throw migrateError;
   }
+
+  const seeded = useRef(false);
+  useEffect(() => {
+    if (__DEV__ && success && !seeded.current) {
+      seeded.current = true;
+      seed().catch(console.error);
+    }
+  }, [success]);
 
   if (!success) return null;
 

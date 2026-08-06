@@ -22,6 +22,7 @@ type Props = {
  */
 export function EntryRow({ journalName, entry }: Props) {
   const router = useRouter();
+
   return (
     <ContextMenu>
       <ContextMenu.Trigger>

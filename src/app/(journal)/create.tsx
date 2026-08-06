@@ -3,6 +3,7 @@ import { Keyboard, PlatformColor } from "react-native";
 import { Stack, useRouter } from "expo-router";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
+import { setCreatedJournalId } from "@/utils/journal/created-journal";
 import { useJournalField } from "@/utils/journal/use-journal-field";
 
 /**
@@ -25,10 +26,10 @@ export default function JournalCreateScreen() {
 
   const handleJournalCreate = async () => {
     Keyboard.dismiss();
-    const { id: newJournalId, name } = await createJournal();
 
-    // replace でスタックせずにジャーナル詳細画面からジャーナル一覧へ戻れるようにする
-    router.replace(`/(journal)/${newJournalId}?name=${name}`);
+    const { id } = await createJournal();
+    setCreatedJournalId(id);
+    router.back();
   };
 
   return (
