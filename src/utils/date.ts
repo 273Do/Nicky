@@ -34,3 +34,17 @@ export const formatDateDays = (date: Date) =>
   date.getFullYear() === new Date().getFullYear()
     ? date.toLocaleDateString("en-US", { month: "long", day: "numeric" })
     : date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+
+/** 日付を n 日ずらす
+ * @param date 基準日付
+ * @param days 日数
+ * @returns ずらされた日付
+ */
+export const addDays = (date: Date, days: number) => {
+  const d = new Date(date);
+
+  d.setDate(d.getDate() + days);
+  d.setHours(0, 0, 0, 0);
+
+  return d;
+};

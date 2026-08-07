@@ -1,4 +1,5 @@
 import { useColorScheme } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { Stack } from "expo-router";
 
@@ -7,14 +8,16 @@ export default function DaysLayout() {
   const titleColor = colorScheme === "dark" ? "#ffffff" : "#000000";
 
   return (
-    <Stack
-      screenOptions={{
-        headerTransparent: true,
-        headerTitleStyle: {
-          color: titleColor,
-        },
-        headerBackButtonDisplayMode: "minimal",
-      }}
-    />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Stack
+        screenOptions={{
+          headerTransparent: true,
+          headerTitleStyle: {
+            color: titleColor,
+          },
+          headerBackButtonDisplayMode: "minimal",
+        }}
+      />
+    </GestureHandlerRootView>
   );
 }
