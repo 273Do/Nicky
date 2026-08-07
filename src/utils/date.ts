@@ -23,3 +23,14 @@ export const formatTime = (date: Date | number): string => {
     minute: "2-digit",
   }).format(date);
 };
+
+/**
+ * 日付を "May 5" または "May 5, 2026" などロケールに応じた形式でフォーマットする関数
+ * @param date フォーマットする日付
+ * @returns フォーマットされた日付文字列
+ */
+export const formatDateDays = (date: Date) =>
+  // 今年でない場合は年を表示する
+  date.getFullYear() === new Date().getFullYear()
+    ? date.toLocaleDateString("en-US", { month: "long", day: "numeric" })
+    : date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
