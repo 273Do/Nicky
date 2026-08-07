@@ -11,7 +11,6 @@ import {
   onTapGesture,
   padding,
   scrollDisabled,
-  shadow,
 } from "@expo/ui/swift-ui/modifiers";
 
 import { JournalWithCountObj } from "@/db/queries/journals";
@@ -34,17 +33,13 @@ const estimateWidth = (journals: JournalWithCountObj[]) => {
 
 const chipBase = [padding({ vertical: 6, horizontal: CHIP_H_PAD }), font({ size: 14 })];
 
-const chipShadow = shadow({ radius: 20, color: "#00000020" });
-
 const glassLabel = [
   ...chipBase,
   glassEffect({
     glass: { variant: "regular", interactive: true },
-    shape: "roundedRectangle",
-    cornerRadius: 100,
+    shape: "capsule",
   }),
   foregroundStyle(PlatformColor("systemGray")),
-  chipShadow,
 ];
 
 const activeLabel = (color: string) => [
@@ -55,11 +50,9 @@ const activeLabel = (color: string) => [
       interactive: true,
       tint: color,
     },
-    shape: "roundedRectangle",
-    cornerRadius: 100,
+    shape: "capsule",
   }),
   foregroundStyle("white"),
-  chipShadow,
 ];
 
 type Props = {
