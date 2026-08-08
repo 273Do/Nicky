@@ -21,7 +21,7 @@ export function DaysLLMFB() {
                 foregroundStyle(PlatformColor("label")),
               ]}
             >
-              今日の気付き
+              {`Today's reflection`}
             </Text>
           </HStack>
         </HStack>

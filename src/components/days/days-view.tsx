@@ -37,7 +37,7 @@ export function DaysView({ date }: Props) {
           flex: 1,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: PlatformColor("systemBackground"),
+          backgroundColor: PlatformColor("systemGroupedBackground"),
         }}
       >
         <Host style={{ flex: 1 }} useViewportSizeMeasurement>
