@@ -20,6 +20,7 @@ import { datePickerStyle, tint } from "@expo/ui/swift-ui/modifiers";
 import { GlassView } from "expo-glass-effect";
 import { Stack } from "expo-router";
 
+import { DaysView } from "@/components/days/days-view";
 import { addDays, formatDateDays } from "@/utils/date";
 
 const SWIPE_THRESHOLD = 50;
@@ -72,8 +73,8 @@ export default function DaysScreen() {
   };
 
   const panGesture = Gesture.Pan()
-    .activeOffsetX([-15, 15])
-    .failOffsetY([-10, 10])
+    .activeOffsetX([-20, 20])
+    .failOffsetY([-15, 15])
     .onUpdate((event) => {
       translateX.value = event.translationX;
     })
@@ -133,6 +134,14 @@ export default function DaysScreen() {
               </GlassView>
             </Pressable>
           ),
+          unstable_headerRightItems: () => [
+            {
+              type: "button",
+              label: "Save",
+              icon: { type: "sfSymbol", name: "gearshape" },
+              onPress: () => console.log("gear"),
+            },
+          ],
         }}
       />
 
@@ -141,11 +150,11 @@ export default function DaysScreen() {
           <View
             style={[styles.page, { width: screenWidth, transform: [{ translateX: -screenWidth }] }]}
           >
-            <View style={[styles.dot, { backgroundColor: PlatformColor("systemIndigo") }]} />
+            <DaysView date={prevDate} />
           </View>
 
           <View style={[styles.page, { width: screenWidth }]}>
-            <View style={[styles.dot, { backgroundColor: PlatformColor("systemIndigo") }]} />
+            <DaysView date={selectedDate} />
           </View>
 
           {canGoNext && (
@@ -155,7 +164,7 @@ export default function DaysScreen() {
                 { width: screenWidth, transform: [{ translateX: screenWidth }] },
               ]}
             >
-              <View style={[styles.dot, { backgroundColor: PlatformColor("systemIndigo") }]} />
+              <DaysView date={nextDate} />
             </View>
           )}
         </Animated.View>
@@ -203,8 +212,6 @@ const styles = StyleSheet.create({
   },
   page: {
     ...StyleSheet.absoluteFillObject,
-    alignItems: "center",
-    paddingTop: 120,
   },
   dot: {
     width: 40,
