@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { PlatformColor, Text, View } from "react-native";
 
-import { Host, List, Section, Text as SText } from "@expo/ui/swift-ui";
+import { Host, List } from "@expo/ui/swift-ui";
 import { animation, Animation, frame } from "@expo/ui/swift-ui/modifiers";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { getEntriesByDateQuery } from "@/db/queries/entries";
 
 import { DaysCard } from "./days-card";
+import { DaysLLMFB } from "./days-llm-fb";
 
 type Props = {
   date: Date;
@@ -55,9 +56,7 @@ export function DaysView({ date }: Props) {
             animation(Animation.default, expandedIds.size),
           ]}
         >
-          <Section>
-            <SText>LLM Feedback Here</SText>
-          </Section>
+          <DaysLLMFB />
           {entries.map((entry, index) => (
             <DaysCard
               key={entry.id}
