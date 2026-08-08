@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, gte, lt } from "drizzle-orm";
 
 import { db } from "@/db/client";
 
@@ -94,6 +94,28 @@ export const deleteAllEntries = async (journalId?: string) => {
   } else {
     await db.delete(entries);
   }
+};
+
+/**
+ * 指定日のエントリー一覧をフィールドとともに取得するクエリ
+ * @param date 対象日（時刻は無視される）
+ */
+export const getEntriesByDateQuery = (date: Date) => {
+  const start = new Date(date);
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date(start);
+  end.setDate(end.getDate() + 1);
+
+  return db.query.entries.findMany({
+    where: and(gte(entries.createdAt, start.getTime()), lt(entries.createdAt, end.getTime())),
+    with: {
+      journal: true,
+      values: {
+        with: { field: true },
+      },
+    },
+  });
 };
 
 /** エントリー詳細の型 */
