@@ -1,26 +1,13 @@
 import { useState } from "react";
 import { PlatformColor, Text, View } from "react-native";
 
-import {
-  Button,
-  Host,
-  HStack,
-  Image,
-  List,
-  Section,
-  Spacer,
-  Text as SText,
-} from "@expo/ui/swift-ui";
-import { animation, Animation, font, foregroundStyle, frame } from "@expo/ui/swift-ui/modifiers";
+import { Host, List, Section, Text as SText } from "@expo/ui/swift-ui";
+import { animation, Animation, frame } from "@expo/ui/swift-ui/modifiers";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { getEntriesByDateQuery } from "@/db/queries/entries";
-import { formatTime } from "@/utils/date";
-import { deserializeValue } from "@/utils/entry/use-entry";
 
-import { EntryFieldItem } from "../entry/entry-field-item";
-
-const PREVIEW_COUNT = 2;
+import { DaysCard } from "./days-card";
 
 type Props = {
   date: Date;
@@ -68,60 +55,20 @@ export function DaysView({ date }: Props) {
             animation(Animation.default, expandedIds.size),
           ]}
         >
-          {entries.map((entry, index) => {
-            const { id, journal, values, createdAt } = entry;
-
-            const sorted = [...values].sort((a, b) => a.field.sortOrder - b.field.sortOrder);
-
-            const isFirstOfJournal =
-              entries.findIndex((e) => e.journal.id === journal.id) === index;
-
-            const isExpanded = expandedIds.has(id);
-            const hasMore = sorted.length > PREVIEW_COUNT;
-            const visibleFields = isExpanded ? sorted : sorted.slice(0, PREVIEW_COUNT);
-
-            return (
-              <Section
-                key={id}
-                header={
-                  <HStack alignment="bottom">
-                    {isFirstOfJournal && (
-                      <HStack spacing={6}>
-                        <Image systemName={journal.icon} color={journal.color} size={20} />
-                        <SText
-                          modifiers={[
-                            font({ size: 20, weight: "bold" }),
-                            foregroundStyle(PlatformColor("label")),
-                          ]}
-                        >
-                          {journal.name}
-                        </SText>
-                      </HStack>
-                    )}
-                    <Spacer />
-                    <SText modifiers={[font({ weight: "semibold" })]}>
-                      {formatTime(createdAt)}
-                    </SText>
-                  </HStack>
-                }
-              >
-                {visibleFields.map((v) => (
-                  <EntryFieldItem
-                    key={v.id}
-                    field={v.field}
-                    value={deserializeValue(v.value, v.field.type)}
-                  />
-                ))}
-                {hasMore && (
-                  <Button
-                    label={isExpanded ? "Show less" : `Show ${sorted.length - PREVIEW_COUNT} more`}
-                    systemImage={isExpanded ? "chevron.up" : "chevron.down"}
-                    onPress={() => toggleExpand(id)}
-                  />
-                )}
-              </Section>
-            );
-          })}
+          <Section>
+            <SText>LLM Feedback Here</SText>
+          </Section>
+          {entries.map((entry, index) => (
+            <DaysCard
+              key={entry.id}
+              entry={entry}
+              isFirstOfJournal={
+                entries.findIndex((e) => e.journal.id === entry.journal.id) === index
+              }
+              isExpanded={expandedIds.has(entry.id)}
+              onToggleExpand={() => toggleExpand(entry.id)}
+            />
+          ))}
         </List>
       </Host>
     </View>
