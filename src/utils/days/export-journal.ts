@@ -10,7 +10,7 @@ const SIGNING_SECRET = process.env.EXPO_PUBLIC_SIGNING_SECRET!;
  * データの署名を生成する
  * <秘密鍵 + データの SHA-256> ハッシュ
  */
-const generateSignature = async (data: string): Promise<string> => {
+export const generateSignature = async (data: string): Promise<string> => {
   return Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, `${SIGNING_SECRET}:${data}`);
 };
 
@@ -18,7 +18,7 @@ const generateSignature = async (data: string): Promise<string> => {
  * 既存のジャーナルを ID を変えて署名付きで共有するための関数
  * @param journal エクスポートするジャーナルの元データ
  */
-export const exportJournal = async (journal: JournalDetail) => {
+export const exportJournal = async (journal: JournalDetail): Promise<void> => {
   try {
     const file = new File(Paths.document, `${journal.name} template.json`);
 

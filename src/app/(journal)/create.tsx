@@ -3,6 +3,7 @@ import { Keyboard, PlatformColor } from "react-native";
 import { Stack, useRouter } from "expo-router";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
+import { importJournal } from "@/utils/days/import-journal";
 import { setCreatedJournalId } from "@/utils/journal/created-journal";
 import { useJournalField } from "@/utils/journal/use-journal-field";
 
@@ -14,6 +15,7 @@ export default function JournalCreateScreen() {
 
   const {
     fields,
+    setFields,
     addField,
     renameField,
     deleteField,
@@ -32,6 +34,17 @@ export default function JournalCreateScreen() {
     router.back();
   };
 
+  const importJournalTemplate = async () => {
+    const journal = await importJournal();
+
+    if (!journal) return;
+
+    const { name, color, icon } = journal;
+
+    setMeta({ name, color, icon });
+    setFields(journal.fields.map(({ id, type, label }) => ({ id, type, label })));
+  };
+
   return (
     <>
       <Stack.Screen
@@ -42,7 +55,7 @@ export default function JournalCreateScreen() {
               type: "button",
               label: "Import Journal",
               icon: { type: "sfSymbol", name: "square.and.arrow.down" },
-              onPress: () => console.log("import journal"),
+              onPress: importJournalTemplate,
             },
             {
               type: "button",

@@ -2,7 +2,7 @@ import { and, eq, notInArray, sql } from "drizzle-orm";
 
 import { db } from "@/db/client";
 import { entries, fields, JournalObj, journals } from "@/db/schemas";
-import { FieldWithSortObj } from "@/utils/journal/use-journal-field";
+import { FieldWithSortObj, JournalMetaObj } from "@/utils/journal/use-journal-field";
 
 /**
  * ジャーナル一覧を取得するクエリ
@@ -59,7 +59,7 @@ export const storeJournal = async (
  */
 export const updateJournal = async (
   journalId: string,
-  meta: Pick<JournalObj, "name" | "icon" | "color">,
+  meta: JournalMetaObj,
   fieldUpdates: FieldWithSortObj[],
 ): Promise<void> => {
   const { name, icon, color } = meta;
