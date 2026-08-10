@@ -245,7 +245,7 @@ export async function seed() {
 
       for (let e = 0; e < entryCount; e++) {
         const entryId = uuid();
-        const daysAgo = rand(0, 120);
+        const daysAgo = rand(0, 9);
         const createdAt = now - daysAgo * 86400000 + rand(0, 86400000);
 
         await tx.insert(entries).values({
