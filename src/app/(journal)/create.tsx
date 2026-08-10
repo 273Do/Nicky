@@ -40,12 +40,18 @@ export default function JournalCreateScreen() {
           unstable_headerRightItems: () => [
             {
               type: "button",
+              label: "Import Journal",
+              icon: { type: "sfSymbol", name: "square.and.arrow.down" },
+              onPress: () => console.log("import journal"),
+            },
+            {
+              type: "button",
               label: "Save",
               icon: { type: "sfSymbol", name: "checkmark" },
               tintColor: formDisabled
                 ? PlatformColor("tertiaryLabel")
                 : PlatformColor("systemIndigo"),
-              variant: formDisabled ? undefined : "prominent",
+              variant: "prominent",
               disabled: formDisabled,
               onPress: formDisabled ? () => {} : handleJournalCreate,
             },

@@ -65,34 +65,34 @@ function JournalEditForm({ journal }: FormProps) {
           headerLargeTitleEnabled: false,
           unstable_headerRightItems: () => [
             {
-              type: "menu" as const,
+              type: "menu",
               label: "Options",
               icon: {
-                type: "sfSymbol" as const,
-                name: "ellipsis" as const,
+                type: "sfSymbol",
+                name: "ellipsis",
               },
               menu: {
                 items: [
                   {
-                    type: "action" as const,
+                    type: "action",
                     icon: {
-                      type: "sfSymbol" as const,
-                      name: "square.and.arrow.up" as const,
+                      type: "sfSymbol",
+                      name: "square.and.arrow.up",
                     },
-                    label: "Export",
-                    state: "off" as const,
+                    label: "Share",
+                    state: "off",
                     onPress: () => {
-                      console.log("Export", journal.name);
+                      console.log("Share", journal.name);
                     },
                   },
                   {
-                    type: "action" as const,
+                    type: "action",
                     label: "Delete Journal",
                     icon: {
-                      type: "sfSymbol" as const,
-                      name: "trash" as const,
+                      type: "sfSymbol",
+                      name: "trash",
                     },
-                    state: "off" as const,
+                    state: "off",
                     destructive: true,
                     onPress: () => setShowDeleteAllAlert(true),
                   },
