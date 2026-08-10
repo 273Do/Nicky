@@ -6,11 +6,10 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
-import { deleteJournal, getJournalDetailQuery } from "@/db/queries/journals";
+import { deleteJournal, getJournalDetailQuery, JournalDetail } from "@/db/queries/journals";
 import { FieldObj } from "@/db/schemas";
+import { exportJournal } from "@/utils/days/export-journal";
 import { FieldDraftObj, useJournalField } from "@/utils/journal/use-journal-field";
-
-type JournalDetail = NonNullable<Awaited<ReturnType<typeof getJournalDetailQuery>>>;
 
 type FormProps = {
   journal: JournalDetail;
@@ -81,9 +80,7 @@ function JournalEditForm({ journal }: FormProps) {
                     },
                     label: "Share",
                     state: "off",
-                    onPress: () => {
-                      console.log("Share", journal.name);
-                    },
+                    onPress: async () => await exportJournal(journal),
                   },
                   {
                     type: "action",

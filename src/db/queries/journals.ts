@@ -28,6 +28,9 @@ export const getJournalDetailQuery = (journalId: string) =>
     },
   });
 
+/** ジャーナル詳細の型 */
+export type JournalDetail = NonNullable<Awaited<ReturnType<typeof getJournalDetailQuery>>>;
+
 /**
  * ジャーナルをフィールドと共に作成するクエリを実行
  * @param newJournal ジャーナルのメタ情報
