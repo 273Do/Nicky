@@ -1,5 +1,6 @@
 import { Keyboard, PlatformColor } from "react-native";
 
+import * as Crypto from "expo-crypto";
 import { Stack, useRouter } from "expo-router";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
@@ -39,10 +40,10 @@ export default function JournalCreateScreen() {
 
     if (!journal) return;
 
-    const { name, color, icon } = journal;
+    const { name, color, icon, fields } = journal;
 
     setMeta({ name, color, icon });
-    setFields(journal.fields.map(({ id, type, label }) => ({ id, type, label })));
+    setFields(fields.map(({ type, label }) => ({ id: Crypto.randomUUID(), type, label })));
   };
 
   return (
