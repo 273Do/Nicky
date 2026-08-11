@@ -1,7 +1,7 @@
 import { Text, TextField } from "@expo/ui/swift-ui";
 import { frame } from "@expo/ui/swift-ui/modifiers";
 
-import { FIELD_LABELS } from "@/core/constants/journal";
+import { FIELD_LABELS } from "@/constants/journal";
 
 import { FieldWrapper } from "./field-wrapper";
 

@@ -3,7 +3,7 @@ import { useRef } from "react";
 import * as Crypto from "expo-crypto";
 import { z } from "zod";
 
-import type { FieldType } from "@/core/constants/journal";
+import type { FieldType } from "@/constants/journal";
 import { storeEntry, updateEntryValues } from "@/db/queries/entries";
 import {
   entrySelectSchema,
