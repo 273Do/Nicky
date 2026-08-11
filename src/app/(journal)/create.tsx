@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Keyboard, PlatformColor } from "react-native";
 
 import * as Crypto from "expo-crypto";
@@ -27,6 +28,8 @@ export default function JournalCreateScreen() {
     formDisabled,
   } = useJournalField();
 
+  const [importKey, setImportKey] = useState(0);
+
   const handleJournalCreate = async () => {
     Keyboard.dismiss();
 
@@ -44,6 +47,7 @@ export default function JournalCreateScreen() {
 
     setMeta({ name, color, icon });
     setFields(fields.map(({ type, label }) => ({ id: Crypto.randomUUID(), type, label })));
+    setImportKey((prev) => prev + 1);
   };
 
   return (
@@ -73,6 +77,7 @@ export default function JournalCreateScreen() {
         }}
       />
       <JournalCreateView
+        key={importKey}
         fields={fields}
         addField={addField}
         renameField={renameField}

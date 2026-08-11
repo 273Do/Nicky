@@ -1,17 +1,21 @@
-import { SFSymbol } from "expo-symbols";
+import type { SFSymbol } from "expo-symbols";
+
+import { z } from "zod";
 
 /**
  * ジャーナルフィールドの種別
  */
-export type FieldType =
-  | "text"
-  | "longText"
-  | "number"
-  | "media"
-  | "check"
-  | "date"
-  | "time"
-  | "location";
+export const fieldTypeSchema = z.enum([
+  "text",
+  "longText",
+  "number",
+  "media",
+  "check",
+  "date",
+  "time",
+  "location",
+]);
+export type FieldType = z.infer<typeof fieldTypeSchema>;
 
 /**
  * FieldType に対応する SF Symbol アイコン名

@@ -2,9 +2,20 @@ import { Alert } from "react-native";
 
 import * as DocumentPicker from "expo-document-picker";
 import { File } from "expo-file-system";
+import { z } from "zod";
 
-import { JournalDetail } from "@/db/queries/journals";
+import type { JournalDetail } from "@/db/queries/journals";
+import { fieldSelectSchema, journalSelectSchema } from "@/db/schemas";
 import { generateSignature } from "@/utils/days/export-journal";
+
+const journalDetailSchema = journalSelectSchema.extend({
+  fields: z.array(fieldSelectSchema),
+});
+
+const importFileSchema = z.object({
+  data: journalDetailSchema,
+  signature: z.string().min(1),
+});
 
 /**
  * json をインポートして、新規ジャーナルを作成する関数
@@ -24,13 +35,14 @@ export const importJournal = async (): Promise<JournalDetail | null> => {
 
     const parsed = JSON.parse(content);
 
-    const parsedData: JournalDetail = parsed.data;
-    const signature: string = parsed.signature;
+    const validated = importFileSchema.safeParse(parsed);
 
-    if (!parsedData || !signature) {
+    if (!validated.success) {
       Alert.alert("Import Failed", "Invalid file format.");
       return null;
     }
+
+    const { data: parsedData, signature } = validated.data;
 
     const expected = await generateSignature(JSON.stringify(parsedData));
 

@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { PlatformColor } from "react-native";
 
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import { z } from "zod";
 
 import { EntryCreateView } from "@/components/entry/entry-create-view";
 import { EntryDetailView } from "@/components/entry/entry-detail";
 import { useEntryDetail } from "@/utils/entry/use-entry-detail";
+import { useValidatedParams } from "@/utils/params";
 
 /**
  * エントリー詳細
@@ -17,11 +19,9 @@ export default function EntryDetailScreen() {
     id: entryId,
     journalName,
     edit,
-  } = useLocalSearchParams<{
-    id: string;
-    journalName: string;
-    edit: string;
-  }>();
+  } = useValidatedParams(
+    z.object({ id: z.string(), journalName: z.string(), edit: z.string().optional() }),
+  );
 
   const [editMode, setEditMode] = useState<boolean>(Boolean(edit));
 

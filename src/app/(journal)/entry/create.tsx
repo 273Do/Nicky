@@ -1,11 +1,13 @@
 import { Keyboard, PlatformColor } from "react-native";
 
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import { z } from "zod";
 
 import { EntryCreateView } from "@/components/entry/entry-create-view";
 import { getFieldsQuery } from "@/db/queries/fields";
 import { useEntry } from "@/utils/entry/use-entry";
+import { useValidatedParams } from "@/utils/params";
 
 /**
  * エントリー作成
@@ -13,10 +15,9 @@ import { useEntry } from "@/utils/entry/use-entry";
 export default function EntryCreateScreen() {
   const router = useRouter();
 
-  const { journalId, journalName } = useLocalSearchParams<{
-    journalId: string;
-    journalName: string;
-  }>();
+  const { journalId, journalName } = useValidatedParams(
+    z.object({ journalId: z.string(), journalName: z.string() }),
+  );
 
   const { data: fields } = useLiveQuery(getFieldsQuery(journalId), [journalId]);
   const { valuesRef, setValue, createEntry } = useEntry(fields);

@@ -1,12 +1,20 @@
 import { useRef } from "react";
 
 import * as Crypto from "expo-crypto";
+import { z } from "zod";
 
 import type { FieldType } from "@/core/constants";
 import { storeEntry, updateEntryValues } from "@/db/queries/entries";
-import { EntryObj, EntryValueObj, FieldObj } from "@/db/schemas";
+import {
+  entrySelectSchema,
+  entryValueInsertSchema,
+  type EntryObj,
+  type EntryValueObj,
+  type FieldObj,
+} from "@/db/schemas";
 
-export type FieldValue = string | number | boolean | Date | null;
+export const fieldValueSchema = z.union([z.string(), z.number(), z.boolean(), z.date(), z.null()]);
+export type FieldValue = z.infer<typeof fieldValueSchema>;
 
 /**
  * 各エントリー入力のデフォルト値
@@ -116,6 +124,9 @@ export const useEntry = (fields: FieldObj[], initialValues?: Record<string, Fiel
       }),
     );
 
+    entrySelectSchema.parse(newEntry);
+    z.array(entryValueInsertSchema).parse(newValues);
+
     await storeEntry(newEntry, newValues);
 
     return newEntry;
@@ -126,10 +137,17 @@ export const useEntry = (fields: FieldObj[], initialValues?: Record<string, Fiel
    * @param entryId エントリー id
    */
   const updateEntry = async (entryId: string): Promise<void> => {
+    z.string().min(1).parse(entryId);
+
     const values = Object.entries(valuesRef.current).map(([fieldId, value]) => ({
       fieldId,
       value: serializeValue(value),
     }));
+
+    z.array(z.object({ fieldId: z.string().min(1), value: z.string().nullable() }))
+      .min(1)
+      .parse(values);
+
     await updateEntryValues(entryId, values);
   };
 

@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 /**
  * 16進数カラーコードを明るくする
  * @param hex 16進数カラーコード
@@ -15,7 +17,7 @@ export const lightenColor = (hex: string, amount = 40): string => {
  * 黒・白に近すぎる色を弾く（輝度が極端な色を除外）
  * @param hex 16進数カラーコード
  */
-export const isValidColor = (hex: string): boolean => {
+const isValidLuminance = (hex: string): boolean => {
   const num = parseInt(hex.replace("#", ""), 16);
   const r = ((num >> 16) & 0xff) / 255;
   const g = ((num >> 8) & 0xff) / 255;
@@ -23,3 +25,11 @@ export const isValidColor = (hex: string): boolean => {
   const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
   return luminance > 0.05 && luminance < 0.9;
 };
+
+/**
+ * HEX カラーコードの Zod スキーマ（形式 + 輝度バリデーション）
+ */
+export const hexColorSchema = z
+  .string()
+  .regex(/^#[0-9a-fA-F]{6}$/)
+  .refine(isValidLuminance, { message: "Color luminance is too extreme" });
