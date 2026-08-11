@@ -1,40 +1,46 @@
 import { useState } from "react";
 
 import * as Crypto from "expo-crypto";
-import { SFSymbol } from "expo-symbols";
+import { z } from "zod";
 
-import { FIELD_ICONS, FieldType, JOURNAL_ICONS } from "@/core/constants";
+import {
+  fieldTypeSchema,
+  type FieldType,
+  journalIconSchema,
+  JOURNAL_ICONS,
+} from "@/core/constants";
 import { storeJournal, updateJournal as updateJournalQuery } from "@/db/queries/journals";
-import { FieldObj, JournalObj } from "@/db/schemas";
+import { fieldInsertSchema, type JournalObj } from "@/db/schemas";
+import { hexColorSchema } from "@/utils/journal/color";
 
 /**
- * ジャーナルメタ情報の型
+ * ジャーナルメタ情報のスキーマ
  */
-export type JournalMetaObj = {
-  /** ジャーナル名 */
-  name: string;
-  /** ジャーナルカラー */
-  color: string;
-  /** ジャーナルアイコン */
-  icon: SFSymbol;
-};
+export const journalMetaSchema = z.object({
+  name: z.string().trim().min(1).max(20), // 20文字まで
+  color: hexColorSchema,
+  icon: journalIconSchema,
+});
+export type JournalMetaObj = z.infer<typeof journalMetaSchema>;
 
 /**
  * ジャーナル作成フォームのフィールド下書き（journalId・sortOrder なし）
  */
-export type FieldDraftObj = Omit<FieldObj, "journalId" | "sortOrder">;
+export const fieldDraftSchema = fieldInsertSchema
+  .omit({ journalId: true, sortOrder: true })
+  .extend({ label: z.string().trim().min(1).max(30) }); // 30 文字まで
+export type FieldDraftObj = z.infer<typeof fieldDraftSchema>;
 
 /**
  * sortOrder 確定済み・journalId 未割当のフィールド（DB 保存直前）
  */
-export type FieldWithSortObj = Omit<FieldObj, "journalId">;
-
-const isFieldType = (value: string): value is FieldType => value in FIELD_ICONS;
+export const fieldWithSortSchema = fieldInsertSchema.omit({ journalId: true });
+export type FieldWithSortObj = z.infer<typeof fieldWithSortSchema>;
 
 /**
  * 全 FieldType の配列
  */
-export const FIELD_TYPES: FieldType[] = Object.keys(FIELD_ICONS).filter(isFieldType);
+export const FIELD_TYPES: FieldType[] = fieldTypeSchema.options;
 
 const defaultMeta: JournalMetaObj = {
   name: "",
@@ -116,14 +122,16 @@ export const useJournalField = (initialData?: {
    * formDisabled フォームが送信可能かどうかのフラグ
    */
   const formDisabled =
-    fields.length === 0 ||
-    meta.name.length === 0 ||
-    fields.some((field) => field.label.length === 0);
+    !journalMetaSchema.safeParse(meta).success ||
+    !z.array(fieldDraftSchema).min(1).safeParse(fields).success;
 
   /**
    * 新規ジャーナルをフィールドと共にDBに保存する
    */
   const createJournal = async (): Promise<JournalObj> => {
+    journalMetaSchema.parse(meta);
+    z.array(fieldDraftSchema).min(1).parse(fields);
+
     const now = Date.now();
 
     const newJournal: JournalObj = {
@@ -152,6 +160,9 @@ export const useJournalField = (initialData?: {
    * @param journalId ジャーナルID
    */
   const updateJournal = async (journalId: string): Promise<void> => {
+    journalMetaSchema.parse(meta);
+    z.array(fieldDraftSchema).min(1).parse(fields);
+
     const fieldUpdates: FieldWithSortObj[] = fields.map((field, i) => ({
       id: field.id,
       type: field.type,

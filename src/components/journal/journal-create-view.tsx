@@ -23,7 +23,7 @@ import {
 } from "@expo/ui/swift-ui/modifiers";
 
 import { FIELD_ICONS, FIELD_LABELS, FieldType } from "@/core/constants";
-import { isValidColor } from "@/utils/journal/color";
+import { hexColorSchema } from "@/utils/journal/color";
 import { JournalMetaObj, type FieldDraftObj } from "@/utils/journal/use-journal-field";
 
 import { FieldBottomSheet } from "./field-bottom-sheet";
@@ -100,12 +100,9 @@ export function JournalCreateView({
 
               {/* ジャーナル名 */}
               <TextField
-                key={meta.name}
                 placeholder="Journal Name"
                 defaultValue={meta.name}
-                onValueChange={(value) =>
-                  setMeta((prev) => ({ ...prev, name: value.slice(0, 20) }))
-                }
+                onValueChange={(value) => setMeta((prev) => ({ ...prev, name: value }))}
                 modifiers={[frame({ maxWidth: 9999 })]}
               />
             </HStack>
@@ -162,7 +159,7 @@ export function JournalCreateView({
           selectedColor={meta.color}
           onSelectIcon={(icon) => setMeta((prev) => ({ ...prev, icon }))}
           onSelectColor={(color) => {
-            if (isValidColor(color)) setMeta((prev) => ({ ...prev, color }));
+            if (hexColorSchema.safeParse(color).success) setMeta((prev) => ({ ...prev, color }));
           }}
         />
       </Host>

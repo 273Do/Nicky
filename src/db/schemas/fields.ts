@@ -1,6 +1,10 @@
+import type { z } from "zod";
+
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
+import { fieldTypeSchema } from "@/core/constants";
 import type { FieldType } from "@/core/constants";
 
 import { entryValues } from "./entries";
@@ -29,4 +33,6 @@ export const fieldsRelations = relations(fields, ({ one, many }) => ({
   entryValues: many(entryValues),
 }));
 
-export type FieldObj = typeof fields.$inferInsert;
+export const fieldSelectSchema = createSelectSchema(fields, { type: fieldTypeSchema });
+export const fieldInsertSchema = createInsertSchema(fields, { type: fieldTypeSchema });
+export type FieldObj = z.infer<typeof fieldInsertSchema>;
