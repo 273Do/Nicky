@@ -3,10 +3,11 @@ import { Alert } from "react-native";
 import * as Crypto from "expo-crypto";
 import { File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import { z } from "zod";
 
 import { JournalDetail } from "@/db/queries/journals";
 
-const SIGNING_SECRET = process.env.EXPO_PUBLIC_SIGNING_SECRET!;
+const SIGNING_SECRET = z.string().min(1).parse(process.env.EXPO_PUBLIC_SIGNING_SECRET);
 
 /**
  * データの署名を生成する

@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { Keyboard, PlatformColor } from "react-native";
+import { Alert as RNAlert, Keyboard, PlatformColor } from "react-native";
 
 import { Alert, Button, Host, Text } from "@expo/ui/swift-ui";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import { z } from "zod";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
 import { deleteJournal, getJournalDetailQuery, JournalDetail } from "@/db/queries/journals";
 import { FieldObj } from "@/db/schemas";
 import { exportJournal } from "@/utils/days/export-journal";
 import { FieldDraftObj, useJournalField } from "@/utils/journal/use-journal-field";
+import { useValidatedParams } from "@/utils/params";
 
 type FormProps = {
   journal: JournalDetail;
@@ -47,8 +49,15 @@ function JournalEditForm({ journal }: FormProps) {
 
   const handleSave = async () => {
     Keyboard.dismiss();
-    await updateJournal(journal.id);
-    router.back();
+
+    try {
+      await updateJournal(journal.id);
+      router.back();
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        RNAlert.alert("Validation Error", error.issues[0].message);
+      }
+    }
   };
 
   const handleDelete = async () => {
@@ -146,7 +155,7 @@ function JournalEditForm({ journal }: FormProps) {
  * ジャーナル編集
  */
 export default function JournalEditScreen() {
-  const { journalId } = useLocalSearchParams<{ journalId: string }>();
+  const { journalId } = useValidatedParams(z.object({ journalId: z.string() }));
   const { data: journal } = useLiveQuery(getJournalDetailQuery(journalId), [journalId]);
 
   return <>{journal && <JournalEditForm journal={journal} />}</>;

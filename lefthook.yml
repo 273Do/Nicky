@@ -9,7 +9,7 @@ pre-commit:
   commands:
     lint-and-format-check:
       glob: "*.{ts,tsx,js,jsx}"
-      run: pnpm run lint
+      run: pnpm run lint {staged_files}
     typecheck:
       run: pnpm run typecheck
 

@@ -1,7 +1,9 @@
-import { Keyboard, PlatformColor } from "react-native";
+import { useState } from "react";
+import { Alert, Keyboard, PlatformColor } from "react-native";
 
 import * as Crypto from "expo-crypto";
 import { Stack, useRouter } from "expo-router";
+import { z } from "zod";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
 import { importJournal } from "@/utils/days/import-journal";
@@ -27,12 +29,20 @@ export default function JournalCreateScreen() {
     formDisabled,
   } = useJournalField();
 
+  const [importKey, setImportKey] = useState(0);
+
   const handleJournalCreate = async () => {
     Keyboard.dismiss();
 
-    const { id } = await createJournal();
-    setCreatedJournalId(id);
-    router.back();
+    try {
+      const { id } = await createJournal();
+      setCreatedJournalId(id);
+      router.back();
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        Alert.alert("Validation Error", error.issues[0].message);
+      }
+    }
   };
 
   const importJournalTemplate = async () => {
@@ -44,6 +54,7 @@ export default function JournalCreateScreen() {
 
     setMeta({ name, color, icon });
     setFields(fields.map(({ type, label }) => ({ id: Crypto.randomUUID(), type, label })));
+    setImportKey((prev) => prev + 1);
   };
 
   return (
@@ -73,6 +84,7 @@ export default function JournalCreateScreen() {
         }}
       />
       <JournalCreateView
+        key={importKey}
         fields={fields}
         addField={addField}
         renameField={renameField}

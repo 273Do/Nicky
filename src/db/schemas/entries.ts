@@ -1,5 +1,8 @@
+import type { z } from "zod";
+
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 import { fields } from "./fields";
 import { journals } from "./journals";
@@ -61,5 +64,9 @@ export const entryValuesRelations = relations(entryValues, ({ one }) => ({
   }),
 }));
 
-export type EntryObj = typeof entries.$inferSelect;
-export type EntryValueObj = typeof entryValues.$inferInsert;
+export const entrySelectSchema = createSelectSchema(entries);
+export const entryInsertSchema = createInsertSchema(entries);
+export const entryValueSelectSchema = createSelectSchema(entryValues);
+export const entryValueInsertSchema = createInsertSchema(entryValues);
+export type EntryObj = z.infer<typeof entrySelectSchema>;
+export type EntryValueObj = z.infer<typeof entryValueInsertSchema>;
