@@ -10,7 +10,7 @@ import {
   scrollDisabled,
 } from "@expo/ui/swift-ui/modifiers";
 
-import { FIELD_ICONS, FIELD_LABELS, FieldType } from "@/core/constants";
+import { FIELD_ICONS, FIELD_LABELS, FieldType } from "@/core/constants/journal";
 import { FIELD_TYPES } from "@/utils/journal/use-journal-field";
 
 type Props = {

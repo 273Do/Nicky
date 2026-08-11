@@ -1,4 +1,4 @@
-import { FieldType } from "@/core/constants";
+import { FieldType } from "@/core/constants/journal";
 import { EntryDetailObj } from "@/db/queries/entries";
 
 import { formatDate, formatTime } from "../date";

@@ -8,7 +8,7 @@ import {
   type FieldType,
   journalIconSchema,
   JOURNAL_ICONS,
-} from "@/core/constants";
+} from "@/core/constants/journal";
 import { storeJournal, updateJournal as updateJournalQuery } from "@/db/queries/journals";
 import { fieldInsertSchema, type JournalObj } from "@/db/schemas";
 import { hexColorSchema } from "@/utils/journal/color";

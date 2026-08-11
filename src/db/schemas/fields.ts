@@ -4,8 +4,8 @@ import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
-import { fieldTypeSchema } from "@/core/constants";
-import type { FieldType } from "@/core/constants";
+import { fieldTypeSchema } from "@/core/constants/journal";
+import type { FieldType } from "@/core/constants/journal";
 
 import { entryValues } from "./entries";
 import { journals } from "./journals";
