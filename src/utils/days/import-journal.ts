@@ -1,3 +1,5 @@
+import { Alert } from "react-native";
+
 import * as DocumentPicker from "expo-document-picker";
 import { File } from "expo-file-system";
 
@@ -22,22 +24,26 @@ export const importJournal = async (): Promise<JournalDetail | null> => {
 
     const parsed = JSON.parse(content);
 
-    if (!parsed.data || !parsed.signature) {
-      console.error("インポート失敗: 無効なファイル形式");
+    const parsedData: JournalDetail = parsed.data;
+    const signature: string = parsed.signature;
+
+    if (!parsedData || !signature) {
+      Alert.alert("Import Failed", "Invalid file format.");
       return null;
     }
 
-    const expected = await generateSignature(JSON.stringify(parsed.data));
+    const expected = await generateSignature(JSON.stringify(parsedData));
 
     // HMAC
-    if (expected !== parsed.signature) {
-      console.error("インポート失敗: 署名が一致しません");
+    if (expected !== signature) {
+      Alert.alert("Import Failed", "This file cannot be imported.");
       return null;
     }
 
-    return parsed.data as JournalDetail;
+    return parsedData;
   } catch (error) {
-    console.error("インポート失敗:", error);
+    Alert.alert("Import Failed", "An error occurred while importing the journal.");
+    console.error("Import Failed:", error);
     return null;
   }
 };

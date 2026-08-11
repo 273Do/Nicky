@@ -1,3 +1,5 @@
+import { Alert } from "react-native";
+
 import * as Crypto from "expo-crypto";
 import { File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
@@ -57,6 +59,7 @@ export const exportJournal = async (journal: JournalDetail): Promise<void> => {
       });
     }
   } catch (error) {
-    console.error("Export failed:", error);
+    Alert.alert("Export Failed", "An error occurred while exporting the journal.");
+    console.error("Export Failed:", error);
   }
 };
