@@ -46,7 +46,7 @@ export const FIELD_LABELS: Record<FieldType, string> = {
 };
 
 /** ジャーナルで使用するSFシンボル一覧 */
-export const JOURNAL_ICONS: SFSymbol[] = [
+export const JOURNAL_ICONS = [
   // 読書・学習
   "book.fill",
   "pencil",
@@ -116,4 +116,11 @@ export const JOURNAL_ICONS: SFSymbol[] = [
   "person.2.fill",
   "crown.fill",
   "bolt.fill",
-];
+] satisfies SFSymbol[];
+
+/** JOURNAL_ICONS の Zod スキーマ（ランタイムで一覧に含まれるか検証、型は SFSymbol を維持） */
+export const journalIconSchema = z
+  .string()
+  .refine((v): v is SFSymbol => (JOURNAL_ICONS as string[]).includes(v), {
+    message: "Invalid journal icon",
+  }) as z.ZodType<SFSymbol>;

@@ -4,11 +4,13 @@ import * as DocumentPicker from "expo-document-picker";
 import { File } from "expo-file-system";
 import { z } from "zod";
 
+import { journalIconSchema } from "@/core/constants";
 import type { JournalDetail } from "@/db/queries/journals";
 import { fieldSelectSchema, journalSelectSchema } from "@/db/schemas";
 import { generateSignature } from "@/utils/days/export-journal";
 
 const journalDetailSchema = journalSelectSchema.extend({
+  icon: journalIconSchema,
   fields: z.array(fieldSelectSchema),
 });
 

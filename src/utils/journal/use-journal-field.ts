@@ -1,11 +1,14 @@
-import type { SFSymbol } from "expo-symbols";
-
 import { useState } from "react";
 
 import * as Crypto from "expo-crypto";
 import { z } from "zod";
 
-import { fieldTypeSchema, type FieldType, JOURNAL_ICONS } from "@/core/constants";
+import {
+  fieldTypeSchema,
+  type FieldType,
+  journalIconSchema,
+  JOURNAL_ICONS,
+} from "@/core/constants";
 import { storeJournal, updateJournal as updateJournalQuery } from "@/db/queries/journals";
 import { fieldInsertSchema, type JournalObj } from "@/db/schemas";
 import { hexColorSchema } from "@/utils/journal/color";
@@ -16,7 +19,7 @@ import { hexColorSchema } from "@/utils/journal/color";
 export const journalMetaSchema = z.object({
   name: z.string().trim().min(1).max(20), // 20文字まで
   color: hexColorSchema,
-  icon: z.string().min(1) as z.ZodType<SFSymbol>,
+  icon: journalIconSchema,
 });
 export type JournalMetaObj = z.infer<typeof journalMetaSchema>;
 
@@ -119,9 +122,8 @@ export const useJournalField = (initialData?: {
    * formDisabled フォームが送信可能かどうかのフラグ
    */
   const formDisabled =
-    fields.length === 0 ||
-    meta.name.trim().length === 0 ||
-    fields.some((field) => field.label.trim().length === 0);
+    !journalMetaSchema.safeParse(meta).success ||
+    !z.array(fieldDraftSchema).min(1).safeParse(fields).success;
 
   /**
    * 新規ジャーナルをフィールドと共にDBに保存する

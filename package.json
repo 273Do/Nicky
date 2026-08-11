@@ -57,6 +57,7 @@
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
+    "eslint": "^9.39.5",
     "eslint-config-expo": "~55.0.0",
     "typescript": "~5.9.2",
     "vite-plus": "catalog:"
