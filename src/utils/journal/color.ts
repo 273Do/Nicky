@@ -1,11 +1,15 @@
 import { z } from "zod";
 
+/** HEX 形式のみチェック（輝度チェックなし） */
+const hexFormatSchema = z.string().regex(/^#[0-9a-fA-F]{6}$/);
+
 /**
  * 16進数カラーコードを明るくする
  * @param hex 16進数カラーコード
  * @param amount 明るさの加算量（デフォルト: 40）
  */
 export const lightenColor = (hex: string, amount = 40): string => {
+  hexFormatSchema.parse(hex);
   const num = parseInt(hex.replace("#", ""), 16);
   const r = Math.min(255, (num >> 16) + amount);
   const g = Math.min(255, ((num >> 8) & 0xff) + amount);

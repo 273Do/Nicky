@@ -20,10 +20,17 @@ export default function EntryDetailScreen() {
     journalName,
     edit,
   } = useValidatedParams(
-    z.object({ id: z.string(), journalName: z.string(), edit: z.string().optional() }),
+    z.object({
+      id: z.string(),
+      journalName: z.string(),
+      edit: z
+        .string()
+        .optional()
+        .transform((v) => v === "true"),
+    }),
   );
 
-  const [editMode, setEditMode] = useState<boolean>(Boolean(edit));
+  const [editMode, setEditMode] = useState(edit);
 
   const { entry, valuesRef, setValue, save, bookmark, remove } = useEntryDetail(entryId);
 
