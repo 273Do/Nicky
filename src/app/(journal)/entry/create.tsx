@@ -1,4 +1,4 @@
-import { Keyboard, PlatformColor } from "react-native";
+import { Alert, Keyboard, PlatformColor } from "react-native";
 
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useRouter } from "expo-router";
@@ -24,8 +24,15 @@ export default function EntryCreateScreen() {
 
   const handleEntryCreate = async () => {
     Keyboard.dismiss();
-    const { id: newEntryId } = await createEntry(journalId);
-    router.replace(`/(journal)/entry/${newEntryId}?journalName=${journalName}`);
+
+    try {
+      const { id: newEntryId } = await createEntry(journalId);
+      router.replace(`/(journal)/entry/${newEntryId}?journalName=${journalName}`);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        Alert.alert("Validation Error", error.issues[0].message);
+      }
+    }
   };
 
   return (

@@ -25,7 +25,7 @@ jobs:
         run: vp check
 
       - name: Lint
-        run: vp run lint
+        run: pnpm lint
 
       - name: Type check
         run: vp run typecheck

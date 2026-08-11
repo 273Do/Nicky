@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PlatformColor } from "react-native";
+import { Alert, PlatformColor } from "react-native";
 
 import { Stack, useRouter } from "expo-router";
 import { z } from "zod";
@@ -35,8 +35,14 @@ export default function EntryDetailScreen() {
   const { entry, valuesRef, setValue, save, bookmark, remove } = useEntryDetail(entryId);
 
   const handleSave = async () => {
-    await save();
-    setEditMode(false);
+    try {
+      await save();
+      setEditMode(false);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        Alert.alert("Validation Error", error.issues[0].message);
+      }
+    }
   };
 
   const handleDelete = async () => {

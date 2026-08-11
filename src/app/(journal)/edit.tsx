@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Keyboard, PlatformColor } from "react-native";
+import { Alert as RNAlert, Keyboard, PlatformColor } from "react-native";
 
 import { Alert, Button, Host, Text } from "@expo/ui/swift-ui";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
@@ -49,8 +49,15 @@ function JournalEditForm({ journal }: FormProps) {
 
   const handleSave = async () => {
     Keyboard.dismiss();
-    await updateJournal(journal.id);
-    router.back();
+
+    try {
+      await updateJournal(journal.id);
+      router.back();
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        RNAlert.alert("Validation Error", error.issues[0].message);
+      }
+    }
   };
 
   const handleDelete = async () => {

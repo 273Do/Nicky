@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Keyboard, PlatformColor } from "react-native";
+import { Alert, Keyboard, PlatformColor } from "react-native";
 
 import * as Crypto from "expo-crypto";
 import { Stack, useRouter } from "expo-router";
+import { z } from "zod";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
 import { importJournal } from "@/utils/days/import-journal";
@@ -33,9 +34,15 @@ export default function JournalCreateScreen() {
   const handleJournalCreate = async () => {
     Keyboard.dismiss();
 
-    const { id } = await createJournal();
-    setCreatedJournalId(id);
-    router.back();
+    try {
+      const { id } = await createJournal();
+      setCreatedJournalId(id);
+      router.back();
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        Alert.alert("Validation Error", error.issues[0].message);
+      }
+    }
   };
 
   const importJournalTemplate = async () => {
