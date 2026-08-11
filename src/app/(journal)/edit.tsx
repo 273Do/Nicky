@@ -6,11 +6,10 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
-import { deleteJournal, getJournalDetailQuery } from "@/db/queries/journals";
+import { deleteJournal, getJournalDetailQuery, JournalDetail } from "@/db/queries/journals";
 import { FieldObj } from "@/db/schemas";
+import { exportJournal } from "@/utils/days/export-journal";
 import { FieldDraftObj, useJournalField } from "@/utils/journal/use-journal-field";
-
-type JournalDetail = NonNullable<Awaited<ReturnType<typeof getJournalDetailQuery>>>;
 
 type FormProps = {
   journal: JournalDetail;
@@ -65,34 +64,32 @@ function JournalEditForm({ journal }: FormProps) {
           headerLargeTitleEnabled: false,
           unstable_headerRightItems: () => [
             {
-              type: "menu" as const,
+              type: "menu",
               label: "Options",
               icon: {
-                type: "sfSymbol" as const,
-                name: "ellipsis" as const,
+                type: "sfSymbol",
+                name: "ellipsis",
               },
               menu: {
                 items: [
                   {
-                    type: "action" as const,
+                    type: "action",
                     icon: {
-                      type: "sfSymbol" as const,
-                      name: "square.and.arrow.up" as const,
+                      type: "sfSymbol",
+                      name: "square.and.arrow.up",
                     },
-                    label: "Export",
-                    state: "off" as const,
-                    onPress: () => {
-                      console.log("Export", journal.name);
-                    },
+                    label: "Share",
+                    state: "off",
+                    onPress: async () => await exportJournal(journal),
                   },
                   {
-                    type: "action" as const,
+                    type: "action",
                     label: "Delete Journal",
                     icon: {
-                      type: "sfSymbol" as const,
-                      name: "trash" as const,
+                      type: "sfSymbol",
+                      name: "trash",
                     },
-                    state: "off" as const,
+                    state: "off",
                     destructive: true,
                     onPress: () => setShowDeleteAllAlert(true),
                   },

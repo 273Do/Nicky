@@ -100,6 +100,7 @@ export function JournalCreateView({
 
               {/* ジャーナル名 */}
               <TextField
+                key={meta.name}
                 placeholder="Journal Name"
                 defaultValue={meta.name}
                 onValueChange={(value) =>

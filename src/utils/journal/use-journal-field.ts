@@ -164,6 +164,7 @@ export const useJournalField = (initialData?: {
 
   return {
     fields,
+    setFields,
     addField,
     renameField,
     deleteField,

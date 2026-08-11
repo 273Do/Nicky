@@ -1,7 +1,7 @@
 import { PlatformColor } from "react-native";
 
-import { Button, HStack, Image, Section, Spacer, Text as SText } from "@expo/ui/swift-ui";
-import { font, foregroundStyle } from "@expo/ui/swift-ui/modifiers";
+import { Button, HStack, Image, Section, Spacer, Text as SText, VStack } from "@expo/ui/swift-ui";
+import { font, foregroundStyle, listRowSeparator, opacity } from "@expo/ui/swift-ui/modifiers";
 
 import { EntryDetailObj } from "@/db/queries/entries";
 import { JournalObj } from "@/db/schemas";
@@ -50,13 +50,23 @@ export function DaysCard({ entry, isFirstOfJournal, isExpanded, onToggleExpand }
         </HStack>
       }
     >
-      {visibleFields.map((v) => (
-        <EntryFieldItem
-          key={v.id}
-          field={v.field}
-          value={deserializeValue(v.value, v.field.type)}
-        />
-      ))}
+      {visibleFields.map((v, i) => {
+        const isFading = !isExpanded && hasMore && i === visibleFields.length - 1;
+        if (isFading) {
+          return (
+            <VStack key={v.id} modifiers={[opacity(0.3), listRowSeparator("hidden", "bottom")]}>
+              <EntryFieldItem field={v.field} value={deserializeValue(v.value, v.field.type)} />
+            </VStack>
+          );
+        }
+        return (
+          <EntryFieldItem
+            key={v.id}
+            field={v.field}
+            value={deserializeValue(v.value, v.field.type)}
+          />
+        );
+      })}
       {hasMore && (
         <Button
           label={isExpanded ? "Show less" : `Show ${sorted.length - PREVIEW_COUNT} more`}

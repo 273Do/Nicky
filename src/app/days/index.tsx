@@ -118,19 +118,21 @@ export default function DaysScreen() {
                   {formatDateDays(selectedDate)}
                 </Text>
 
-                <Animated.View style={[styles.headerLabel, prevHeaderStyle]}>
-                  <Text style={styles.headerText}>{formatDateDays(prevDate)}</Text>
-                </Animated.View>
-
-                <Animated.View style={[styles.headerLabel, currentHeaderStyle]}>
-                  <Text style={styles.headerText}>{formatDateDays(selectedDate)}</Text>
-                </Animated.View>
-
-                {canGoNext && (
-                  <Animated.View style={[styles.headerLabel, nextHeaderStyle]}>
-                    <Text style={styles.headerText}>{formatDateDays(nextDate)}</Text>
+                <View style={styles.headerClip}>
+                  <Animated.View style={[styles.headerLabel, prevHeaderStyle]}>
+                    <Text style={styles.headerText}>{formatDateDays(prevDate)}</Text>
                   </Animated.View>
-                )}
+
+                  <Animated.View style={[styles.headerLabel, currentHeaderStyle]}>
+                    <Text style={styles.headerText}>{formatDateDays(selectedDate)}</Text>
+                  </Animated.View>
+
+                  {canGoNext && (
+                    <Animated.View style={[styles.headerLabel, nextHeaderStyle]}>
+                      <Text style={styles.headerText}>{formatDateDays(nextDate)}</Text>
+                    </Animated.View>
+                  )}
+                </View>
               </GlassView>
             </Pressable>
           ),
@@ -190,9 +192,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 12,
     borderRadius: 100,
+  },
+  headerClip: {
+    ...StyleSheet.absoluteFillObject,
     overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 100,
   },
   headerSizer: {
     opacity: 0,
