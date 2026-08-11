@@ -24,5 +24,8 @@ jobs:
       - name: Run checks
         run: vp check
 
+      - name: Lint
+        run: vp run lint
+
       - name: Type check
         run: vp run typecheck
