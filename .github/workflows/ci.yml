@@ -25,7 +25,7 @@ jobs:
         run: vp check
 
       - name: Lint
-        run: pnpm lint
+        run: npx eslint
 
       - name: Type check
         run: vp run typecheck
