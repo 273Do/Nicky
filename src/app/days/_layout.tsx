@@ -17,7 +17,17 @@ export default function DaysLayout() {
           },
           headerBackButtonDisplayMode: "minimal",
         }}
-      />
+      >
+        <Stack.Screen name="index" />
+        <Stack.Screen
+          name="settings"
+          options={{
+            title: "Settings",
+            headerTransparent: true,
+            headerBackButtonMenuEnabled: true,
+          }}
+        />
+      </Stack>
     </GestureHandlerRootView>
   );
 }

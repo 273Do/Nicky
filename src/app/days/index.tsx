@@ -18,7 +18,7 @@ import Animated, {
 import { BottomSheet, DatePicker, Host } from "@expo/ui/swift-ui";
 import { datePickerStyle, tint } from "@expo/ui/swift-ui/modifiers";
 import { GlassView } from "expo-glass-effect";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 
 import { DaysView } from "@/components/days/days-view";
 import { addDays, formatDateDays } from "@/utils/date";
@@ -36,6 +36,7 @@ export default function DaysScreen() {
     return d;
   });
   const [showCalendar, setShowCalendar] = useState(false);
+  const router = useRouter();
 
   const glassWidth = useSharedValue(200);
 
@@ -141,7 +142,7 @@ export default function DaysScreen() {
               type: "button",
               label: "Save",
               icon: { type: "sfSymbol", name: "gearshape" },
-              onPress: () => console.log("gear"),
+              onPress: () => router.navigate("/days/settings"),
             },
           ],
         }}
