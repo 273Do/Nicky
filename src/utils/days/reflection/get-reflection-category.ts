@@ -22,7 +22,7 @@ const schema = z.object({
 /**
  * 日毎のエントリーをLLMに渡すテキストに変換する
  */
-const entriesToText = (entries: DailyEntryObj[]): string =>
+export const entriesToText = (entries: DailyEntryObj[]): string =>
   entries
     .map((entry) => {
       const header = `[${entry.journal.name}]`;
@@ -49,10 +49,20 @@ export const getReflectionCategory = async (
     .join("\n");
 
   const entriesText = entriesToText(entries);
-  const prompt = `${selectReflectionCategoryPrompt.ja}\n\n${entriesText}\n\nカテゴリー一覧:\n${categoryList}\n\nRespond with ONLY a JSON object: {"categories":["cat1","cat2"]}\n/no_think`;
+
+  const system = `あなたはジャーナル振り返りのカテゴリー選択アシスタントです。以下のルールを厳守してください。
+
+ルール:
+- 与えられたカテゴリー一覧から、振り返りに最もふさわしいカテゴリーを2つ選ぶこと
+- 出力は必ず {"categories":["cat1","cat2"]} のJSON形式のみとすること
+
+カテゴリー一覧:
+${categoryList}`;
+
+  const prompt = `${selectReflectionCategoryPrompt.ja}\n\n${entriesText}\n/no_think`;
 
   try {
-    const { text } = await generateText({ model, prompt });
+    const { text } = await generateText({ model, system, prompt });
     const json = text.match(/\{[\s\S]*\}/)?.[0];
 
     if (!json) return null;
