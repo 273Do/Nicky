@@ -4,10 +4,9 @@ import { PlatformColor } from "react-native";
 import { Button, HStack, Image, Section, Text } from "@expo/ui/swift-ui";
 import { font, foregroundStyle } from "@expo/ui/swift-ui/modifiers";
 
-import { ReflectionCategory } from "@/constants/reflection-category";
+import type { ReflectionResult } from "@/constants/reflection";
 import { DailyEntryObj } from "@/db/queries/entries";
-import { getReflectionCategory } from "@/utils/days/reflection/get-reflection-category";
-import { getReflectionContent } from "@/utils/days/reflection/get-reflection-content";
+import { getReflection } from "@/utils/days/reflection/get-reflection";
 
 import { FieldWrapper } from "../field/field-wrapper";
 
@@ -18,43 +17,27 @@ type Props = {
   entries: DailyEntryObj[];
 };
 
-type ReflectionObj = {
-  category: ReflectionCategory;
-  content: string;
-};
-
 /**
- * LLM によるフィードバックを表示する
+ * AI Reflection を表示する
  */
 export function DaysLLMFB({ entries }: Props) {
-  const [reflections, setReflections] = useState<[ReflectionObj, ReflectionObj] | null>();
+  const [reflection, setReflection] = useState<ReflectionResult | null>();
 
   useEffect(() => {
-    setReflections(null);
+    setReflection(null);
   }, [entries]);
 
-  const handleGenerateReflection = async () => {
-    console.log("click");
-    const categories = await getReflectionCategory(entries);
-
-    if (categories && categories.length === 2) {
-      const [content0, content1] = await Promise.all([
-        getReflectionContent(entries, categories[0]),
-        getReflectionContent(entries, categories[1]),
-      ]);
-
-      setReflections([
-        { category: categories[0], content: content0 ?? "" },
-        { category: categories[1], content: content1 ?? "" },
-      ]);
-      console.log(reflections);
+  const handleGenerate = async () => {
+    const result = await getReflection(entries);
+    if (result) {
+      setReflection(result);
     }
   };
 
   return (
     <>
-      <Button label={"Gen"} onPress={handleGenerateReflection} />
-      {reflections && (
+      <Button label={"Gen"} onPress={handleGenerate} />
+      {reflection && (
         <Section
           header={
             <HStack alignment="bottom">
@@ -66,13 +49,13 @@ export function DaysLLMFB({ entries }: Props) {
                     foregroundStyle(PlatformColor("label")),
                   ]}
                 >
-                  {`Today's reflection`}
+                  {reflection.title}
                 </Text>
               </HStack>
             </HStack>
           }
         >
-          {reflections.map(({ category, content }, i) => (
+          {reflection.items.map(({ category, content }, i) => (
             <FieldWrapper label={category} key={i}>
               <Text>{content}</Text>
             </FieldWrapper>
