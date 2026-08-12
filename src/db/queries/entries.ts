@@ -120,3 +120,6 @@ export const getEntriesByDateQuery = (date: Date) => {
 
 /** エントリー詳細の型 */
 export type EntryDetailObj = Awaited<ReturnType<typeof getEntriesQuery>>[number];
+
+/** 日付ベースのエントリー詳細の型（journal を含む） */
+export type DailyEntryObj = Awaited<ReturnType<typeof getEntriesByDateQuery>>[number];

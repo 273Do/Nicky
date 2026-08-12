@@ -11,6 +11,9 @@ import { DaysCard } from "./days-card";
 import { DaysLLMFB } from "./days-llm-fb";
 
 type Props = {
+  /**
+   * 日付
+   */
   date: Date;
 };
 
@@ -56,7 +59,7 @@ export function DaysView({ date }: Props) {
             animation(Animation.default, expandedIds.size),
           ]}
         >
-          <DaysLLMFB />
+          <DaysLLMFB entries={entries} />
           {entries.map((entry, index) => (
             <DaysCard
               key={entry.id}
