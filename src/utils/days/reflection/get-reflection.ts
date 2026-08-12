@@ -41,8 +41,6 @@ export const getReflection = async (entries: DailyEntryObj[]): Promise<Reflectio
   const entriesText = entriesToText(entries);
   const prompt = `Here are today's journal entries. Generate a reflection based on these records.\n\n${entriesText}`;
 
-  console.log(prompt);
-
   try {
     const { text } = await generateText({
       model,

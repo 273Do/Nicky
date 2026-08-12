@@ -56,7 +56,7 @@ export type ReflectionCategory = keyof typeof reflectionCategories;
  */
 export const reflectionSchema = z.object({
   /** その日を象徴する語りかけの一文 */
-  title: z.string().min(1).max(20),
+  title: z.string().min(1).max(15),
   /** 振り返り2項目 */
   items: z
     .array(
