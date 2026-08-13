@@ -15,9 +15,9 @@ import {
 import { foregroundStyle, frame, padding, tag, tint } from "@expo/ui/swift-ui/modifiers";
 
 const MODELS = [
-  { id: "gemma-3-4b", label: "Gemma 3 4B", size: "~2.5GB" },
-  { id: "qwen-3-4b", label: "Qwen 3 4B", size: "~2.5GB" },
-  { id: "phi-4-Mini", label: "Phi-4 Mini", size: "~2.5GB" },
+  { id: "gemma-3-4b", label: "Gemma 3 4B" },
+  { id: "qwen-3-4b", label: "Qwen 3 4B" },
+  { id: "phi-4-Mini", label: "Phi-4 Mini" },
 ] as const;
 
 /**
@@ -64,7 +64,7 @@ export default function SettingsScreen() {
           <Picker label="Model" selection={selectedModel} onSelectionChange={setSelectedModel}>
             {MODELS.map((model) => (
               <Text key={model.id} modifiers={[tag(model.id)]}>
-                {model.label} ({model.size})
+                {model.label}
               </Text>
             ))}
           </Picker>
