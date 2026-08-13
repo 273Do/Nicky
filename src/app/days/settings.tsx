@@ -1,12 +1,31 @@
+import { useState } from "react";
 import { PlatformColor } from "react-native";
 
-import { HStack, Host, List, Section, Spacer, Text } from "@expo/ui/swift-ui";
-import { foregroundStyle, frame, padding } from "@expo/ui/swift-ui/modifiers";
+import {
+  DatePicker,
+  HStack,
+  Host,
+  List,
+  Picker,
+  Section,
+  Spacer,
+  Text,
+  Toggle,
+} from "@expo/ui/swift-ui";
+import { foregroundStyle, frame, padding, tag, tint } from "@expo/ui/swift-ui/modifiers";
+
+const MODELS = [
+  { id: "gemma-3-4b", label: "Gemma 3 4B", size: "~2.5GB" },
+  { id: "qwen-3-4b", label: "Qwen 3 4B", size: "~2.5GB" },
+  { id: "phi-4-Mini", label: "Phi-4 Mini", size: "~2.5GB" },
+] as const;
 
 /**
  * Nicky 設定画面
  */
 export default function SettingsScreen() {
+  const [selectedModel, setSelectedModel] = useState<(typeof MODELS)[number]["id"]>("gemma-3-4b");
+
   return (
     <Host
       style={{ flex: 1, backgroundColor: PlatformColor("systemGroupedBackground") }}
@@ -28,30 +47,27 @@ export default function SettingsScreen() {
               システム
             </Text>
           </HStack>
-          <HStack>
-            <Text>Model</Text>
-            <Spacer />
-            <Text modifiers={[foregroundStyle({ type: "hierarchical", style: "secondary" })]}>
-              Gemma 3 4B
-            </Text>
-          </HStack>
         </Section>
 
         <Section>
-          <HStack>
-            <Text>Daily Reminder</Text>
-            <Spacer />
-            <Text modifiers={[foregroundStyle({ type: "hierarchical", style: "secondary" })]}>
-              21:00
-            </Text>
-          </HStack>
-          <HStack>
-            <Text>Reflection Ready</Text>
-            <Spacer />
-            <Text modifiers={[foregroundStyle({ type: "hierarchical", style: "secondary" })]}>
-              On
-            </Text>
-          </HStack>
+          <Toggle
+            isOn={true}
+            label="Notification"
+            modifiers={[tint(PlatformColor("systemIndigo"))]}
+          />
+          <Toggle
+            isOn={true}
+            label="AI Reflection"
+            modifiers={[tint(PlatformColor("systemIndigo"))]}
+          />
+          <DatePicker title="Time" displayedComponents={["hourAndMinute"]} />
+          <Picker label="Model" selection={selectedModel} onSelectionChange={setSelectedModel}>
+            {MODELS.map((model) => (
+              <Text key={model.id} modifiers={[tag(model.id)]}>
+                {model.label} ({model.size})
+              </Text>
+            ))}
+          </Picker>
         </Section>
 
         <Section>
