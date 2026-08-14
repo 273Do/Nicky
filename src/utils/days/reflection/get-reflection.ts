@@ -1,3 +1,4 @@
+import { downloadModel, llama } from "@react-native-ai/llama";
 import { generateText } from "ai";
 
 import {
@@ -8,8 +9,6 @@ import {
 } from "@/constants/reflection";
 import { DailyEntryObj } from "@/db/queries/entries";
 import { formatFieldValue } from "@/utils/entry/preview";
-
-import { getReflectionModel } from "./get-reflection-model";
 
 /**
  * 日毎のエントリーをLLMに渡すテキストに変換する
@@ -33,10 +32,15 @@ const categoryList = Object.entries(reflectionCategories)
 /**
  * その日の記録をもとに AI Reflection を生成する
  * @param entries その日のエントリーの一覧
+ * @param gguf HuggingFaceのGGUFモデルパス
  */
-export const getReflection = async (entries: DailyEntryObj[]): Promise<ReflectionResult | null> => {
-  const model = await getReflectionModel();
-  if (!model) return null;
+export const getReflection = async (
+  entries: DailyEntryObj[],
+  gguf: string,
+): Promise<ReflectionResult | null> => {
+  const modelPath = await downloadModel(gguf);
+  const model = llama.languageModel(modelPath);
+  await model.prepare();
 
   const entriesText = entriesToText(entries);
   const prompt = `Here are today's journal entries. Generate a reflection based on these records.\n\n${entriesText}`;

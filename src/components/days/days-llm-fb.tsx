@@ -7,6 +7,7 @@ import { font, foregroundStyle } from "@expo/ui/swift-ui/modifiers";
 import type { ReflectionResult } from "@/constants/reflection";
 import { DailyEntryObj } from "@/db/queries/entries";
 import { getReflection } from "@/utils/days/reflection/get-reflection";
+import { useAIReflectionSettings } from "@/utils/settings/use-ai-reflection-settings";
 
 import { FieldWrapper } from "../field/field-wrapper";
 
@@ -21,14 +22,17 @@ type Props = {
  * AI Reflection を表示する
  */
 export function DaysLLMFB({ entries }: Props) {
+  const { aiReflectionEnabled, aiModel } = useAIReflectionSettings();
   const [reflection, setReflection] = useState<ReflectionResult | null>();
 
   useEffect(() => {
     setReflection(null);
   }, [entries]);
 
+  if (!aiReflectionEnabled) return null;
+
   const handleGenerate = async () => {
-    const result = await getReflection(entries);
+    const result = await getReflection(entries, aiModel.gguf);
     if (result) {
       setReflection(result);
     }
