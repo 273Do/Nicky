@@ -12,8 +12,14 @@ import { useAIReflectionSettings } from "@/utils/settings/use-ai-reflection-sett
  * アプリの機能設定
  */
 export function Application() {
-  const { aiReflectionEnabled, aiModel, setAIReflectionEnabled, setAIModel } =
-    useAIReflectionSettings();
+  const {
+    aiReflectionEnabled,
+    aiModel,
+    reflectionTime,
+    setAIReflectionEnabled,
+    setAIModel,
+    setReflectionTime,
+  } = useAIReflectionSettings();
   const [downloading, setDownloading] = useState(false);
   const [displayModelId, setDisplayModelId] = useState<AIModelId>(aiModel.id);
 
@@ -67,7 +73,6 @@ export function Application() {
         label="AI Reflection"
         modifiers={[tint(PlatformColor("systemIndigo"))]}
       />
-      <DatePicker title="Time" displayedComponents={["hourAndMinute"]} />
       <Picker
         label={downloading ? "Downloading..." : "Model"}
         selection={displayModelId}
@@ -80,6 +85,12 @@ export function Application() {
           </Text>
         ))}
       </Picker>
+      <DatePicker
+        title="Reflection Time"
+        displayedComponents={["hourAndMinute"]}
+        selection={reflectionTime}
+        onDateChange={setReflectionTime}
+      />
     </Section>
   );
 }
