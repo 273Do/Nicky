@@ -21,7 +21,7 @@ type Props = {
 /**
  * AI Reflection を表示する
  */
-export function DaysLLMFB({ entries }: Props) {
+export function DaysLLMReflection({ entries }: Props) {
   const { aiReflectionEnabled, aiModel } = useAIReflectionSettings();
   const [reflection, setReflection] = useState<ReflectionResult | null>();
 
