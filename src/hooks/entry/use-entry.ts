@@ -3,7 +3,6 @@ import { useRef } from "react";
 import * as Crypto from "expo-crypto";
 import { z } from "zod";
 
-import type { FieldType } from "@/core/constants";
 import { storeEntry, updateEntryValues } from "@/db/queries/entries";
 import {
   entrySelectSchema,
@@ -12,58 +11,10 @@ import {
   type EntryValueObj,
   type FieldObj,
 } from "@/db/schemas";
+import { type FieldValue, getDefaultValue, serializeValue } from "@/utils/entry/field-value";
 
-export const fieldValueSchema = z.union([z.string(), z.number(), z.boolean(), z.date(), z.null()]);
-export type FieldValue = z.infer<typeof fieldValueSchema>;
-
-/**
- * 各エントリー入力のデフォルト値
- * @param type フィールドタイプ
- */
-const getDefaultValue = (type: FieldType): FieldValue => {
-  switch (type) {
-    case "text":
-    case "longText":
-      return "";
-    case "check":
-      return false;
-    case "date":
-    case "time":
-      return new Date();
-    default:
-      return null;
-  }
-};
-
-/** FieldValue を DB の text 型に変換 */
-const serializeValue = (value: FieldValue): string | null => {
-  if (value === null) return null;
-  if (value instanceof Date) return String(value.getTime());
-  return String(value);
-};
-
-/**
- * DB の text 型を FieldValue に変換
- * @param value DB の値
- * @param type フィールドタイプ
- */
-export const deserializeValue = (value: string | null, type: FieldType): FieldValue => {
-  if (value === null) return getDefaultValue(type);
-  switch (type) {
-    case "number":
-      return Number(value);
-    case "check":
-      return value === "true";
-    case "date":
-    case "time":
-      return new Date(Number(value));
-    case "media":
-    case "location":
-      return null;
-    default:
-      return value;
-  }
-};
+export type { FieldValue } from "@/utils/entry/field-value";
+export { deserializeValue } from "@/utils/entry/field-value";
 
 /**
  * エントリーフォームの値を管理するフック

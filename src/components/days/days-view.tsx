@@ -8,9 +8,12 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { getEntriesByDateQuery } from "@/db/queries/entries";
 
 import { DaysCard } from "./days-card";
-import { DaysLLMFB } from "./days-llm-fb";
+import { DaysLLMReflection } from "./days-llm-reflection";
 
 type Props = {
+  /**
+   * 日付
+   */
   date: Date;
 };
 
@@ -56,7 +59,7 @@ export function DaysView({ date }: Props) {
             animation(Animation.default, expandedIds.size),
           ]}
         >
-          <DaysLLMFB />
+          <DaysLLMReflection date={date} />
           {entries.map((entry, index) => (
             <DaysCard
               key={entry.id}

@@ -18,10 +18,10 @@ import Animated, {
 import { BottomSheet, DatePicker, Host } from "@expo/ui/swift-ui";
 import { datePickerStyle, tint } from "@expo/ui/swift-ui/modifiers";
 import { GlassView } from "expo-glass-effect";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 
 import { DaysView } from "@/components/days/days-view";
-import { addDays, formatDateDays } from "@/utils/date";
+import { addDays, formatDateDays, startOfDay } from "@/utils/date";
 
 const SWIPE_THRESHOLD = 50;
 
@@ -30,12 +30,9 @@ const SWIPE_THRESHOLD = 50;
  */
 export default function DaysScreen() {
   const { width: screenWidth } = useWindowDimensions();
-  const [selectedDate, setSelectedDate] = useState(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d;
-  });
+  const [selectedDate, setSelectedDate] = useState(() => startOfDay());
   const [showCalendar, setShowCalendar] = useState(false);
+  const router = useRouter();
 
   const glassWidth = useSharedValue(200);
 
@@ -44,8 +41,7 @@ export default function DaysScreen() {
   const prevDate = addDays(selectedDate, -1);
   const nextDate = addDays(selectedDate, 1);
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = startOfDay();
 
   const canGoNext = nextDate <= today;
 
@@ -141,7 +137,7 @@ export default function DaysScreen() {
               type: "button",
               label: "Save",
               icon: { type: "sfSymbol", name: "gearshape" },
-              onPress: () => console.log("gear"),
+              onPress: () => router.navigate("/days/settings"),
             },
           ],
         }}

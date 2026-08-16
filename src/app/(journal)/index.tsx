@@ -64,7 +64,7 @@ export default function JournalScreen() {
                           type: "action" as const,
                           icon: {
                             type: "sfSymbol" as const,
-                            name: bookmarkOnly ? ("bookmark.fill" as const) : ("bookmark" as const),
+                            name: bookmarkOnly ? ("bookmark" as const) : ("bookmark.fill" as const),
                           },
                           label: bookmarkOnly ? "Show All" : "Bookmarked Only",
                           onPress: () => setBookmarkOnly((prev) => !prev),

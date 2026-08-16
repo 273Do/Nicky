@@ -1,7 +1,7 @@
 import { count } from "drizzle-orm";
 import * as Crypto from "expo-crypto";
 
-import type { FieldType } from "@/core/constants";
+import type { FieldType } from "@/constants/journal";
 
 import { db } from "./client";
 import { entries, entryValues, fields, journals } from "./schemas";

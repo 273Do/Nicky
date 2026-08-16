@@ -1,8 +1,7 @@
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { getEntriesQuery } from "@/db/queries/entries";
-
-import { buildPreviewEntry } from "./preview";
+import { buildPreviewEntry } from "@/utils/entry/preview";
 
 type Params = {
   /** ジャーナル id */
@@ -14,7 +13,7 @@ type Params = {
 /**
  * エントリー一覧を取得し、フィルターまで行うフック
  */
-export function useEntryList({ journalId, bookmarkOnly = false }: Params) {
+export const useEntryList = ({ journalId, bookmarkOnly = false }: Params) => {
   const { data: entries } = useLiveQuery(getEntriesQuery(journalId), [journalId]);
 
   const previewEntries = entries.map(buildPreviewEntry);
@@ -25,4 +24,4 @@ export function useEntryList({ journalId, bookmarkOnly = false }: Params) {
   const sorted = [...filtered].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
   return { entries: sorted };
-}
+};

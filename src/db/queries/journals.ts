@@ -2,7 +2,7 @@ import { and, eq, notInArray, sql } from "drizzle-orm";
 
 import { db } from "@/db/client";
 import { entries, fields, JournalObj, journals } from "@/db/schemas";
-import { FieldWithSortObj, JournalMetaObj } from "@/utils/journal/use-journal-field";
+import { FieldWithSortObj, JournalMetaObj } from "@/hooks/journal/use-journal-field";
 
 /**
  * ジャーナル一覧を取得するクエリ

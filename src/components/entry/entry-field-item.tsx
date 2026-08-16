@@ -7,7 +7,7 @@ import { EntryMedia } from "@/components/field/entry-media";
 import { EntryText } from "@/components/field/entry-text";
 import { EntryTime } from "@/components/field/entry-time";
 import type { FieldObj } from "@/db/schemas";
-import { type FieldValue } from "@/utils/entry/use-entry";
+import { type FieldValue } from "@/hooks/entry/use-entry";
 
 type Props = {
   /** フィールド定義 */

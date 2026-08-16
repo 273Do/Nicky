@@ -35,6 +35,24 @@ export const formatDateDays = (date: Date) =>
     ? date.toLocaleDateString("en-US", { month: "long", day: "numeric" })
     : date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 
+/**
+ * 日付を 00:00:00.000 に正規化した Date を返す
+ * @param date 基準日付（省略時は今日）
+ * @returns 正規化した日付
+ */
+export const startOfDay = (date: Date = new Date()): Date => {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
+
+/**
+ * 日付を 00:00:00.000 に正規化したタイムスタンプを返す
+ * @param date 基準日付
+ * @returns 正規化したタイムスタンプ
+ */
+export const startOfDayTimestamp = (date: Date): number => startOfDay(date).getTime();
+
 /** 日付を n 日ずらす
  * @param date 基準日付
  * @param days 日数
@@ -42,9 +60,18 @@ export const formatDateDays = (date: Date) =>
  */
 export const addDays = (date: Date, days: number) => {
   const d = new Date(date);
-
   d.setDate(d.getDate() + days);
-  d.setHours(0, 0, 0, 0);
+  return startOfDay(d);
+};
 
-  return d;
+/**
+ * 現在時刻が指定時刻を過ぎているか（時・分のみ比較）
+ * @param time 比較対象の時刻
+ */
+export const isPastTime = (time: Date): boolean => {
+  const now = new Date();
+  return (
+    now.getHours() > time.getHours() ||
+    (now.getHours() === time.getHours() && now.getMinutes() >= time.getMinutes())
+  );
 };

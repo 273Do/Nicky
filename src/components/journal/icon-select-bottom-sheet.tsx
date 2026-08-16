@@ -20,7 +20,7 @@ import {
 } from "@expo/ui/swift-ui/modifiers";
 import { SFSymbol } from "expo-symbols";
 
-import { JOURNAL_ICONS } from "@/core/constants";
+import { JOURNAL_ICONS } from "@/constants/journal";
 import { chunkArray } from "@/utils/chunk-array";
 
 type Props = {

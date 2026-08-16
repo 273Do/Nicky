@@ -44,22 +44,30 @@ src/app/
     entry/
       create.tsx               # Create entry  /entry/create?journalId=...&journalName=...
       [id].tsx                 # Entry detail  /entry/[id]?journalName=...
-  explore.tsx                  # Report tab
+  days/
+    _layout.tsx                # Stack — scoped to days tab
+    index.tsx                  # Daily reflection list
+    settings.tsx               # AI reflection settings (model, time, enabled)
+  search/
+    _layout.tsx                # Stack — scoped to search tab
+    index.tsx                  # Journal entry search
 ```
 
 **Navigation flow:** Journal list → `[id]` (entry list) → `entry/[id]` (entry detail)
 
-**Key rule:** `NativeTabs` is the root navigator; `Stack` lives inside `(journal)` group. This keeps the tab bar visible when pushing screens.
+**Key rule:** `NativeTabs` is the root navigator; `Stack` lives inside each tab group (`(journal)`, `days`, `search`). This keeps the tab bar visible when pushing screens.
 
 ### Database Layer
 
 Drizzle ORM + expo-sqlite. Schema is split by domain in `src/db/schemas/`:
 
-| File          | Tables                                   |
-| ------------- | ---------------------------------------- |
-| `journals.ts` | `journals`                               |
-| `fields.ts`   | `fields` (field definitions per journal) |
-| `entries.ts`  | `entries`, `entry_values`                |
+| File             | Tables                                            |
+| ---------------- | ------------------------------------------------- |
+| `journals.ts`    | `journals`                                        |
+| `fields.ts`      | `fields` (field definitions per journal)          |
+| `entries.ts`     | `entries`, `entry_values`                         |
+| `reflections.ts` | `reflections` (one AI-generated reflection/day)   |
+| `settings.ts`    | `settings` (KVS — key/value pairs for app config) |
 
 ```mermaid
 erDiagram
@@ -92,6 +100,22 @@ erDiagram
         TEXT id PK
         TEXT entryId FK
         TEXT fieldId FK
+        TEXT value
+    }
+
+    reflections {
+        TEXT id PK
+        INTEGER date "unique, midnight timestamp"
+        TEXT title
+        TEXT firstCategory
+        TEXT firstContent
+        TEXT secondCategory
+        TEXT secondContent
+        INTEGER createdAt
+    }
+
+    settings {
+        TEXT key PK
         TEXT value
     }
 
@@ -160,6 +184,24 @@ All field values are stored as `text | null` in `entry_values.value`. Serializat
 - Remaining field values joined with spaces = preview (also used for search)
 - Entries grouped by month for the list view (`groupByMonth`)
 
+### AI Reflection Pipeline
+
+On-device LLM generates daily reflections from journal entries:
+
+1. **Entry collection** — `src/db/queries/entries.ts` fetches all entries for a given day (`DailyEntryObj[]`)
+2. **Text conversion** — `src/utils/days/reflection/get-reflection.ts` formats entries into structured text (journal name + field labels/values)
+3. **LLM inference** — `@react-native-ai/llama` downloads a GGUF model, Vercel `ai` package's `generateText()` runs inference with a system prompt
+4. **Parsing** — JSON output is extracted via regex and validated with `reflectionSchema` (Zod)
+5. **Storage** — Result saved to `reflections` table (one per day, keyed by midnight timestamp)
+
+**Supported models** (defined in `src/constants/ai-models.ts`): Gemma 3 4B, Qwen 3 4B, Phi-4 Mini — all Q4_K_M quantization from HuggingFace.
+
+**Settings** are stored in the `settings` KVS table, managed by `src/hooks/settings/use-ai-reflection-settings.ts`:
+
+- `aiReflectionEnabled` — on/off toggle
+- `aiReflectionModelId` — selected GGUF model
+- `aiReflectionTime` — time of day to auto-generate (via `use-auto-reflection.ts`)
+
 ### Keyboard Dismiss Rule
 
 Always call `Keyboard.dismiss()` **before** any `async` save operation that triggers navigation. Skipping this causes a `RemoteTextInput` session crash on iOS when the keyboard is mid-input as the screen unmounts.
@@ -176,6 +218,8 @@ Always call `Keyboard.dismiss()` **before** any `async` save operation that trig
 | `expo-sqlite` + `drizzle-orm`      | Local SQLite persistence                                                                                                                                                                                |
 | `expo-crypto`                      | `Crypto.randomUUID()` for ID generation at the app layer                                                                                                                                                |
 | `PlatformColor`                    | Adaptive system colors: `"label"`, `"systemBackground"`, `"systemIndigo"`                                                                                                                               |
+| `@react-native-ai/llama`           | On-device GGUF model download + inference via `downloadModel()` and `llama.languageModel()`                                                                                                             |
+| `ai` (Vercel AI SDK)               | `generateText()` with structured prompts — used with llama model provider                                                                                                                               |
 
 ### SwiftUI Component Rules
 

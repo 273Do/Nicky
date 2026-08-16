@@ -22,9 +22,9 @@ import {
   padding,
 } from "@expo/ui/swift-ui/modifiers";
 
-import { FIELD_ICONS, FIELD_LABELS, FieldType } from "@/core/constants";
+import { FIELD_ICONS, FIELD_LABELS, FieldType } from "@/constants/journal";
+import { JournalMetaObj, type FieldDraftObj } from "@/hooks/journal/use-journal-field";
 import { hexColorSchema } from "@/utils/journal/color";
-import { JournalMetaObj, type FieldDraftObj } from "@/utils/journal/use-journal-field";
 
 import { FieldBottomSheet } from "./field-bottom-sheet";
 import { IconSelectBottomSheet } from "./icon-select-bottom-sheet";

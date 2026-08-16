@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { DatePicker, Text } from "@expo/ui/swift-ui";
 
-import { FIELD_LABELS } from "@/core/constants";
+import { FIELD_LABELS } from "@/constants/journal";
 import { formatTime } from "@/utils/date";
 
 import { FieldWrapper } from "./field-wrapper";
