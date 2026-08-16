@@ -1,8 +1,18 @@
 # Nicky
 
-🚧 Nicky is a native iOS mobile app that lets you customize, manage, and share your own personal journal.
+🚧 Nicky is a native iOS journaling app built with React Native and Expo.
 
-<img src="docs/screenshots/app-images.svg" />
+<img src="docs/screenshots/Nicky-screenshots.png" />
+
+## Features
+
+- **Custom Journals** — Create journals with flexible field types (text, number, date, time, location, media, check)
+- **Daily Entries** — Record entries with bookmarking and full-text search
+- **AI Reflection** — On-device LLM generates daily reflections from journal entries at a configurable time
+- **Import / Export** — Import journal templates and export journals or entries
+- **Native iOS UI** — Built with SwiftUI components via `@expo/ui/swift-ui`
+
+---
 
 # Welcome to your Expo app 👋
 
