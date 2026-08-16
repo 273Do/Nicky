@@ -1,12 +1,12 @@
-import { Alert, Keyboard, PlatformColor } from "react-native";
+import { Keyboard, PlatformColor } from "react-native";
 
 import { Stack } from "expo-router";
-import { z } from "zod";
 
 import { EntryCreateView } from "@/components/entry/entry-create-view";
 import { type EntryDetailObj } from "@/db/queries/entries";
 import { useEntry } from "@/hooks/entry/use-entry";
 import { buildEntryFormData } from "@/utils/entry/entry-form";
+import { handleSaveError } from "@/utils/handle-save-error";
 
 /**
  * 編集フォーム — editMode 切替時にマウント/アンマウントされ、useRef が毎回初期化される
@@ -29,9 +29,7 @@ export function EntryEditView({
       await updateEntry(entry.id);
       onSave();
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        Alert.alert("Validation Error", error.issues[0].message);
-      }
+      handleSaveError(error);
     }
   };
 

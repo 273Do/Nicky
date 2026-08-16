@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert as RNAlert, Keyboard, PlatformColor } from "react-native";
+import { Keyboard, PlatformColor } from "react-native";
 
 import { Alert, Button, Host, Text } from "@expo/ui/swift-ui";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
@@ -12,6 +12,7 @@ import { FieldObj } from "@/db/schemas";
 import { FieldDraftObj, useJournalField } from "@/hooks/journal/use-journal-field";
 import { useValidatedParams } from "@/hooks/use-validated-params";
 import { exportJournal } from "@/utils/days/export-journal";
+import { handleSaveError } from "@/utils/handle-save-error";
 
 type FormProps = {
   journal: JournalDetail;
@@ -54,9 +55,7 @@ function JournalEditForm({ journal }: FormProps) {
       await updateJournal(journal.id);
       router.back();
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        RNAlert.alert("Validation Error", error.issues[0].message);
-      }
+      handleSaveError(error);
     }
   };
 

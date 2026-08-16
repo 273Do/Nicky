@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { Alert, Keyboard, PlatformColor } from "react-native";
+import { Keyboard, PlatformColor } from "react-native";
 
 import * as Crypto from "expo-crypto";
 import { Stack, useRouter } from "expo-router";
-import { z } from "zod";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
 import { useJournalField } from "@/hooks/journal/use-journal-field";
 import { importJournal } from "@/utils/days/import-journal";
+import { handleSaveError } from "@/utils/handle-save-error";
 import { setCreatedJournalId } from "@/utils/journal/created-journal";
 
 /**
@@ -39,9 +39,7 @@ export default function JournalCreateScreen() {
       setCreatedJournalId(id);
       router.back();
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        Alert.alert("Validation Error", error.issues[0].message);
-      }
+      handleSaveError(error);
     }
   };
 
