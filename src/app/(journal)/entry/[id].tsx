@@ -84,10 +84,10 @@ export default function EntryDetailScreen() {
                           type: "action",
                           icon: {
                             type: "sfSymbol",
-                            name: entry?.bookmark ? "bookmark.slash" : "bookmark",
+                            name: "square.and.arrow.up",
                           },
-                          label: entry?.bookmark ? "Unbookmark" : "Bookmark",
-                          onPress: bookmark,
+                          label: "Export Entry",
+                          onPress: () => console.log("Export Entry"),
                         },
                         {
                           type: "action",
@@ -98,6 +98,16 @@ export default function EntryDetailScreen() {
                         },
                       ],
                     },
+                  },
+                  {
+                    type: "button",
+                    icon: {
+                      type: "sfSymbol",
+                      name: entry?.bookmark ? "bookmark.fill" : "bookmark",
+                    },
+                    label: entry?.bookmark ? "Unbookmark" : "Bookmark",
+                    tintColor: entry?.bookmark ? PlatformColor("systemIndigo") : undefined,
+                    onPress: bookmark,
                   },
                   {
                     type: "button",

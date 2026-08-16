@@ -55,7 +55,7 @@ export function EntryRow({ journalName, entry }: Props) {
         />
         <Button
           label={entry.bookmark ? "Unbookmark" : "Bookmark"}
-          systemImage={entry.bookmark ? "bookmark.slash" : "bookmark"}
+          systemImage={entry.bookmark ? "bookmark" : "bookmark.fill"}
           onPress={async () => await bookmarkEntry(entry.id, !entry.bookmark)}
         />
         <Button
