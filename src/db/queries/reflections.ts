@@ -4,20 +4,14 @@ import * as Crypto from "expo-crypto";
 import type { ReflectionResult } from "@/constants/reflection";
 import { db } from "@/db/client";
 import { reflections } from "@/db/schemas";
-
-/** 日付を 00:00:00 のタイムスタンプに正規化 */
-const normalizeDate = (date: Date) => {
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  return d.getTime();
-};
+import { startOfDayTimestamp } from "@/utils/date";
 
 /**
  * 指定日の振り返りを取得するクエリ（useLiveQuery 用）
  */
 export const getReflectionByDateQuery = (date: Date) =>
   db.query.reflections.findFirst({
-    where: eq(reflections.date, normalizeDate(date)),
+    where: eq(reflections.date, startOfDayTimestamp(date)),
   });
 
 /**
@@ -29,7 +23,7 @@ export const storeReflection = async (date: Date, result: ReflectionResult): Pro
       .insert(reflections)
       .values({
         id: Crypto.randomUUID(),
-        date: normalizeDate(date),
+        date: startOfDayTimestamp(date),
         title: result.title,
         firstCategory: result.items[0].category,
         firstContent: result.items[0].content,
@@ -54,6 +48,6 @@ export const storeReflection = async (date: Date, result: ReflectionResult): Pro
  */
 export const deleteReflection = async (date: Date): Promise<void> => {
   await db.transaction(async (tx) => {
-    await tx.delete(reflections).where(eq(reflections.date, normalizeDate(date)));
+    await tx.delete(reflections).where(eq(reflections.date, startOfDayTimestamp(date)));
   });
 };

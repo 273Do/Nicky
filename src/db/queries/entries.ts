@@ -1,6 +1,7 @@
 import { and, eq, gte, lt } from "drizzle-orm";
 
 import { db } from "@/db/client";
+import { addDays, startOfDay } from "@/utils/date";
 
 import { entries, EntryObj, EntryValueObj, entryValues } from "../schemas";
 
@@ -101,11 +102,8 @@ export const deleteAllEntries = async (journalId?: string) => {
  * @param date 対象日（時刻は無視される）
  */
 export const getEntriesByDateQuery = (date: Date) => {
-  const start = new Date(date);
-  start.setHours(0, 0, 0, 0);
-
-  const end = new Date(start);
-  end.setDate(end.getDate() + 1);
+  const start = startOfDay(date);
+  const end = addDays(start, 1);
 
   return db.query.entries.findMany({
     where: and(gte(entries.createdAt, start.getTime()), lt(entries.createdAt, end.getTime())),

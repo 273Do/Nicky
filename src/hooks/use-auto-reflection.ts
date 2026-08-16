@@ -4,6 +4,7 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { getEntriesByDateQuery } from "@/db/queries/entries";
 import { getReflectionByDateQuery, storeReflection } from "@/db/queries/reflections";
+import { startOfDay } from "@/utils/date";
 import { getReflection } from "@/utils/days/reflection/get-reflection";
 import { useAIReflectionSettings } from "@/utils/settings/use-ai-reflection-settings";
 
@@ -27,14 +28,8 @@ const isPastReflectionTime = (reflectionTime: Date): boolean => {
  * 4. 今日のエントリーが1件以上ある
  */
 export function useAutoReflection() {
-  console.log("生成！");
   const { aiReflectionEnabled, aiModel, reflectionTime } = useAIReflectionSettings();
-
-  const today = useMemo(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }, []);
+  const today = useMemo(() => startOfDay(), []);
 
   const { data: entries } = useLiveQuery(getEntriesByDateQuery(today), [today.getTime()]);
   const { data: reflection } = useLiveQuery(getReflectionByDateQuery(today), [today.getTime()]);
@@ -48,11 +43,15 @@ export function useAutoReflection() {
     if (generating.current) return;
 
     generating.current = true;
-    getReflection(entries, aiModel.gguf)
-      .then((result) => result && storeReflection(today, result))
-      .catch((error) => console.warn("[auto-reflection]", error))
-      .finally(() => {
+    (async () => {
+      try {
+        const result = await getReflection(entries, aiModel.gguf);
+        if (result) await storeReflection(today, result);
+      } catch (error) {
+        console.warn("[auto-reflection]", error);
+      } finally {
         generating.current = false;
-      });
+      }
+    })();
   }, [entries, reflection, aiReflectionEnabled, reflectionTime, aiModel.gguf, today]);
 }
