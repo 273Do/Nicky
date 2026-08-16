@@ -21,9 +21,6 @@ importers:
       '@expo/ui':
         specifier: ~55.0.17
         version: 55.0.17(expo@55.0.18)(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
-      '@react-native-ai/apple':
-        specifier: ^0.12.0
-        version: 0.12.0(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))
       '@react-native-ai/llama':
         specifier: ^0.12.0
         version: 0.12.0(llama.rn@0.12.0-rc.9(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
@@ -2038,11 +2035,6 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
-
-  '@react-native-ai/apple@0.12.0':
-    resolution: {integrity: sha512-BC/kEDbCZprv1xcQCWsgapXm/WEsj5lieBDvU1vJXStrN+BG+hWM01zoqDGTD/j71zvt9DEfHcMvEqbrGY2uAA==}
-    peerDependencies:
-      react-native: '>=0.76.0'
 
   '@react-native-ai/llama@0.12.0':
     resolution: {integrity: sha512-v/zhk9SEAk7P4/iELHMkAfIEEIn1TaMdIwfaFv41Yu3wm3sRbws7qRufTeq3nFBnSLj3MtVMZy4Vew7Fy5uyaA==}
@@ -7837,13 +7829,6 @@ snapshots:
       react: 19.2.0
     optionalDependencies:
       '@types/react': 19.2.14
-
-  '@react-native-ai/apple@0.12.0(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))':
-    dependencies:
-      '@ai-sdk/provider': 3.0.14
-      '@ai-sdk/provider-utils': 4.0.42(zod@4.4.3)
-      react-native: 0.83.6(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0)
-      zod: 4.4.3
 
   '@react-native-ai/llama@0.12.0(llama.rn@0.12.0-rc.9(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)':
     dependencies:
