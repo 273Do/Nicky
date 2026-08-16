@@ -6,7 +6,7 @@ import { disabled, tag, tint } from "@expo/ui/swift-ui/modifiers";
 import { downloadModel, removeModel } from "@react-native-ai/llama";
 
 import { AI_MODELS, type AIModelId } from "@/constants/ai-models";
-import { useAIReflectionSettings } from "@/utils/settings/use-ai-reflection-settings";
+import { useAIReflectionSettings } from "@/hooks/settings/use-ai-reflection-settings";
 
 /**
  * アプリの機能設定

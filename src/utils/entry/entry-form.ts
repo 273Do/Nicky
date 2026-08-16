@@ -1,7 +1,6 @@
 import { EntryDetailObj } from "@/db/queries/entries";
 import { FieldObj } from "@/db/schemas";
-
-import { deserializeValue, FieldValue } from "./use-entry";
+import { deserializeValue, FieldValue } from "@/hooks/entry/use-entry";
 
 /**
  * エントリー詳細からフォーム用のフィールド一覧と初期値を導出する

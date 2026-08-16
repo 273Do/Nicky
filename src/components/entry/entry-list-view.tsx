@@ -9,7 +9,7 @@ import { SymbolView } from "expo-symbols";
 import { JournalChipList } from "@/components/journal/journal-chip";
 import { deleteEntry } from "@/db/queries/entries";
 import { type JournalWithCountObj } from "@/db/queries/journals";
-import { useEntryList } from "@/utils/entry/use-entry-list";
+import { useEntryList } from "@/hooks/entry/use-entry-list";
 
 import { EntryRow } from "./entry-row";
 

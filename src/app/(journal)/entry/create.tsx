@@ -6,7 +6,7 @@ import { z } from "zod";
 
 import { EntryCreateView } from "@/components/entry/entry-create-view";
 import { getFieldsQuery } from "@/db/queries/fields";
-import { useEntry } from "@/utils/entry/use-entry";
+import { useEntry } from "@/hooks/entry/use-entry";
 import { useValidatedParams } from "@/utils/params";
 
 /**

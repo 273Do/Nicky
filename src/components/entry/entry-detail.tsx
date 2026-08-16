@@ -4,8 +4,8 @@ import { Host, List, Section, Text } from "@expo/ui/swift-ui";
 import { frame, listStyle } from "@expo/ui/swift-ui/modifiers";
 
 import { EntryDetailObj } from "@/db/queries/entries";
+import { deserializeValue } from "@/hooks/entry/use-entry";
 import { formatDate } from "@/utils/date";
-import { deserializeValue } from "@/utils/entry/use-entry";
 
 import { EntryFieldItem } from "./entry-field-item";
 

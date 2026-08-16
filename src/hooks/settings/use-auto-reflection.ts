@@ -4,9 +4,9 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { getEntriesByDateQuery } from "@/db/queries/entries";
 import { getReflectionByDateQuery, storeReflection } from "@/db/queries/reflections";
+import { useAIReflectionSettings } from "@/hooks/settings/use-ai-reflection-settings";
 import { startOfDay } from "@/utils/date";
 import { getReflection } from "@/utils/days/reflection/get-reflection";
-import { useAIReflectionSettings } from "@/utils/settings/use-ai-reflection-settings";
 
 /** 現在時刻が reflectionTime を過ぎているか */
 const isPastReflectionTime = (reflectionTime: Date): boolean => {

@@ -9,8 +9,8 @@ import { z } from "zod";
 import { JournalCreateView } from "@/components/journal/journal-create-view";
 import { deleteJournal, getJournalDetailQuery, JournalDetail } from "@/db/queries/journals";
 import { FieldObj } from "@/db/schemas";
+import { FieldDraftObj, useJournalField } from "@/hooks/journal/use-journal-field";
 import { exportJournal } from "@/utils/days/export-journal";
-import { FieldDraftObj, useJournalField } from "@/utils/journal/use-journal-field";
 import { useValidatedParams } from "@/utils/params";
 
 type FormProps = {

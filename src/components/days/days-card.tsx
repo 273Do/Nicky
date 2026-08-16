@@ -5,8 +5,8 @@ import { font, foregroundStyle, listRowSeparator, opacity } from "@expo/ui/swift
 
 import { EntryDetailObj } from "@/db/queries/entries";
 import { JournalObj } from "@/db/schemas";
+import { deserializeValue } from "@/hooks/entry/use-entry";
 import { formatTime } from "@/utils/date";
-import { deserializeValue } from "@/utils/entry/use-entry";
 
 import { EntryFieldItem } from "../entry/entry-field-item";
 

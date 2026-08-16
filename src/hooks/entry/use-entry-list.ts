@@ -1,8 +1,7 @@
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { getEntriesQuery } from "@/db/queries/entries";
-
-import { buildPreviewEntry } from "./preview";
+import { buildPreviewEntry } from "@/utils/entry/preview";
 
 type Params = {
   /** ジャーナル id */

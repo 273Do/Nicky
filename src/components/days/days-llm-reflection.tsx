@@ -5,7 +5,7 @@ import { font, foregroundStyle } from "@expo/ui/swift-ui/modifiers";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { getReflectionByDateQuery } from "@/db/queries/reflections";
-import { useAIReflectionSettings } from "@/utils/settings/use-ai-reflection-settings";
+import { useAIReflectionSettings } from "@/hooks/settings/use-ai-reflection-settings";
 
 import { FieldWrapper } from "../field/field-wrapper";
 
