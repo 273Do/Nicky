@@ -3,11 +3,17 @@ import React from "react";
 
 import AppTabs from "@/components/app-tabs";
 import { DrizzleProvider } from "@/components/drizzle-provider";
+import { useAutoReflection } from "@/hooks/use-auto-reflection";
+
+function AppContent() {
+  useAutoReflection();
+  return <AppTabs />;
+}
 
 export default function RootLayout() {
   return (
     <DrizzleProvider>
-      <AppTabs />
+      <AppContent />
     </DrizzleProvider>
   );
 }

@@ -59,7 +59,7 @@ export function DaysView({ date }: Props) {
             animation(Animation.default, expandedIds.size),
           ]}
         >
-          <DaysLLMReflection date={date} entries={entries} />
+          <DaysLLMReflection date={date} />
           {entries.map((entry, index) => (
             <DaysCard
               key={entry.id}
