@@ -5,18 +5,8 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { getEntriesByDateQuery } from "@/db/queries/entries";
 import { getReflectionByDateQuery, storeReflection } from "@/db/queries/reflections";
 import { useAIReflectionSettings } from "@/hooks/settings/use-ai-reflection-settings";
-import { startOfDay } from "@/utils/date";
+import { isPastTime, startOfDay } from "@/utils/date";
 import { getReflection } from "@/utils/days/reflection/get-reflection";
-
-/** 現在時刻が reflectionTime を過ぎているか */
-const isPastReflectionTime = (reflectionTime: Date): boolean => {
-  const now = new Date();
-  return (
-    now.getHours() > reflectionTime.getHours() ||
-    (now.getHours() === reflectionTime.getHours() &&
-      now.getMinutes() >= reflectionTime.getMinutes())
-  );
-};
 
 /**
  * アプリ起動時に今日の AI Reflection を自動生成するフック
@@ -27,7 +17,7 @@ const isPastReflectionTime = (reflectionTime: Date): boolean => {
  * 3. 今日の reflection が DB に未保存
  * 4. 今日のエントリーが1件以上ある
  */
-export function useAutoReflection() {
+export const useAutoReflection = () => {
   const { aiReflectionEnabled, aiModel, reflectionTime } = useAIReflectionSettings();
   const today = useMemo(() => startOfDay(), []);
 
@@ -39,7 +29,7 @@ export function useAutoReflection() {
     if (!aiReflectionEnabled) return;
     if (reflection) return;
     if (!entries || entries.length === 0) return;
-    if (!isPastReflectionTime(reflectionTime)) return;
+    if (!isPastTime(reflectionTime)) return;
     if (generating.current) return;
 
     generating.current = true;
@@ -54,4 +44,4 @@ export function useAutoReflection() {
       }
     })();
   }, [entries, reflection, aiReflectionEnabled, reflectionTime, aiModel.gguf, today]);
-}
+};

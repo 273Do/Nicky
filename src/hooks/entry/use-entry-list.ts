@@ -13,7 +13,7 @@ type Params = {
 /**
  * エントリー一覧を取得し、フィルターまで行うフック
  */
-export function useEntryList({ journalId, bookmarkOnly = false }: Params) {
+export const useEntryList = ({ journalId, bookmarkOnly = false }: Params) => {
   const { data: entries } = useLiveQuery(getEntriesQuery(journalId), [journalId]);
 
   const previewEntries = entries.map(buildPreviewEntry);
@@ -24,4 +24,4 @@ export function useEntryList({ journalId, bookmarkOnly = false }: Params) {
   const sorted = [...filtered].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
   return { entries: sorted };
-}
+};

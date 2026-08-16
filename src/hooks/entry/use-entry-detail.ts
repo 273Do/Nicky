@@ -11,7 +11,7 @@ import { useEntry } from "./use-entry";
  * エントリー詳細画面のデータ取得・フォーム状態・アクションをまとめたフック
  * @param entryId エントリー id
  */
-export function useEntryDetail(entryId: string) {
+export const useEntryDetail = (entryId: string) => {
   const { data: entry } = useLiveQuery(getEntryDetailQuery(entryId), [entryId]);
 
   const { fields, initialValues } = entry
@@ -37,4 +37,4 @@ export function useEntryDetail(entryId: string) {
   };
 
   return { entry, valuesRef, setValue, save, bookmark, remove };
-}
+};

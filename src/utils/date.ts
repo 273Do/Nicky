@@ -63,3 +63,15 @@ export const addDays = (date: Date, days: number) => {
   d.setDate(d.getDate() + days);
   return startOfDay(d);
 };
+
+/**
+ * 現在時刻が指定時刻を過ぎているか（時・分のみ比較）
+ * @param time 比較対象の時刻
+ */
+export const isPastTime = (time: Date): boolean => {
+  const now = new Date();
+  return (
+    now.getHours() > time.getHours() ||
+    (now.getHours() === time.getHours() && now.getMinutes() >= time.getMinutes())
+  );
+};
