@@ -1,6 +1,6 @@
 # Nicky
 
-Nicky is a native iOS journaling app built with React Native and Expo.
+🚧 Nicky is a native iOS journaling app built with React Native and Expo.
 
 <img src="docs/screenshots/Nicky-screenshots.png" />
 
