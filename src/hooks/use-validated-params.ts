@@ -5,7 +5,7 @@ import { useLocalSearchParams } from "expo-router";
 /**
  * useLocalSearchParams を Zod スキーマでバリデーションするフック
  */
-export function useValidatedParams<T extends z.ZodTypeAny>(schema: T): z.infer<T> {
+export const useValidatedParams = <T extends z.ZodTypeAny>(schema: T): z.infer<T> => {
   const params = useLocalSearchParams();
   return schema.parse(params);
-}
+};

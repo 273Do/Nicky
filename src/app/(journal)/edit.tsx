@@ -10,8 +10,8 @@ import { JournalCreateView } from "@/components/journal/journal-create-view";
 import { deleteJournal, getJournalDetailQuery, JournalDetail } from "@/db/queries/journals";
 import { FieldObj } from "@/db/schemas";
 import { FieldDraftObj, useJournalField } from "@/hooks/journal/use-journal-field";
+import { useValidatedParams } from "@/hooks/use-validated-params";
 import { exportJournal } from "@/utils/days/export-journal";
-import { useValidatedParams } from "@/utils/params";
 
 type FormProps = {
   journal: JournalDetail;
@@ -155,7 +155,9 @@ function JournalEditForm({ journal }: FormProps) {
  * ジャーナル編集
  */
 export default function JournalEditScreen() {
-  const { journalId } = useValidatedParams(z.object({ journalId: z.string() }));
+  const schema = z.object({ journalId: z.string() });
+  const { journalId } = useValidatedParams(schema);
+
   const { data: journal } = useLiveQuery(getJournalDetailQuery(journalId), [journalId]);
 
   return <>{journal && <JournalEditForm journal={journal} />}</>;

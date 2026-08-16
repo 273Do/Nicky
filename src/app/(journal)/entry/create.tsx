@@ -7,7 +7,7 @@ import { z } from "zod";
 import { EntryCreateView } from "@/components/entry/entry-create-view";
 import { getFieldsQuery } from "@/db/queries/fields";
 import { useEntry } from "@/hooks/entry/use-entry";
-import { useValidatedParams } from "@/utils/params";
+import { useValidatedParams } from "@/hooks/use-validated-params";
 
 /**
  * エントリー作成
@@ -15,9 +15,8 @@ import { useValidatedParams } from "@/utils/params";
 export default function EntryCreateScreen() {
   const router = useRouter();
 
-  const { journalId, journalName } = useValidatedParams(
-    z.object({ journalId: z.string(), journalName: z.string() }),
-  );
+  const schema = z.object({ journalId: z.string(), journalName: z.string() });
+  const { journalId, journalName } = useValidatedParams(schema);
 
   const { data: fields } = useLiveQuery(getFieldsQuery(journalId), [journalId]);
   const { valuesRef, setValue, createEntry } = useEntry(fields);

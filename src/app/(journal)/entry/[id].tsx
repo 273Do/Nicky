@@ -7,7 +7,7 @@ import { z } from "zod";
 import { EntryCreateView } from "@/components/entry/entry-create-view";
 import { EntryDetailView } from "@/components/entry/entry-detail";
 import { useEntryDetail } from "@/hooks/entry/use-entry-detail";
-import { useValidatedParams } from "@/utils/params";
+import { useValidatedParams } from "@/hooks/use-validated-params";
 
 /**
  * エントリー詳細
@@ -15,20 +15,15 @@ import { useValidatedParams } from "@/utils/params";
 export default function EntryDetailScreen() {
   const router = useRouter();
 
-  const {
-    id: entryId,
-    journalName,
-    edit,
-  } = useValidatedParams(
-    z.object({
-      id: z.string(),
-      journalName: z.string(),
-      edit: z
-        .string()
-        .optional()
-        .transform((v) => v === "true"),
-    }),
-  );
+  const shema = z.object({
+    id: z.string(),
+    journalName: z.string(),
+    edit: z
+      .string()
+      .optional()
+      .transform((v) => v === "true"),
+  });
+  const { id: entryId, journalName, edit } = useValidatedParams(shema);
 
   const [editMode, setEditMode] = useState(edit);
 
