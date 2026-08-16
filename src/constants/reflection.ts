@@ -61,8 +61,10 @@ export const reflectionSchema = z.object({
   items: z
     .array(
       z.object({
-        category: z.string().refine((v): v is ReflectionCategory => v in reflectionCategories),
-        content: z.string().min(1),
+        category: z
+          .string()
+          .refine((v): v is ReflectionCategory => Object.hasOwn(reflectionCategories, v)),
+        content: z.string().min(1).max(80),
       }),
     )
     .length(2),

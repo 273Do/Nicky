@@ -21,7 +21,8 @@ export function Application() {
     setReflectionTime,
   } = useAIReflectionSettings();
   const [downloading, setDownloading] = useState(false);
-  const [displayModelId, setDisplayModelId] = useState<AIModelId>(aiModel.id);
+  const [pendingModelId, setPendingModelId] = useState<AIModelId | null>(null);
+  const displayModelId = pendingModelId ?? aiModel.id;
 
   const handleModelSelect = (id: string) => {
     if (downloading) return;
@@ -31,7 +32,7 @@ export function Application() {
     const newModel = AI_MODELS.find((m) => m.id === modelId);
     if (!newModel) return;
 
-    setDisplayModelId(modelId);
+    setPendingModelId(modelId);
 
     Alert.alert(
       "Download Model",
@@ -40,7 +41,7 @@ export function Application() {
         {
           text: "Cancel",
           style: "cancel",
-          onPress: () => setDisplayModelId(aiModel.id),
+          onPress: () => setPendingModelId(null),
         },
         {
           text: "OK",
@@ -53,8 +54,8 @@ export function Application() {
               await removeModel(oldGguf).catch(() => {});
             } catch (error) {
               console.warn("[model-switch]", error);
-              setDisplayModelId(aiModel.id);
             } finally {
+              setPendingModelId(null);
               setDownloading(false);
             }
           },

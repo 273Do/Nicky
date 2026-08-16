@@ -40,12 +40,13 @@ export const getReflection = async (
 ): Promise<ReflectionResult | null> => {
   const modelPath = await downloadModel(gguf);
   const model = llama.languageModel(modelPath);
-  await model.prepare();
-
-  const entriesText = entriesToText(entries);
-  const prompt = `Here are today's journal entries. Generate a reflection based on these records.\n\n${entriesText}`;
 
   try {
+    await model.prepare();
+
+    const entriesText = entriesToText(entries);
+    const prompt = `Here are today's journal entries. Generate a reflection based on these records.\n\n${entriesText}`;
+
     const { text } = await generateText({
       model,
       system: buildSystemPrompt(categoryList, "ja"),
@@ -60,5 +61,7 @@ export const getReflection = async (
   } catch (error) {
     console.warn("[reflection]", error);
     return null;
+  } finally {
+    await model.unload();
   }
 };
