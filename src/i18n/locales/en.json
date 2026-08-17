@@ -1,0 +1,92 @@
+{
+  "tabs": {
+    "journal": "Journal",
+    "days": "Days",
+    "search": "Search"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "options": "Options",
+    "done": "Done",
+    "ok": "OK"
+  },
+  "journal": {
+    "newJournal": "New Journal",
+    "import": "Import",
+    "share": "Share",
+    "showAll": "All",
+    "bookmarkedOnly": "Bookmarked",
+    "deleteJournal": "Delete Journal",
+    "deleteAllEntries": "Delete All Entries",
+    "deleteJournalTitle": "Delete \u201c{{name}}\u201d?",
+    "deleteAllEntriesTitle": "Delete All Entries in \u201c{{name}}\u201d?",
+    "deleteConfirm": "This action cannot be undone.",
+    "deleteAll": "Delete All",
+    "namePlaceholder": "Name",
+    "fields": "Fields",
+    "fieldPlaceholder": "{{type}} Name",
+    "addField": "Add Field",
+    "selectColor": "Colour"
+  },
+  "entry": {
+    "newEntry": "New Entry",
+    "export": "Export",
+    "deleteEntry": "Delete Entry",
+    "bookmark": "Add Bookmark",
+    "unbookmark": "Remove Bookmark",
+    "noEntries": "No Entries",
+    "showLess": "Show Less",
+    "showMore": "Show {{count}} More"
+  },
+  "field": {
+    "text": "Text",
+    "longText": "Long Text",
+    "number": "Number",
+    "media": "Media",
+    "check": "Checkbox",
+    "location": "Location",
+    "date": "Date",
+    "time": "Time",
+    "setLocation": "Set Location",
+    "notSet": "None"
+  },
+  "settings": {
+    "title": "Settings",
+    "notification": "Notifications",
+    "aiReflection": "AI Reflection",
+    "downloading": "Downloading\u2026",
+    "model": "Model",
+    "reflectionTime": "Reflection Time",
+    "downloadModel": "Download Model",
+    "downloadConfirm": "Download {{model}}? The current model will be removed.",
+    "language": "Language",
+    "exportAllJournals": "Export All Journals",
+    "exportAllEntries": "Export All Entries",
+    "deleteAllData": "Delete All Data"
+  },
+  "support": {
+    "support": "Support",
+    "rateOnAppStore": "Rate on the App Store",
+    "termsOfService": "Terms & Conditions",
+    "privacyPolicy": "Privacy Policy",
+    "acknowledgements": "Acknowledgements"
+  },
+  "error": {
+    "validation": "Invalid Input",
+    "unexpected": "Something went wrong. Please try again.",
+    "title": "Error",
+    "exportFailed": "Unable to Export",
+    "exportFailedMessage": "The journal could not be exported. Please try again.",
+    "importFailed": "Unable to Import",
+    "importInvalidFormat": "This file format is not supported.",
+    "importCannotImport": "This file could not be imported.",
+    "importFailedMessage": "An error occurred while importing. Please try again."
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search"
+  }
+}
