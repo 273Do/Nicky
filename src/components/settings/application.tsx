@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Linking, PlatformColor } from "react-native";
+import { Alert, PlatformColor } from "react-native";
 
 import { DatePicker, Picker, Section, Text, Toggle } from "@expo/ui/swift-ui";
-import { disabled, onTapGesture, tag, tint } from "@expo/ui/swift-ui/modifiers";
+import { disabled, tag, tint } from "@expo/ui/swift-ui/modifiers";
 import { downloadModel, removeModel } from "@react-native-ai/llama";
 
 import { AI_MODELS, type AIModelId } from "@/constants/ai-models";
@@ -69,9 +69,6 @@ export function Application() {
 
   return (
     <Section>
-      <Text modifiers={[onTapGesture(() => void Linking.openSettings())]}>
-        {t("settings.language")}
-      </Text>
       <Toggle
         isOn={true}
         label={t("settings.notification")}
