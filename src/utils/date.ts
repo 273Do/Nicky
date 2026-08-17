@@ -1,10 +1,12 @@
+import i18n from "@/i18n";
+
 /**
- * 日付を "yyyy年mm月dd日" / "May 5, 2026" などロケールに応じた形式でフォーマットする関数
+ * 日付をなどアプリ言語に応じた形式でフォーマットする関数
  * @param date フォーマットする日付
  * @return フォーマットされた日付文字列
  */
 export const formatDate = (date: Date | number): string => {
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(i18n.language, {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -18,22 +20,22 @@ export const formatDate = (date: Date | number): string => {
  * @returns フォーマットされた時刻文字列
  */
 export const formatTime = (date: Date | number): string => {
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(i18n.language, {
     hour: "numeric",
     minute: "2-digit",
   }).format(date);
 };
 
 /**
- * 日付を "May 5" または "May 5, 2026" などロケールに応じた形式でフォーマットする関数
+ * 日付をアプリ言語に応じた形式でフォーマットする関数（Days画面ヘッダー用）
  * @param date フォーマットする日付
  * @returns フォーマットされた日付文字列
  */
 export const formatDateDays = (date: Date) =>
   // 今年でない場合は年を表示する
   date.getFullYear() === new Date().getFullYear()
-    ? date.toLocaleDateString("en-US", { month: "long", day: "numeric" })
-    : date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+    ? date.toLocaleDateString(i18n.language, { month: "long", day: "numeric" })
+    : date.toLocaleDateString(i18n.language, { month: "long", day: "numeric", year: "numeric" });
 
 /**
  * 日付を 00:00:00.000 に正規化した Date を返す
