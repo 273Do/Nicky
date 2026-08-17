@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { PlatformColor } from "react-native";
 
 import { Button, HStack, Image, Spacer, Text, VStack } from "@expo/ui/swift-ui";
@@ -14,6 +15,8 @@ type Props = {
  * メディアフィールド（ダミー実装）
  */
 export function EntryMedia({ label, edit = false }: Props) {
+  const { t } = useTranslation();
+
   return (
     <VStack alignment="leading" spacing={8}>
       <Text
@@ -26,7 +29,7 @@ export function EntryMedia({ label, edit = false }: Props) {
       </Text>
       {edit ? (
         <HStack>
-          <Text>Media</Text>
+          <Text>{t("field.media")}</Text>
           <Spacer />
           <Button
             modifiers={[
