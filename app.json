@@ -9,7 +9,10 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon",
-      "bundleIdentifier": "com.273dodev.Nicky"
+      "bundleIdentifier": "com.273dodev.Nicky",
+      "infoPlist": {
+        "CFBundleLocalizations": ["en", "ja"]
+      }
     },
     "android": {
       "adaptiveIcon": {
