@@ -7,6 +7,7 @@ import { z } from "zod";
 import { journalIconSchema } from "@/constants/journal";
 import type { JournalDetail } from "@/db/queries/journals";
 import { fieldSelectSchema, journalSelectSchema } from "@/db/schemas";
+import i18n from "@/i18n";
 import { generateSignature } from "@/utils/days/export-journal";
 
 const journalDetailSchema = journalSelectSchema.extend({
@@ -40,7 +41,7 @@ export const importJournal = async (): Promise<JournalDetail | null> => {
     const validated = importFileSchema.safeParse(parsed);
 
     if (!validated.success) {
-      Alert.alert("Import Failed", "Invalid file format.");
+      Alert.alert(i18n.t("error.importFailed"), i18n.t("error.importInvalidFormat"));
       return null;
     }
 
@@ -50,13 +51,13 @@ export const importJournal = async (): Promise<JournalDetail | null> => {
 
     // HMAC
     if (expected !== signature) {
-      Alert.alert("Import Failed", "This file cannot be imported.");
+      Alert.alert(i18n.t("error.importFailed"), i18n.t("error.importCannotImport"));
       return null;
     }
 
     return parsedData;
   } catch (error) {
-    Alert.alert("Import Failed", "An error occurred while importing the journal.");
+    Alert.alert(i18n.t("error.importFailed"), i18n.t("error.importFailedMessage"));
     console.error("Import Failed:", error);
     return null;
   }

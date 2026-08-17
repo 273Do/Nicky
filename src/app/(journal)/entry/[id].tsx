@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { PlatformColor } from "react-native";
 
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
@@ -14,6 +15,7 @@ import { useValidatedParams } from "@/hooks/use-validated-params";
  * エントリー詳細
  */
 export default function EntryDetailScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
 
   const shema = z.object({
@@ -49,7 +51,7 @@ export default function EntryDetailScreen() {
             : () => [
                 {
                   type: "menu",
-                  label: "Options",
+                  label: t("common.options"),
                   icon: { type: "sfSymbol", name: "ellipsis" },
                   menu: {
                     items: [
@@ -59,12 +61,12 @@ export default function EntryDetailScreen() {
                           type: "sfSymbol",
                           name: "square.and.arrow.up",
                         },
-                        label: "Export Entry",
+                        label: t("entry.export"),
                         onPress: () => console.log("Export Entry"),
                       },
                       {
                         type: "action",
-                        label: "Delete Entry",
+                        label: t("entry.deleteEntry"),
                         icon: { type: "sfSymbol", name: "trash" },
                         destructive: true,
                         onPress: handleDelete,
@@ -78,13 +80,13 @@ export default function EntryDetailScreen() {
                     type: "sfSymbol",
                     name: entry?.bookmark ? "bookmark.fill" : "bookmark",
                   },
-                  label: entry?.bookmark ? "Unbookmark" : "Bookmark",
+                  label: entry?.bookmark ? t("entry.unbookmark") : t("entry.bookmark"),
                   tintColor: entry?.bookmark ? PlatformColor("systemIndigo") : undefined,
                   onPress: handleBookmark,
                 },
                 {
                   type: "button",
-                  label: "Edit",
+                  label: t("common.edit"),
                   onPress: () => setEditMode(true),
                 },
               ],

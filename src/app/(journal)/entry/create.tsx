@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Keyboard, PlatformColor } from "react-native";
 
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
@@ -14,6 +15,7 @@ import { handleSaveError } from "@/utils/handle-save-error";
  * エントリー作成
  */
 export default function EntryCreateScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
 
   const schema = z.object({ journalId: z.string(), journalName: z.string() });
@@ -43,7 +45,7 @@ export default function EntryCreateScreen() {
           unstable_headerRightItems: () => [
             {
               type: "button",
-              label: "Create New Entry",
+              label: t("entry.newEntry"),
               icon: { type: "sfSymbol", name: "checkmark" },
               tintColor: PlatformColor("systemIndigo"),
               variant: "prominent",

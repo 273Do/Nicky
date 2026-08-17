@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Alert, Button, Host, Text } from "@expo/ui/swift-ui";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
@@ -13,6 +14,7 @@ import { consumeCreatedJournalId } from "@/utils/journal/created-journal";
  * ジャーナル画面（チップ切り替え + エントリー一覧）
  */
 export default function JournalScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
 
   const { data: journals } = useLiveQuery(getJournalsQuery);
@@ -46,14 +48,14 @@ export default function JournalScreen() {
     <>
       <Stack.Screen
         options={{
-          title: "Journal",
+          title: t("tabs.journal"),
           headerLargeTitleEnabled: true,
           unstable_headerRightItems: () => [
             ...(activeJournal
               ? [
                   {
                     type: "menu" as const,
-                    label: "Options",
+                    label: t("common.options"),
                     icon: {
                       type: "sfSymbol" as const,
                       name: "ellipsis" as const,
@@ -66,7 +68,7 @@ export default function JournalScreen() {
                             type: "sfSymbol" as const,
                             name: bookmarkOnly ? ("bookmark" as const) : ("bookmark.fill" as const),
                           },
-                          label: bookmarkOnly ? "Show All" : "Bookmarked Only",
+                          label: bookmarkOnly ? t("journal.showAll") : t("journal.bookmarkedOnly"),
                           onPress: () => setBookmarkOnly((prev) => !prev),
                         },
                         {
@@ -75,7 +77,7 @@ export default function JournalScreen() {
                             type: "sfSymbol" as const,
                             name: "ellipsis.circle" as const,
                           },
-                          label: "Edit",
+                          label: t("common.edit"),
                           onPress: () => {
                             router.push(`/(journal)/edit?journalId=${activeJournal.id}`);
                           },
@@ -86,7 +88,7 @@ export default function JournalScreen() {
                             type: "sfSymbol" as const,
                             name: "square.and.arrow.up.on.square" as const,
                           },
-                          label: "Export",
+                          label: t("entry.export"),
                           state: "off" as const,
                           onPress: () => {
                             console.log("Export", activeJournal?.name);
@@ -94,7 +96,7 @@ export default function JournalScreen() {
                         },
                         {
                           type: "action" as const,
-                          label: "Delete All Entries",
+                          label: t("journal.deleteAllEntries"),
                           icon: {
                             type: "sfSymbol" as const,
                             name: "trash" as const,
@@ -110,7 +112,7 @@ export default function JournalScreen() {
               : []),
             {
               type: "button",
-              label: "Create New Journal",
+              label: t("journal.newJournal"),
               icon: { type: "sfSymbol", name: "folder.badge.plus" },
               onPress: () => router.push("/(journal)/create"),
             },
@@ -130,7 +132,7 @@ export default function JournalScreen() {
 
       <Host matchContents>
         <Alert
-          title={`Delete All "${activeJournal?.name}" Entries`}
+          title={t("journal.deleteAllEntriesTitle", { name: activeJournal?.name })}
           isPresented={showDeleteAllAlert}
           onIsPresentedChange={setShowDeleteAllAlert}
         >
@@ -138,12 +140,12 @@ export default function JournalScreen() {
             <Text>{""}</Text>
           </Alert.Trigger>
           <Alert.Message>
-            <Text>All entries in this journal will be permanently deleted.</Text>
+            <Text>{t("journal.deleteConfirm")}</Text>
           </Alert.Message>
           <Alert.Actions>
-            <Button label="Cancel" role="cancel" />
+            <Button label={t("common.cancel")} role="cancel" />
             <Button
-              label="Delete All"
+              label={t("journal.deleteAll")}
               role="destructive"
               onPress={() => {
                 if (activeJournal) deleteAllEntries(activeJournal.id).catch(console.error);

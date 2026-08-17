@@ -1,9 +1,11 @@
+import { useTranslation } from "react-i18next";
 import { useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { Stack } from "expo-router";
 
 export default function DaysLayout() {
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const titleColor = colorScheme === "dark" ? "#ffffff" : "#000000";
 
@@ -22,7 +24,7 @@ export default function DaysLayout() {
         <Stack.Screen
           name="settings"
           options={{
-            title: "Settings",
+            title: t("settings.title"),
             headerTransparent: true,
             headerBackButtonMenuEnabled: true,
           }}

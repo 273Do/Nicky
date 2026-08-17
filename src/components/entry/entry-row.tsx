@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { PlatformColor } from "react-native";
 
 import { Button, ContextMenu, HStack, Image, Spacer, Text, VStack } from "@expo/ui/swift-ui";
@@ -21,6 +22,7 @@ type Props = {
  * エントリー行
  */
 export function EntryRow({ journalName, entry }: Props) {
+  const { t } = useTranslation();
   const router = useRouter();
 
   return (
@@ -47,19 +49,19 @@ export function EntryRow({ journalName, entry }: Props) {
       </ContextMenu.Trigger>
       <ContextMenu.Items>
         <Button
-          label="Edit"
+          label={t("common.edit")}
           systemImage="ellipsis.circle"
           onPress={() =>
             router.push(`/(journal)/entry/${entry.id}?journalName=${journalName}&edit=true`)
           }
         />
         <Button
-          label={entry.bookmark ? "Unbookmark" : "Bookmark"}
+          label={entry.bookmark ? t("entry.unbookmark") : t("entry.bookmark")}
           systemImage={entry.bookmark ? "bookmark" : "bookmark.fill"}
           onPress={async () => await bookmarkEntry(entry.id, !entry.bookmark)}
         />
         <Button
-          label="Delete"
+          label={t("common.delete")}
           systemImage="trash"
           role="destructive"
           onPress={async () => await deleteEntry(entry.id)}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Keyboard, PlatformColor } from "react-native";
 
 import { Alert, Button, Host, Text } from "@expo/ui/swift-ui";
@@ -22,6 +23,7 @@ type FormProps = {
  * ジャーナル編集フォーム（journal ロード後にマウントして初期値を確定させる）
  */
 function JournalEditForm({ journal }: FormProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const [showDeleteAllAlert, setShowDeleteAllAlert] = useState(false);
 
@@ -73,7 +75,7 @@ function JournalEditForm({ journal }: FormProps) {
           unstable_headerRightItems: () => [
             {
               type: "menu",
-              label: "Options",
+              label: t("common.options"),
               icon: {
                 type: "sfSymbol",
                 name: "ellipsis",
@@ -86,13 +88,13 @@ function JournalEditForm({ journal }: FormProps) {
                       type: "sfSymbol",
                       name: "square.and.arrow.up",
                     },
-                    label: "Share",
+                    label: t("journal.share"),
                     state: "off",
                     onPress: async () => await exportJournal(journal),
                   },
                   {
                     type: "action",
-                    label: "Delete Journal",
+                    label: t("journal.deleteJournal"),
                     icon: {
                       type: "sfSymbol",
                       name: "trash",
@@ -106,7 +108,7 @@ function JournalEditForm({ journal }: FormProps) {
             },
             {
               type: "button",
-              label: "Save",
+              label: t("common.save"),
               icon: { type: "sfSymbol", name: "checkmark" },
               tintColor: formDisabled
                 ? PlatformColor("tertiaryLabel")
@@ -130,7 +132,7 @@ function JournalEditForm({ journal }: FormProps) {
 
       <Host matchContents>
         <Alert
-          title={`Delete "${journal.name}" Journal`}
+          title={t("journal.deleteJournalTitle", { name: journal.name })}
           isPresented={showDeleteAllAlert}
           onIsPresentedChange={setShowDeleteAllAlert}
         >
@@ -138,11 +140,11 @@ function JournalEditForm({ journal }: FormProps) {
             <Text>{""}</Text>
           </Alert.Trigger>
           <Alert.Message>
-            <Text>All entries in this journal will be permanently deleted.</Text>
+            <Text>{t("journal.deleteConfirm")}</Text>
           </Alert.Message>
           <Alert.Actions>
-            <Button label="Cancel" role="cancel" />
-            <Button label="Delete" role="destructive" onPress={handleDelete} />
+            <Button label={t("common.cancel")} role="cancel" />
+            <Button label={t("common.delete")} role="destructive" onPress={handleDelete} />
           </Alert.Actions>
         </Alert>
       </Host>

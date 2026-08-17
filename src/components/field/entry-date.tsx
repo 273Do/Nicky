@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { DatePicker, Text } from "@expo/ui/swift-ui";
 
-import { FIELD_LABELS } from "@/constants/journal";
 import { formatDate } from "@/utils/date";
 
 import { FieldWrapper } from "./field-wrapper";
@@ -27,6 +27,7 @@ export function EntryDate({
   onValueChange,
   edit = false,
 }: Props) {
+  const { t } = useTranslation();
   const [date, setDate] = useState<Date>(defaultValue);
 
   const handleChange = (value: Date) => {
@@ -38,7 +39,7 @@ export function EntryDate({
     <FieldWrapper label={label}>
       {edit ? (
         <DatePicker
-          title={FIELD_LABELS.date}
+          title={t("field.date")}
           selection={date}
           displayedComponents={["date"]}
           onDateChange={handleChange}

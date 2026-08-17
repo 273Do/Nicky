@@ -1,16 +1,20 @@
+import { useTranslation } from "react-i18next";
+
 import { Stack } from "expo-router";
 
 /**
  * 検索画面
  */
 export default function SearchScreen() {
+  const { t } = useTranslation();
+
   return (
     <Stack.Screen
       options={{
-        title: "Search",
+        title: t("search.title"),
         headerLargeTitleEnabled: true,
         headerSearchBarOptions: {
-          placeholder: "Search",
+          placeholder: t("search.placeholder"),
           hideWhenScrolling: false,
         },
       }}

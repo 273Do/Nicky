@@ -8,6 +8,7 @@ import {
   reflectionSchema,
 } from "@/constants/reflection";
 import { DailyEntryObj } from "@/db/queries/entries";
+import i18n from "@/i18n";
 import { formatFieldValue } from "@/utils/entry/preview";
 
 /**
@@ -49,7 +50,7 @@ export const getReflection = async (
 
     const { text } = await generateText({
       model,
-      system: buildSystemPrompt(categoryList, "ja"),
+      system: buildSystemPrompt(categoryList, i18n.language === "ja" ? "ja" : "en"),
       prompt,
     });
     const json = text.match(/\{[\s\S]*\}/)?.[0];

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { PlatformColor } from "react-native";
 
 import { Button, HStack, Image, Spacer, Text, VStack } from "@expo/ui/swift-ui";
@@ -14,6 +15,8 @@ type Props = {
  * 位置情報フィールド（ダミー実装）
  */
 export function EntryLocation({ label, edit = false }: Props) {
+  const { t } = useTranslation();
+
   return (
     <VStack alignment="leading" spacing={8}>
       <Text
@@ -26,7 +29,7 @@ export function EntryLocation({ label, edit = false }: Props) {
       </Text>
       {edit ? (
         <HStack>
-          <Text>Location</Text>
+          <Text>{t("field.location")}</Text>
           <Spacer />
           <Button
             modifiers={[
@@ -41,7 +44,7 @@ export function EntryLocation({ label, edit = false }: Props) {
                 color={PlatformColor("systemIndigo")}
                 size={18}
               />
-              <Text>set location</Text>
+              <Text>{t("field.setLocation")}</Text>
             </HStack>
           </Button>
         </HStack>
@@ -49,7 +52,7 @@ export function EntryLocation({ label, edit = false }: Props) {
         <HStack spacing={6}>
           <Image systemName="mappin.and.ellipse" color={PlatformColor("tertiaryLabel")} size={16} />
           <Text modifiers={[foregroundStyle({ type: "hierarchical", style: "tertiary" })]}>
-            Not set
+            {t("field.notSet")}
           </Text>
         </HStack>
       )}

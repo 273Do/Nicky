@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Keyboard, PlatformColor } from "react-native";
 
 import { Stack } from "expo-router";
@@ -20,6 +21,7 @@ export function EntryEditView({
   onSave: () => void;
   onCancel: () => void;
 }) {
+  const { t } = useTranslation();
   const { fields, initialValues } = buildEntryFormData(entry);
   const { valuesRef, setValue, updateEntry } = useEntry(fields, initialValues);
 
@@ -40,12 +42,12 @@ export function EntryEditView({
           unstable_headerRightItems: () => [
             {
               type: "button",
-              label: "Cancel",
+              label: t("common.cancel"),
               onPress: onCancel,
             },
             {
               type: "button",
-              label: "Save",
+              label: t("common.save"),
               icon: { type: "sfSymbol", name: "checkmark" },
               tintColor: PlatformColor("systemIndigo"),
               variant: "prominent",

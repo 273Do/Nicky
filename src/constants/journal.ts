@@ -32,17 +32,17 @@ export const FIELD_ICONS: Record<FieldType, SFSymbol> = {
 };
 
 /**
- * FieldType に対応する日本語表示名
+ * FieldType に対応する i18n 翻訳キー
  */
-export const FIELD_LABELS: Record<FieldType, string> = {
-  text: "Text",
-  longText: "Long Text",
-  number: "Number",
-  media: "Media",
-  check: "Check",
-  location: "Location",
-  date: "Date",
-  time: "Time",
+export const FIELD_LABEL_KEYS: Record<FieldType, string> = {
+  text: "field.text",
+  longText: "field.longText",
+  number: "field.number",
+  media: "field.media",
+  check: "field.check",
+  location: "field.location",
+  date: "field.date",
+  time: "field.time",
 };
 
 /** ジャーナルで使用するSFシンボル一覧 */

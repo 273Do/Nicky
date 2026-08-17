@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Alert, PlatformColor } from "react-native";
+import { useTranslation } from "react-i18next";
+import { Alert, Linking, PlatformColor } from "react-native";
 
 import { DatePicker, Picker, Section, Text, Toggle } from "@expo/ui/swift-ui";
-import { disabled, tag, tint } from "@expo/ui/swift-ui/modifiers";
+import { disabled, onTapGesture, tag, tint } from "@expo/ui/swift-ui/modifiers";
 import { downloadModel, removeModel } from "@react-native-ai/llama";
 
 import { AI_MODELS, type AIModelId } from "@/constants/ai-models";
@@ -12,6 +13,7 @@ import { useAIReflectionSettings } from "@/hooks/settings/use-ai-reflection-sett
  * アプリの機能設定
  */
 export function Application() {
+  const { t } = useTranslation();
   const {
     aiReflectionEnabled,
     aiModel,
@@ -35,16 +37,16 @@ export function Application() {
     setPendingModelId(modelId);
 
     Alert.alert(
-      "Download Model",
-      `${newModel.label} をダウンロードしますか？\n現在のモデルは削除されます。`,
+      t("settings.downloadModel"),
+      t("settings.downloadConfirm", { model: newModel.label }),
       [
         {
-          text: "Cancel",
+          text: t("common.cancel"),
           style: "cancel",
           onPress: () => setPendingModelId(null),
         },
         {
-          text: "OK",
+          text: t("common.ok"),
           onPress: async () => {
             setDownloading(true);
             try {
@@ -67,15 +69,22 @@ export function Application() {
 
   return (
     <Section>
-      <Toggle isOn={true} label="Notification" modifiers={[tint(PlatformColor("systemIndigo"))]} />
+      <Text modifiers={[onTapGesture(() => void Linking.openSettings())]}>
+        {t("settings.language")}
+      </Text>
+      <Toggle
+        isOn={true}
+        label={t("settings.notification")}
+        modifiers={[tint(PlatformColor("systemIndigo"))]}
+      />
       <Toggle
         isOn={aiReflectionEnabled}
         onIsOnChange={(enabled) => setAIReflectionEnabled(enabled)}
-        label="AI Reflection"
+        label={t("settings.aiReflection")}
         modifiers={[tint(PlatformColor("systemIndigo"))]}
       />
       <Picker
-        label={downloading ? "Downloading..." : "Model"}
+        label={downloading ? t("settings.downloading") : t("settings.model")}
         selection={displayModelId}
         onSelectionChange={handleModelSelect}
         modifiers={[disabled(downloading)]}
@@ -87,7 +96,7 @@ export function Application() {
         ))}
       </Picker>
       <DatePicker
-        title="Reflection Time"
+        title={t("settings.reflectionTime")}
         displayedComponents={["hourAndMinute"]}
         selection={reflectionTime}
         onDateChange={setReflectionTime}

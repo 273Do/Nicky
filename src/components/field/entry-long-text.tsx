@@ -1,7 +1,7 @@
+import { useTranslation } from "react-i18next";
+
 import { Text, TextField } from "@expo/ui/swift-ui";
 import { frame, lineLimit } from "@expo/ui/swift-ui/modifiers";
-
-import { FIELD_LABELS } from "@/constants/journal";
 
 import { FieldWrapper } from "./field-wrapper";
 
@@ -20,11 +20,13 @@ type Props = {
  * ロングテキストフィールド
  */
 export function EntryLongText({ label, defaultValue = "", onValueChange, edit = false }: Props) {
+  const { t } = useTranslation();
+
   return (
     <FieldWrapper label={label}>
       {edit ? (
         <TextField
-          placeholder={FIELD_LABELS.longText}
+          placeholder={t("field.longText")}
           defaultValue={defaultValue}
           onValueChange={onValueChange}
           axis="vertical"
