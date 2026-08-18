@@ -1,9 +1,18 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, PlatformColor } from "react-native";
+import { Alert, Linking, PlatformColor } from "react-native";
 
-import { DatePicker, Picker, Section, Text, Toggle } from "@expo/ui/swift-ui";
-import { disabled, tag, tint } from "@expo/ui/swift-ui/modifiers";
+import {
+  Button,
+  DatePicker,
+  HStack,
+  Picker,
+  Section,
+  Spacer,
+  Text,
+  Toggle,
+} from "@expo/ui/swift-ui";
+import { disabled, foregroundStyle, tag, tint } from "@expo/ui/swift-ui/modifiers";
 import { downloadModel, removeModel } from "@react-native-ai/llama";
 
 import { AI_MODELS, type AIModelId } from "@/constants/ai-models";
@@ -69,6 +78,20 @@ export function Application() {
 
   return (
     <Section>
+      <Button
+        onPress={() => void Linking.openSettings()}
+        modifiers={[foregroundStyle({ type: "color", color: PlatformColor("label") })]}
+      >
+        <HStack>
+          <Text>{t("settings.language")}</Text>
+          <Spacer />
+          <Text
+            modifiers={[foregroundStyle({ type: "color", color: PlatformColor("secondaryLabel") })]}
+          >
+            {t("settings.currentLanguage")}
+          </Text>
+        </HStack>
+      </Button>
       <Toggle
         isOn={true}
         label={t("settings.notification")}

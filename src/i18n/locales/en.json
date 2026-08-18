@@ -63,6 +63,7 @@
     "downloadModel": "Download Model",
     "downloadConfirm": "Download {{model}}? The current model will be removed.",
     "language": "Language",
+    "currentLanguage": "English",
     "exportAllJournals": "Export All Journals",
     "exportAllEntries": "Export All Entries",
     "deleteAllData": "Delete All Data"

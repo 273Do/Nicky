@@ -63,6 +63,7 @@
     "downloadModel": "モデルをダウンロード",
     "downloadConfirm": "{{model}}をダウンロードしますか？現在のモデルは削除されます。",
     "language": "言語",
+    "currentLanguage": "日本語",
     "exportAllJournals": "すべてのジャーナルを書き出す",
     "exportAllEntries": "すべてのエントリーを書き出す",
     "deleteAllData": "すべてのデータを削除"
