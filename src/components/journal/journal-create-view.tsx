@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { PlatformColor, View } from "react-native";
 
 import {
@@ -22,7 +23,7 @@ import {
   padding,
 } from "@expo/ui/swift-ui/modifiers";
 
-import { FIELD_ICONS, FIELD_LABELS, FieldType } from "@/constants/journal";
+import { FIELD_ICONS, FIELD_LABEL_KEYS, FieldType } from "@/constants/journal";
 import { JournalMetaObj, type FieldDraftObj } from "@/hooks/journal/use-journal-field";
 import { hexColorSchema } from "@/utils/journal/color";
 
@@ -58,6 +59,7 @@ export function JournalCreateView({
   meta,
   setMeta,
 }: Props) {
+  const { t } = useTranslation();
   const [showSheet, setShowSheet] = useState<{
     field: boolean;
     icon: boolean;
@@ -100,7 +102,7 @@ export function JournalCreateView({
 
               {/* ジャーナル名 */}
               <TextField
-                placeholder="Journal Name"
+                placeholder={t("journal.namePlaceholder")}
                 defaultValue={meta.name}
                 onValueChange={(value) => setMeta((prev) => ({ ...prev, name: value }))}
                 modifiers={[frame({ maxWidth: 9999 })]}
@@ -109,7 +111,7 @@ export function JournalCreateView({
           </Section>
 
           {/* フィールド */}
-          <Section title="Fields">
+          <Section title={t("journal.fields")}>
             <List.ForEach onMove={moveField} onDelete={deleteField}>
               {fields.map((field) => (
                 <HStack key={field.id} spacing={16} modifiers={[listRowInsets({ leading: 16 })]}>
@@ -120,7 +122,9 @@ export function JournalCreateView({
                     modifiers={[frame({ width: 24 })]}
                   />
                   <TextField
-                    placeholder={`${FIELD_LABELS[field.type]} Field Name`}
+                    placeholder={t("journal.fieldPlaceholder", {
+                      type: t(FIELD_LABEL_KEYS[field.type]),
+                    })}
                     defaultValue={field.label}
                     onValueChange={(value) => renameField(field.id, value)}
                     modifiers={[frame({ maxWidth: 9999 })]}
@@ -137,7 +141,7 @@ export function JournalCreateView({
             </List.ForEach>
 
             <Button
-              label="Add Field"
+              label={t("journal.addField")}
               systemImage="plus"
               onPress={() => setShowSheet((prev) => ({ ...prev, field: true }))}
             />

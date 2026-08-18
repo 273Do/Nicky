@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   PlatformColor,
   Pressable,
@@ -29,6 +30,7 @@ const SWIPE_THRESHOLD = 50;
  * Days 画面
  */
 export default function DaysScreen() {
+  const { t } = useTranslation();
   const { width: screenWidth } = useWindowDimensions();
   const [selectedDate, setSelectedDate] = useState(() => startOfDay());
   const [showCalendar, setShowCalendar] = useState(false);
@@ -135,7 +137,7 @@ export default function DaysScreen() {
           unstable_headerRightItems: () => [
             {
               type: "button",
-              label: "Save",
+              label: t("settings.title"),
               icon: { type: "sfSymbol", name: "gearshape" },
               onPress: () => router.navigate("/days/settings"),
             },

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { PlatformColor } from "react-native";
 
 import {
@@ -52,6 +53,7 @@ export function IconSelectBottomSheet({
   onSelectIcon,
   onSelectColor,
 }: Props) {
+  const { t } = useTranslation();
   const rows = chunkArray(JOURNAL_ICONS, COLUMNS);
 
   return (
@@ -69,7 +71,7 @@ export function IconSelectBottomSheet({
               ]}
             />
             <ColorPicker
-              label="Select folder color"
+              label={t("journal.selectColor")}
               selection={selectedColor}
               onSelectionChange={onSelectColor}
               supportsOpacity={false}

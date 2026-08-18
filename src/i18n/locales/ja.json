@@ -1,0 +1,95 @@
+{
+  "tabs": {
+    "journal": "ジャーナル",
+    "days": "デイリー",
+    "search": "検索"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "options": "オプション",
+    "done": "完了",
+    "ok": "OK"
+  },
+  "journal": {
+    "newJournal": "新規ジャーナル",
+    "import": "読み込む",
+    "share": "共有",
+    "showAll": "すべて",
+    "bookmarkedOnly": "ブックマーク",
+    "deleteJournal": "ジャーナルを削除",
+    "deleteAllEntries": "すべてのエントリーを削除",
+    "deleteJournalTitle": "\u201c{{name}}\u201dを削除しますか？",
+    "deleteAllEntriesTitle": "\u201c{{name}}\u201dのすべてのエントリーを削除しますか？",
+    "deleteConfirm": "この操作は取り消せません。",
+    "deleteAll": "すべて削除",
+    "namePlaceholder": "名前",
+    "fields": "フィールド",
+    "fieldPlaceholder": "{{type}}の名前",
+    "addField": "フィールドを追加",
+    "selectColor": "カラー"
+  },
+  "entry": {
+    "newEntry": "新規エントリー",
+    "export": "書き出す",
+    "deleteEntry": "エントリーを削除",
+    "bookmark": "ブックマークに追加",
+    "unbookmark": "ブックマークを解除",
+    "noEntries": "エントリーなし",
+    "showLess": "表示を減らす",
+    "showMore": "さらに{{count}}件表示"
+  },
+  "field": {
+    "text": "テキスト",
+    "longText": "ロングテキスト",
+    "number": "数値",
+    "media": "メディア",
+    "check": "チェックボックス",
+    "location": "位置情報",
+    "date": "日付",
+    "time": "時刻",
+    "setLocation": "位置情報を設定",
+    "notSet": "なし"
+  },
+  "settings": {
+    "title": "設定",
+    "notification": "通知",
+    "aiReflection": "AI振り返り",
+    "downloading": "ダウンロード中\u2026",
+    "model": "モデル",
+    "reflectionTime": "振り返りの時刻",
+    "downloadModel": "モデルをダウンロード",
+    "downloadConfirm": "{{model}}をダウンロードしますか？現在のモデルは削除されます。",
+    "language": "言語",
+    "currentLanguage": "日本語",
+    "exportDialogTitle": "ジャーナルテンプレートを書き出す",
+    "exportAllJournals": "すべてのジャーナルを書き出す",
+    "exportAllEntries": "すべてのエントリーを書き出す",
+    "deleteAllData": "すべてのデータを削除"
+  },
+  "support": {
+    "support": "サポート",
+    "rateOnAppStore": "App Storeで評価する",
+    "termsOfService": "利用規約",
+    "privacyPolicy": "プライバシーポリシー",
+    "acknowledgements": "謝辞",
+    "version": "Nicky バージョン {{version}}"
+  },
+  "error": {
+    "validation": "入力エラー",
+    "unexpected": "問題が発生しました。もう一度お試しください。",
+    "title": "エラー",
+    "exportFailed": "書き出せません",
+    "exportFailedMessage": "ジャーナルを書き出せませんでした。もう一度お試しください。",
+    "importFailed": "読み込めません",
+    "importInvalidFormat": "このファイル形式には対応していません。",
+    "importCannotImport": "このファイルは読み込めませんでした。",
+    "importFailedMessage": "読み込み中にエラーが発生しました。もう一度お試しください。"
+  },
+  "search": {
+    "title": "検索",
+    "placeholder": "検索"
+  }
+}

@@ -6,6 +6,7 @@ import * as Sharing from "expo-sharing";
 import { z } from "zod";
 
 import { JournalDetail } from "@/db/queries/journals";
+import i18n from "@/i18n";
 
 const SIGNING_SECRET = z.string().min(1).parse(process.env.EXPO_PUBLIC_SIGNING_SECRET);
 
@@ -55,12 +56,12 @@ export const exportJournal = async (journal: JournalDetail): Promise<void> => {
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(file.uri, {
         mimeType: "application/json",
-        dialogTitle: "Export journal template",
+        dialogTitle: i18n.t("settings.exportDialogTitle"),
         UTI: "public.json",
       });
     }
   } catch (error) {
-    Alert.alert("Export Failed", "An error occurred while exporting the journal.");
+    Alert.alert(i18n.t("error.exportFailed"), i18n.t("error.exportFailedMessage"));
     console.error("Export Failed:", error);
   }
 };

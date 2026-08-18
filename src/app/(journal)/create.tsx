@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Keyboard, PlatformColor } from "react-native";
 
 import * as Crypto from "expo-crypto";
@@ -14,6 +15,7 @@ import { setCreatedJournalId } from "@/utils/journal/created-journal";
  * ジャーナル作成
  */
 export default function JournalCreateScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
 
   const {
@@ -59,17 +61,17 @@ export default function JournalCreateScreen() {
     <>
       <Stack.Screen
         options={{
-          title: "New Journal",
+          title: t("journal.newJournal"),
           unstable_headerRightItems: () => [
             {
               type: "button",
-              label: "Import Journal",
+              label: t("journal.import"),
               icon: { type: "sfSymbol", name: "square.and.arrow.down" },
               onPress: importJournalTemplate,
             },
             {
               type: "button",
-              label: "Save",
+              label: t("common.save"),
               icon: { type: "sfSymbol", name: "checkmark" },
               tintColor: formDisabled
                 ? PlatformColor("tertiaryLabel")

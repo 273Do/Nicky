@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { PlatformColor } from "react-native";
 
 import { BottomSheet, Button, Group, HStack, Image, List, Text } from "@expo/ui/swift-ui";
@@ -10,7 +11,7 @@ import {
   scrollDisabled,
 } from "@expo/ui/swift-ui/modifiers";
 
-import { FIELD_ICONS, FIELD_LABELS, FieldType } from "@/constants/journal";
+import { FIELD_ICONS, FIELD_LABEL_KEYS, FieldType } from "@/constants/journal";
 import { FIELD_TYPES } from "@/hooks/journal/use-journal-field";
 
 type Props = {
@@ -26,6 +27,7 @@ type Props = {
  * フィールド追加ボトムシート
  */
 export function FieldBottomSheet({ isPresented, onIsPresentedChange, onAdd }: Props) {
+  const { t } = useTranslation();
   const handlePress = (type: FieldType) => {
     onAdd(type);
   };
@@ -53,7 +55,7 @@ export function FieldBottomSheet({ isPresented, onIsPresentedChange, onAdd }: Pr
                   size={20}
                   modifiers={[frame({ width: 24 })]}
                 />
-                <Text>{FIELD_LABELS[type]}</Text>
+                <Text>{t(FIELD_LABEL_KEYS[type])}</Text>
               </HStack>
             </Button>
           ))}

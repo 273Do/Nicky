@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { PlatformColor } from "react-native";
 
 import { Button, HStack, Image, Section, Spacer, Text as SText, VStack } from "@expo/ui/swift-ui";
@@ -23,6 +24,7 @@ type Props = {
  * Days画面のエントリーカード
  */
 export function DaysCard({ entry, isFirstOfJournal, isExpanded, onToggleExpand }: Props) {
+  const { t } = useTranslation();
   const { journal, values, createdAt } = entry;
   const sorted = [...values].sort((a, b) => a.field.sortOrder - b.field.sortOrder);
   const hasMore = sorted.length > PREVIEW_COUNT;
@@ -69,7 +71,11 @@ export function DaysCard({ entry, isFirstOfJournal, isExpanded, onToggleExpand }
       })}
       {hasMore && (
         <Button
-          label={isExpanded ? "Show less" : `Show ${sorted.length - PREVIEW_COUNT} more`}
+          label={
+            isExpanded
+              ? t("entry.showLess")
+              : t("entry.showMore", { count: sorted.length - PREVIEW_COUNT })
+          }
           systemImage={isExpanded ? "chevron.up" : "chevron.down"}
           onPress={onToggleExpand}
         />

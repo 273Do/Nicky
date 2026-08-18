@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { PlatformColor, Text, View } from "react-native";
 
 import { Host, List } from "@expo/ui/swift-ui";
@@ -21,6 +22,7 @@ type Props = {
  * Days画面 — 指定日のエントリー一覧をスクロール表示
  */
 export function DaysView({ date }: Props) {
+  const { t } = useTranslation();
   const { data: entries } = useLiveQuery(getEntriesByDateQuery(date), [date.getTime()]);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
@@ -44,7 +46,9 @@ export function DaysView({ date }: Props) {
         }}
       >
         <Host style={{ flex: 1 }} useViewportSizeMeasurement>
-          <Text style={{ fontSize: 15, color: PlatformColor("secondaryLabel") }}>No entries</Text>
+          <Text style={{ fontSize: 15, color: PlatformColor("secondaryLabel") }}>
+            {t("entry.noEntries")}
+          </Text>
         </Host>
       </View>
     );

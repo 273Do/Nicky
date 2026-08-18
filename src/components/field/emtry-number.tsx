@@ -1,9 +1,8 @@
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Text, TextField, type TextFieldRef } from "@expo/ui/swift-ui";
 import { frame } from "@expo/ui/swift-ui/modifiers";
-
-import { FIELD_LABELS } from "@/constants/journal";
 
 import { FieldWrapper } from "./field-wrapper";
 
@@ -22,6 +21,7 @@ type Props = {
  * 数値フィールド
  */
 export function EntryNumber({ label, defaultValue, onValueChange, edit = false }: Props) {
+  const { t } = useTranslation();
   const [number, setNumber] = useState<number | undefined>(defaultValue);
   const numberFieldRef = useRef<TextFieldRef>(null);
 
@@ -45,7 +45,7 @@ export function EntryNumber({ label, defaultValue, onValueChange, edit = false }
       {edit ? (
         <TextField
           ref={numberFieldRef}
-          placeholder={FIELD_LABELS.number}
+          placeholder={t("field.number")}
           defaultValue={String(number ?? "")}
           onValueChange={handleValueChange}
           modifiers={[frame({ maxWidth: 9999 })]}
