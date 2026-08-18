@@ -7,7 +7,13 @@ export function Support() {
   const { t } = useTranslation();
 
   return (
-    <Section footer={<Text modifiers={[padding({ bottom: 10 })]}>Nicky Version 1.0.0</Text>}>
+    <Section
+      footer={
+        <Text modifiers={[padding({ bottom: 10 })]}>
+          {t("support.version", { version: "1.0.0" })}
+        </Text>
+      }
+    >
       <Text>{t("support.support")}</Text>
       <Text>{t("support.rateOnAppStore")}</Text>
       <Text>{t("support.termsOfService")}</Text>

@@ -56,7 +56,7 @@ export const exportJournal = async (journal: JournalDetail): Promise<void> => {
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(file.uri, {
         mimeType: "application/json",
-        dialogTitle: "Export journal template",
+        dialogTitle: i18n.t("settings.exportDialogTitle"),
         UTI: "public.json",
       });
     }

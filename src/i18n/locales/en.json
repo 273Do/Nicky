@@ -64,6 +64,7 @@
     "downloadConfirm": "Download {{model}}? The current model will be removed.",
     "language": "Language",
     "currentLanguage": "English",
+    "exportDialogTitle": "Export Journal Template",
     "exportAllJournals": "Export All Journals",
     "exportAllEntries": "Export All Entries",
     "deleteAllData": "Delete All Data"
@@ -73,7 +74,8 @@
     "rateOnAppStore": "Rate on the App Store",
     "termsOfService": "Terms & Conditions",
     "privacyPolicy": "Privacy Policy",
-    "acknowledgements": "Acknowledgements"
+    "acknowledgements": "Acknowledgements",
+    "version": "Nicky Version {{version}}"
   },
   "error": {
     "validation": "Invalid Input",

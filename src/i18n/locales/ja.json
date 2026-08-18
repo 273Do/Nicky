@@ -64,6 +64,7 @@
     "downloadConfirm": "{{model}}をダウンロードしますか？現在のモデルは削除されます。",
     "language": "言語",
     "currentLanguage": "日本語",
+    "exportDialogTitle": "ジャーナルテンプレートを書き出す",
     "exportAllJournals": "すべてのジャーナルを書き出す",
     "exportAllEntries": "すべてのエントリーを書き出す",
     "deleteAllData": "すべてのデータを削除"
@@ -73,7 +74,8 @@
     "rateOnAppStore": "App Storeで評価する",
     "termsOfService": "利用規約",
     "privacyPolicy": "プライバシーポリシー",
-    "acknowledgements": "謝辞"
+    "acknowledgements": "謝辞",
+    "version": "Nicky バージョン {{version}}"
   },
   "error": {
     "validation": "入力エラー",
