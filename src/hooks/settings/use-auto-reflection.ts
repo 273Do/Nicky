@@ -18,7 +18,7 @@ import { getReflection } from "@/utils/days/reflection/get-reflection";
  * 4. 今日のエントリーが1件以上ある
  */
 export const useAutoReflection = () => {
-  const { aiReflectionEnabled, aiModel, reflectionTime } = useAIReflectionSettings();
+  const { aiReflectionEnabled, reflectionTime } = useAIReflectionSettings();
   const today = useMemo(() => startOfDay(), []);
 
   const { data: entries } = useLiveQuery(getEntriesByDateQuery(today), [today.getTime()]);
@@ -35,7 +35,7 @@ export const useAutoReflection = () => {
     generating.current = true;
     (async () => {
       try {
-        const result = await getReflection(entries, aiModel.gguf);
+        const result = await getReflection(entries);
         if (result) await storeReflection(today, result);
       } catch (error) {
         console.warn("[auto-reflection]", error);
@@ -43,5 +43,5 @@ export const useAutoReflection = () => {
         generating.current = false;
       }
     })();
-  }, [entries, reflection, aiReflectionEnabled, reflectionTime, aiModel.gguf, today]);
+  }, [entries, reflection, aiReflectionEnabled, reflectionTime, today]);
 };

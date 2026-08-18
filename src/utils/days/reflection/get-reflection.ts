@@ -1,6 +1,7 @@
 import { downloadModel, llama } from "@react-native-ai/llama";
 import { generateText } from "ai";
 
+import { AI_MODEL } from "@/constants/ai-models";
 import {
   type ReflectionResult,
   buildSystemPrompt,
@@ -33,13 +34,9 @@ const categoryList = Object.entries(reflectionCategories)
 /**
  * その日の記録をもとに AI Reflection を生成する
  * @param entries その日のエントリーの一覧
- * @param gguf HuggingFaceのGGUFモデルパス
  */
-export const getReflection = async (
-  entries: DailyEntryObj[],
-  gguf: string,
-): Promise<ReflectionResult | null> => {
-  const modelPath = await downloadModel(gguf);
+export const getReflection = async (entries: DailyEntryObj[]): Promise<ReflectionResult | null> => {
+  const modelPath = await downloadModel(AI_MODEL.gguf);
   const model = llama.languageModel(modelPath);
 
   try {
