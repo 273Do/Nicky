@@ -49,16 +49,16 @@ export function EntryRow({ journalName, entry }: Props) {
       </ContextMenu.Trigger>
       <ContextMenu.Items>
         <Button
+          label={entry.bookmark ? t("entry.unbookmark") : t("entry.bookmark")}
+          systemImage={entry.bookmark ? "bookmark" : "bookmark.fill"}
+          onPress={async () => await bookmarkEntry(entry.id, !entry.bookmark)}
+        />
+        <Button
           label={t("common.edit")}
           systemImage="ellipsis.circle"
           onPress={() =>
             router.push(`/(journal)/entry/${entry.id}?journalName=${journalName}&edit=true`)
           }
-        />
-        <Button
-          label={entry.bookmark ? t("entry.unbookmark") : t("entry.bookmark")}
-          systemImage={entry.bookmark ? "bookmark" : "bookmark.fill"}
-          onPress={async () => await bookmarkEntry(entry.id, !entry.bookmark)}
         />
         <Button
           label={t("common.delete")}
