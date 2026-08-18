@@ -65,7 +65,8 @@
         }
       ],
       "expo-sqlite",
-      "expo-localization"
+      "expo-localization",
+      "./plugins/with-settings-bundle"
     ],
     "experiments": {
       "typedRoutes": true,
