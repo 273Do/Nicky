@@ -53,7 +53,7 @@ export function EntryListView({
     setFade(0.25);
     const id = requestAnimationFrame(() => setFade(1));
     return () => cancelAnimationFrame(id);
-  }, [activeJournalId]);
+  }, [activeJournalId, bookmarkOnly]);
 
   return (
     <View style={{ flex: 1 }}>
