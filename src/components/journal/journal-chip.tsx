@@ -2,6 +2,8 @@ import { PlatformColor, useWindowDimensions } from "react-native";
 
 import { HStack, Image, ScrollView, Spacer, Text } from "@expo/ui/swift-ui";
 import {
+  animation,
+  Animation,
   defaultScrollAnchor,
   fixedSize,
   font,
@@ -33,17 +35,12 @@ const estimateWidth = (journals: JournalWithCountObj[]) => {
 
 const chipBase = [padding({ vertical: 6, horizontal: CHIP_H_PAD }), font({ size: 14 })];
 
-const glassLabel = [
-  ...chipBase,
-  glassEffect({
-    glass: { variant: "regular", interactive: true },
-    shape: "capsule",
-  }),
-  foregroundStyle(PlatformColor("systemGray")),
-];
+const glassInactive = glassEffect({
+  glass: { variant: "regular", interactive: true },
+  shape: "capsule",
+});
 
-const activeLabel = (color: string) => [
-  ...chipBase,
+const glassActive = (color: string) =>
   glassEffect({
     glass: {
       variant: "regular",
@@ -51,9 +48,7 @@ const activeLabel = (color: string) => [
       tint: color,
     },
     shape: "capsule",
-  }),
-  foregroundStyle("white"),
-];
+  });
 
 type Props = {
   /** ジャーナル */
@@ -102,7 +97,10 @@ export function JournalChipList({ journals, activeJournalId, onSelect, scrollToE
             <HStack
               key={journal.id}
               modifiers={[
-                ...(isActive ? activeLabel(journal.color) : glassLabel),
+                ...chipBase,
+                foregroundStyle(isActive ? "white" : PlatformColor("systemGray")),
+                animation(Animation.easeInOut({ duration: 0.2 }), isActive),
+                isActive ? glassActive(journal.color) : glassInactive,
                 onTapGesture(() => onSelect(journal.id)),
               ]}
             >
