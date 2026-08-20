@@ -4,26 +4,24 @@ import { PlatformColor, Text, View } from "react-native";
 
 import { Host, List } from "@expo/ui/swift-ui";
 import { animation, Animation, frame } from "@expo/ui/swift-ui/modifiers";
-import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
-import { getEntriesByDateQuery } from "@/db/queries/entries";
+import { type DailyEntryObj } from "@/db/queries/entries";
 
 import { DaysCard } from "./days-card";
 import { DaysLLMReflection } from "./days-llm-reflection";
 
 type Props = {
-  /**
-   * 日付
-   */
+  /** 日付 */
   date: Date;
+  /** その日のエントリー（親から渡される） */
+  entries?: DailyEntryObj[];
 };
 
 /**
  * Days画面 — 指定日のエントリー一覧をスクロール表示
  */
-export function DaysView({ date }: Props) {
+export function DaysView({ date, entries }: Props) {
   const { t } = useTranslation();
-  const { data: entries } = useLiveQuery(getEntriesByDateQuery(date), [date.getTime()]);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
   const toggleExpand = (id: string) => {
@@ -56,7 +54,7 @@ export function DaysView({ date }: Props) {
 
   return (
     <View style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}>
-      <Host style={{ flex: 1 }} useViewportSizeMeasurement>
+      <Host key={date.getTime()} style={{ flex: 1 }} useViewportSizeMeasurement>
         <List
           modifiers={[
             frame({ maxWidth: 9999, maxHeight: 9999 }),
