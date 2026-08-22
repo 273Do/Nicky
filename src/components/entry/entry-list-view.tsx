@@ -77,7 +77,7 @@ export function EntryListView({
           >
             <List.ForEach
               onDelete={(indices) => indices.forEach(async (i) => await deleteEntry(entries[i].id))}
-              modifiers={[opacity(fade), animation(Animation.easeInOut({ duration: 0.2 }), fade)]}
+              modifiers={[opacity(fade), animation(Animation.easeInOut({ duration: 0.1 }), fade)]}
             >
               {entries.map((entry) => (
                 <EntryRow key={entry.id} journalName={journalName} entry={entry} />

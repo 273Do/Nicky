@@ -21,6 +21,7 @@ export default function DaysLayout() {
         }}
       >
         <Stack.Screen name="index" />
+        <Stack.Screen name="entry/[id]" />
         <Stack.Screen
           name="settings"
           options={{

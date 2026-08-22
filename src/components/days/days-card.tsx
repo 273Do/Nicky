@@ -1,85 +1,76 @@
-import { useTranslation } from "react-i18next";
 import { PlatformColor } from "react-native";
 
-import { Button, HStack, Image, Section, Spacer, Text as SText, VStack } from "@expo/ui/swift-ui";
-import { font, foregroundStyle, listRowSeparator, opacity } from "@expo/ui/swift-ui/modifiers";
+import { Button, HStack, Image, Rectangle, Section, Spacer, Text } from "@expo/ui/swift-ui";
+import {
+  font,
+  foregroundStyle,
+  frame,
+  lineLimit,
+  listRowSeparator,
+  padding,
+} from "@expo/ui/swift-ui/modifiers";
+import { useRouter } from "expo-router";
 
-import { EntryDetailObj } from "@/db/queries/entries";
-import { JournalObj } from "@/db/schemas";
-import { deserializeValue } from "@/hooks/entry/use-entry";
+import { type DailyEntryObj } from "@/db/queries/entries";
 import { formatTime } from "@/utils/date";
+import { buildPreviewEntry } from "@/utils/entry/preview";
 
-import { EntryFieldItem } from "../entry/entry-field-item";
-
-const PREVIEW_COUNT = 2;
+import { secondary } from "../entry/entry-row";
 
 type Props = {
-  entry: EntryDetailObj & { journal: JournalObj };
-  isFirstOfJournal: boolean;
-  isExpanded: boolean;
-  onToggleExpand: () => void;
+  journalEntries: DailyEntryObj[];
 };
 
 /**
- * Days画面のエントリーカード
+ * Days画面 — ジャーナル単位のタイムラインセクション
  */
-export function DaysCard({ entry, isFirstOfJournal, isExpanded, onToggleExpand }: Props) {
-  const { t } = useTranslation();
-  const { journal, values, createdAt } = entry;
-  const sorted = [...values].sort((a, b) => a.field.sortOrder - b.field.sortOrder);
-  const hasMore = sorted.length > PREVIEW_COUNT;
-  const visibleFields = isExpanded ? sorted : sorted.slice(0, PREVIEW_COUNT);
+export function DaysCard({ journalEntries }: Props) {
+  const router = useRouter();
+
+  const { journal } = journalEntries[0];
 
   return (
     <Section
       header={
-        <HStack alignment="bottom">
-          {isFirstOfJournal && (
-            <HStack spacing={6}>
-              <Image systemName={journal.icon} color={journal.color} size={20} />
-              <SText
-                modifiers={[
-                  font({ size: 18, weight: "bold" }),
-                  foregroundStyle(PlatformColor("label")),
-                ]}
-              >
-                {journal.name}
-              </SText>
-            </HStack>
-          )}
-          <Spacer />
-          <SText modifiers={[font({ weight: "semibold" })]}>{formatTime(createdAt)}</SText>
+        <HStack spacing={6}>
+          <Image systemName={journal.icon} color={journal.color} size={16} />
+          <Text
+            modifiers={[
+              font({ size: 16, weight: "bold" }),
+              foregroundStyle(PlatformColor("label")),
+            ]}
+          >
+            {journal.name}
+          </Text>
         </HStack>
       }
     >
-      {visibleFields.map((v, i) => {
-        const isFading = !isExpanded && hasMore && i === visibleFields.length - 1;
-        if (isFading) {
-          return (
-            <VStack key={v.id} modifiers={[opacity(0.3), listRowSeparator("hidden", "bottom")]}>
-              <EntryFieldItem field={v.field} value={deserializeValue(v.value, v.field.type)} />
-            </VStack>
-          );
-        }
+      {journalEntries.map((entry) => {
+        const preview = buildPreviewEntry(entry);
         return (
-          <EntryFieldItem
-            key={v.id}
-            field={v.field}
-            value={deserializeValue(v.value, v.field.type)}
-          />
+          <Button
+            key={entry.id}
+            modifiers={[
+              foregroundStyle({ type: "hierarchical", style: "primary" }),
+              listRowSeparator("hidden"),
+            ]}
+            onPress={() => router.push(`/days/entry/${entry.id}?journalName=${journal.name}`)}
+          >
+            <HStack spacing={15} modifiers={[padding({ vertical: -5, leading: 10 })]}>
+              {/* 縦線 */}
+              <Rectangle
+                modifiers={[
+                  frame({ width: 1.5, maxHeight: 9999 }),
+                  foregroundStyle(PlatformColor("separator")),
+                ]}
+              />
+              <Text modifiers={[font({ size: 16 }), lineLimit(1)]}>{preview.title}</Text>
+              <Spacer />
+              <Text modifiers={[secondary]}>{formatTime(entry.createdAt)}</Text>
+            </HStack>
+          </Button>
         );
       })}
-      {hasMore && (
-        <Button
-          label={
-            isExpanded
-              ? t("entry.showLess")
-              : t("entry.showMore", { count: sorted.length - PREVIEW_COUNT })
-          }
-          systemImage={isExpanded ? "chevron.up" : "chevron.down"}
-          onPress={onToggleExpand}
-        />
-      )}
     </Section>
   );
 }

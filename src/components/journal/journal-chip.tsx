@@ -99,7 +99,7 @@ export function JournalChipList({ journals, activeJournalId, onSelect, scrollToE
               modifiers={[
                 ...chipBase,
                 foregroundStyle(isActive ? "white" : PlatformColor("systemGray")),
-                animation(Animation.easeInOut({ duration: 0.2 }), isActive),
+                animation(Animation.easeInOut({ duration: 0.1 }), isActive),
                 isActive ? glassActive(journal.color) : glassInactive,
                 onTapGesture(() => onSelect(journal.id)),
               ]}

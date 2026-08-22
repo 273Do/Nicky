@@ -9,7 +9,7 @@ import { bookmarkEntry, deleteEntry } from "@/db/queries/entries";
 import { formatDate } from "@/utils/date";
 import { PreviewEntryObj } from "@/utils/entry/preview";
 
-const secondary = foregroundStyle({ type: "hierarchical", style: "secondary" });
+export const secondary = foregroundStyle({ type: "hierarchical", style: "secondary" });
 
 type Props = {
   /** ジャーナル */
