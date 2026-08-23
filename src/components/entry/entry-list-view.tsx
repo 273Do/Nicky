@@ -1,7 +1,8 @@
+import { useEffect, useState } from "react";
 import { PlatformColor, Pressable, StyleSheet, View } from "react-native";
 
 import { Host, List, Section } from "@expo/ui/swift-ui";
-import { frame, listStyle } from "@expo/ui/swift-ui/modifiers";
+import { animation, Animation, frame, listStyle, opacity } from "@expo/ui/swift-ui/modifiers";
 import { GlassView } from "expo-glass-effect";
 import { useRouter } from "expo-router";
 import { SymbolView } from "expo-symbols";
@@ -46,6 +47,14 @@ export function EntryListView({
     bookmarkOnly,
   });
 
+  const [fade, setFade] = useState(1);
+
+  useEffect(() => {
+    setFade(0.25);
+    const id = requestAnimationFrame(() => setFade(1));
+    return () => cancelAnimationFrame(id);
+  }, [activeJournalId, bookmarkOnly]);
+
   return (
     <View style={{ flex: 1 }}>
       <Host
@@ -68,6 +77,7 @@ export function EntryListView({
           >
             <List.ForEach
               onDelete={(indices) => indices.forEach(async (i) => await deleteEntry(entries[i].id))}
+              modifiers={[opacity(fade), animation(Animation.easeInOut({ duration: 0.1 }), fade)]}
             >
               {entries.map((entry) => (
                 <EntryRow key={entry.id} journalName={journalName} entry={entry} />

@@ -1,10 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { PlatformColor } from "react-native";
 
-import { BottomSheet, Button, Group, HStack, Image, List, Text } from "@expo/ui/swift-ui";
+import { BottomSheet, Button, Group, Image, Label, List } from "@expo/ui/swift-ui";
 import {
   foregroundStyle,
-  frame,
   padding,
   presentationDetents,
   presentationDragIndicator,
@@ -48,15 +47,16 @@ export function FieldBottomSheet({ isPresented, onIsPresentedChange, onAdd }: Pr
               modifiers={[foregroundStyle({ type: "hierarchical", style: "primary" })]}
               onPress={() => handlePress(type)}
             >
-              <HStack spacing={12}>
-                <Image
-                  systemName={FIELD_ICONS[type]}
-                  color={PlatformColor("systemIndigo")}
-                  size={20}
-                  modifiers={[frame({ width: 24 })]}
-                />
-                <Text>{t(FIELD_LABEL_KEYS[type])}</Text>
-              </HStack>
+              <Label
+                title={t(FIELD_LABEL_KEYS[type])}
+                icon={
+                  <Image
+                    systemName={FIELD_ICONS[type]}
+                    color={PlatformColor("systemIndigo")}
+                    size={17}
+                  />
+                }
+              />
             </Button>
           ))}
         </List>

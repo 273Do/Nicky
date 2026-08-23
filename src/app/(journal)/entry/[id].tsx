@@ -50,6 +50,16 @@ export default function EntryDetailScreen() {
             ? undefined
             : () => [
                 {
+                  type: "button",
+                  icon: {
+                    type: "sfSymbol",
+                    name: entry?.bookmark ? "bookmark.fill" : "bookmark",
+                  },
+                  label: entry?.bookmark ? t("entry.unbookmark") : t("entry.bookmark"),
+                  tintColor: entry?.bookmark ? PlatformColor("systemIndigo") : undefined,
+                  onPress: handleBookmark,
+                },
+                {
                   type: "menu",
                   label: t("common.options"),
                   icon: { type: "sfSymbol", name: "ellipsis" },
@@ -74,16 +84,7 @@ export default function EntryDetailScreen() {
                     ],
                   },
                 },
-                {
-                  type: "button",
-                  icon: {
-                    type: "sfSymbol",
-                    name: entry?.bookmark ? "bookmark.fill" : "bookmark",
-                  },
-                  label: entry?.bookmark ? t("entry.unbookmark") : t("entry.bookmark"),
-                  tintColor: entry?.bookmark ? PlatformColor("systemIndigo") : undefined,
-                  onPress: handleBookmark,
-                },
+
                 {
                   type: "button",
                   label: t("common.edit"),

@@ -15,6 +15,8 @@ import {
   ZStack,
 } from "@expo/ui/swift-ui";
 import {
+  animation,
+  Animation,
   environment,
   foregroundStyle,
   frame,
@@ -78,6 +80,7 @@ export function JournalCreateView({
           modifiers={[
             frame({ maxWidth: 9999, maxHeight: 9999 }),
             environment("editMode", "inactive"),
+            animation(Animation.easeInOut({ duration: 0.25 }), fields.length),
           ]}
         >
           {/* ジャーナル名・アイコン・カラー */}

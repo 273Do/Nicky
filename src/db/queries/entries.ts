@@ -116,6 +116,22 @@ export const getEntriesByDateQuery = (date: Date) => {
   });
 };
 
+/**
+ * 日付範囲のエントリー一覧をフィールドとともに取得するクエリ
+ * @param start 開始日（0:00:00）
+ * @param end 終了日の翌日（0:00:00、この日は含まない）
+ */
+export const getEntriesByRangeQuery = (start: Date, end: Date) =>
+  db.query.entries.findMany({
+    where: and(gte(entries.createdAt, start.getTime()), lt(entries.createdAt, end.getTime())),
+    with: {
+      journal: true,
+      values: {
+        with: { field: true },
+      },
+    },
+  });
+
 /** エントリー詳細の型 */
 export type EntryDetailObj = Awaited<ReturnType<typeof getEntriesQuery>>[number];
 
