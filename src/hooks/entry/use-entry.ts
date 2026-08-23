@@ -11,7 +11,12 @@ import {
   type EntryValueObj,
   type FieldObj,
 } from "@/db/schemas";
-import { type FieldValue, getDefaultValue, serializeValue } from "@/utils/entry/field-value";
+import {
+  type FieldValue,
+  getDefaultValue,
+  serializeValue,
+  validateFieldValue,
+} from "@/utils/entry/field-value";
 
 export type { FieldValue } from "@/utils/entry/field-value";
 export { deserializeValue } from "@/utils/entry/field-value";
@@ -75,6 +80,11 @@ export const useEntry = (fields: FieldObj[], initialValues?: Record<string, Fiel
       }),
     );
 
+    // フィールドごとのバリデーション
+    for (const field of fields) {
+      validateFieldValue(valuesRef.current[field.id], field.type);
+    }
+
     entrySelectSchema.parse(newEntry);
     z.array(entryValueInsertSchema).parse(newValues);
 
@@ -89,6 +99,11 @@ export const useEntry = (fields: FieldObj[], initialValues?: Record<string, Fiel
    */
   const updateEntry = async (entryId: string): Promise<void> => {
     z.string().min(1).parse(entryId);
+
+    // フィールドごとのバリデーション
+    for (const field of fields) {
+      validateFieldValue(valuesRef.current[field.id], field.type);
+    }
 
     const values = Object.entries(valuesRef.current).map(([fieldId, value]) => ({
       fieldId,
