@@ -67,6 +67,7 @@ export default function JournalScreen() {
                       name: "ellipsis" as const,
                     },
                     menu: {
+                      title: activeJournal.name,
                       items: [
                         {
                           type: "action" as const,
