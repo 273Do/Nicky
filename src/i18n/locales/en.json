@@ -44,8 +44,11 @@
   "field": {
     "text": "Text",
     "longText": "Long Text",
+    "link": "Link",
     "number": "Number",
+    "rating": "Rating",
     "media": "Media",
+    "audio": "Audio",
     "check": "Checkbox",
     "location": "Location",
     "date": "Date",

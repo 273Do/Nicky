@@ -44,8 +44,11 @@
   "field": {
     "text": "テキスト",
     "longText": "ロングテキスト",
+    "link": "リンク",
     "number": "数値",
+    "rating": "レーティング",
     "media": "メディア",
+    "audio": "オーディオ",
     "check": "チェックボックス",
     "location": "位置情報",
     "date": "日付",
