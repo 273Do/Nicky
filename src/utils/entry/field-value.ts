@@ -7,7 +7,7 @@ export type FieldValue = z.infer<typeof fieldValueSchema>;
 
 /** フィールドタイプごとの値バリデーションスキーマ */
 const fieldValueSchemaByType: Record<FieldType, z.ZodType<FieldValue>> = {
-  text: z.string().max(20),
+  text: z.string().max(40),
   longText: z.string(),
   link: z.string(),
   number: z.number(),
@@ -17,7 +17,7 @@ const fieldValueSchemaByType: Record<FieldType, z.ZodType<FieldValue>> = {
   time: z.date(),
   media: z.null(),
   audio: z.null(),
-  location: z.null(),
+  location: z.string(),
 };
 
 /**
@@ -71,8 +71,9 @@ export const deserializeValue = (value: string | null, type: FieldType): FieldVa
     case "time":
       return new Date(Number(value));
     case "media":
-    case "location":
       return null;
+    case "location":
+      return value;
     default:
       return value;
   }

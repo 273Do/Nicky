@@ -53,6 +53,8 @@ export function EntryFieldItem({ field, value, setValue, edit = false }: Props) 
     case "media":
       return <EntryMedia {...shared} />;
     case "location":
-      return <EntryLocation {...shared} />;
+      return (
+        <EntryLocation {...shared} defaultValue={typeof value === "string" ? value : undefined} />
+      );
   }
 }
