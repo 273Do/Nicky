@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlatformColor } from "react-native";
 
@@ -50,23 +50,49 @@ export function EntryLocation({ label, defaultValue, onValueChange, edit = false
   const { t } = useTranslation();
   const [location, setLocation] = useState<LocationData | null>(() => parseLocation(defaultValue));
   const [address, setAddress] = useState(location?.address ?? "");
+  const mountedRef = useRef(true);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const updateLocation = (data: LocationData) => {
-    setLocation(data);
-    setAddress(data.address);
-    onValueChange?.(JSON.stringify(data));
-  };
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
-  const handleAddressSubmit = async (text: string) => {
-    if (!text.trim()) return;
+  const geocode = async (text: string) => {
     const results = await Location.geocodeAsync(text);
+
+    if (!mountedRef.current) return;
+
     if (results.length > 0) {
-      updateLocation({
+      const data: LocationData = {
         address: text,
         lat: results[0].latitude,
         lng: results[0].longitude,
-      });
+      };
+      setLocation(data);
+
+      await onValueChange?.(JSON.stringify(data));
     }
+  };
+
+  const handleTextChange = async (text: string) => {
+    setAddress(text);
+
+    // 即座に住所テキストだけ親に反映（既存の座標を保持）
+    const updated: LocationData = {
+      address: text,
+      lat: location?.lat ?? 0,
+      lng: location?.lng ?? 0,
+    };
+
+    await onValueChange?.(JSON.stringify(updated));
+    // 500ms 後にジオコーディングして座標を確定
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(async () => {
+      if (text.trim()) await geocode(text);
+    }, 500);
   };
 
   if (!edit) {
@@ -90,7 +116,6 @@ export function EntryLocation({ label, defaultValue, onValueChange, edit = false
     return (
       <FieldWrapper label={label}>
         <HStack spacing={6}>
-          <Image systemName="mappin.and.ellipse" color={PlatformColor("systemIndigo")} size={16} />
           <Text>{location.address}</Text>
         </HStack>
       </FieldWrapper>
@@ -102,10 +127,7 @@ export function EntryLocation({ label, defaultValue, onValueChange, edit = false
       <TextField
         placeholder={t("field.location")}
         defaultValue={address}
-        onValueChange={setAddress}
-        onFocusChange={(focused) => {
-          if (!focused && address) handleAddressSubmit(address);
-        }}
+        onValueChange={handleTextChange}
         modifiers={[frame({ maxWidth: 9999 })]}
       />
     </FieldWrapper>
