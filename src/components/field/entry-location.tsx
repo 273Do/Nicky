@@ -1,36 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { PlatformColor } from "react-native";
 
-import { HStack, Image, Text, TextField, VStack } from "@expo/ui/swift-ui";
+import { HStack, Text, TextField, VStack } from "@expo/ui/swift-ui";
 import { clipShape, foregroundStyle, frame } from "@expo/ui/swift-ui/modifiers";
 import * as Location from "expo-location";
 import { AppleMaps } from "expo-maps";
 
+import { type LocationData, parseLocation } from "@/utils/entry/field-value";
+
 import { FieldWrapper } from "./field-wrapper";
-
-export { InlineMapView, parseLocation, type LocationData };
-
-/** 位置情報の JSON 構造 */
-type LocationData = {
-  address: string;
-  lat: number;
-  lng: number;
-};
-
-/** JSON 文字列をパースして LocationData を返す */
-const parseLocation = (value: string | undefined): LocationData | null => {
-  if (!value) return null;
-  try {
-    const parsed = JSON.parse(value);
-    if (parsed.address && typeof parsed.lat === "number" && typeof parsed.lng === "number") {
-      return parsed as LocationData;
-    }
-    return null;
-  } catch {
-    return null;
-  }
-};
 
 type Props = {
   /** フィールドラベル */
@@ -46,7 +24,7 @@ type Props = {
 /**
  * 位置情報フィールド
  */
-export function EntryLocation({ label, defaultValue, onValueChange, edit = false }: Props) {
+export const EntryLocation = ({ label, defaultValue, onValueChange, edit = false }: Props) => {
   const { t } = useTranslation();
   const [location, setLocation] = useState<LocationData | null>(() => parseLocation(defaultValue));
   const [address, setAddress] = useState(location?.address ?? "");
@@ -100,11 +78,6 @@ export function EntryLocation({ label, defaultValue, onValueChange, edit = false
       return (
         <FieldWrapper label={label}>
           <HStack spacing={6}>
-            <Image
-              systemName="mappin.and.ellipse"
-              color={PlatformColor("tertiaryLabel")}
-              size={16}
-            />
             <Text modifiers={[foregroundStyle({ type: "hierarchical", style: "tertiary" })]}>
               {t("field.notSet")}
             </Text>
@@ -132,12 +105,12 @@ export function EntryLocation({ label, defaultValue, onValueChange, edit = false
       />
     </FieldWrapper>
   );
-}
+};
 
 /**
  * SwiftUI List 内で使えるインラインマップ
  */
-function InlineMapView({ lat, lng, title }: { lat: number; lng: number; title: string }) {
+export const InlineMapView = ({ lat, lng, title }: { lat: number; lng: number; title: string }) => {
   return (
     <VStack modifiers={[frame({ height: 200, maxWidth: 9999 }), clipShape("roundedRectangle", 12)]}>
       <AppleMaps.View
@@ -155,4 +128,4 @@ function InlineMapView({ lat, lng, title }: { lat: number; lng: number; title: s
       />
     </VStack>
   );
-}
+};

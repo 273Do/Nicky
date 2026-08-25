@@ -2,6 +2,7 @@ import { FieldType } from "@/constants/journal";
 import { EntryDetailObj } from "@/db/queries/entries";
 
 import { formatDate, formatTime } from "../date";
+import { parseLocation } from "./field-value";
 
 export type PreviewEntryObj = {
   /** エントリー id */
@@ -30,13 +31,8 @@ export const formatFieldValue = (value: string | null, type: FieldType): string 
       return formatTime(new Date(Number(value)));
     case "check":
       return value === "true" ? "✓" : "";
-    case "location": {
-      try {
-        return JSON.parse(value).address ?? value;
-      } catch {
-        return value;
-      }
-    }
+    case "location":
+      return parseLocation(value)?.address ?? value;
     default:
       return value;
   }

@@ -6,8 +6,9 @@ import { frame, listStyle } from "@expo/ui/swift-ui/modifiers";
 import { EntryDetailObj } from "@/db/queries/entries";
 import { deserializeValue } from "@/hooks/entry/use-entry";
 import { formatDate } from "@/utils/date";
+import { parseLocation } from "@/utils/entry/field-value";
 
-import { InlineMapView, parseLocation } from "../field/entry-location";
+import { InlineMapView } from "../field/entry-location";
 import { EntryFieldItem } from "./entry-field-item";
 
 type Props = {
