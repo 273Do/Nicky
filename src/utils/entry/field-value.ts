@@ -17,10 +17,7 @@ const fieldValueSchemaByType: Record<FieldType, z.ZodType<FieldValue>> = {
   time: z.date(),
   check: z.boolean(),
   rating: z.number().min(0).max(5),
-  location: z.union([
-    z.string().refine((v) => locationDataSchema.safeParse(JSON.parse(v)).success),
-    z.null(),
-  ]),
+  location: z.string().nullable(),
 };
 
 /** 位置情報のスキーマ */
@@ -51,6 +48,10 @@ export const parseLocation = (value: string | undefined): LocationData | null =>
  */
 export const validateFieldValue = (value: FieldValue, type: FieldType): void => {
   fieldValueSchemaByType[type].parse(value);
+
+  if (type === "location" && typeof value === "string" && value) {
+    locationDataSchema.parse(JSON.parse(value));
+  }
 };
 
 /**

@@ -58,6 +58,15 @@ export const EntryLocation = ({ label, defaultValue, onValueChange, edit = false
   const handleTextChange = async (text: string) => {
     setAddress(text);
 
+    if (!text.trim()) {
+      setLocation(null);
+
+      await onValueChange?.("");
+
+      if (timerRef.current) clearTimeout(timerRef.current);
+      return;
+    }
+
     // 即座に住所テキストだけ親に反映（既存の座標を保持）
     const updated: LocationData = {
       address: text,
@@ -69,7 +78,7 @@ export const EntryLocation = ({ label, defaultValue, onValueChange, edit = false
     // 500ms 後にジオコーディングして座標を確定
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(async () => {
-      if (text.trim()) await geocode(text);
+      await geocode(text);
     }, 500);
   };
 
