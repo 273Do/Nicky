@@ -10,12 +10,12 @@ export const fieldTypeSchema = z.enum([
   "longText",
   "link",
   "number",
-  "rating",
   "media",
   "audio",
-  "check",
   "date",
   "time",
+  "check",
+  "rating",
   "location",
 ]);
 export type FieldType = z.infer<typeof fieldTypeSchema>;
@@ -28,13 +28,13 @@ export const FIELD_ICONS: Record<FieldType, SFSymbol> = {
   longText: "text.quote",
   link: "link",
   number: "numbers.rectangle",
-  rating: "star.leadinghalf.filled",
   media: "photo",
   audio: "microphone",
-  check: "checkmark.circle",
-  location: "mappin.and.ellipse",
   date: "calendar",
   time: "stopwatch",
+  check: "checkmark.circle",
+  rating: "star.leadinghalf.filled",
+  location: "mappin.and.ellipse",
 };
 
 /**
@@ -45,13 +45,13 @@ export const FIELD_LABEL_KEYS: Record<FieldType, string> = {
   longText: "field.longText",
   link: "field.link",
   number: "field.number",
-  rating: "field.rating",
   media: "field.media",
   audio: "field.audio",
-  check: "field.check",
-  location: "field.location",
   date: "field.date",
   time: "field.time",
+  check: "field.check",
+  rating: "field.rating",
+  location: "field.location",
 };
 
 /** ジャーナルで使用するSFシンボル一覧 */

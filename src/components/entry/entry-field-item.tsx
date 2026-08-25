@@ -9,6 +9,8 @@ import { EntryTime } from "@/components/field/entry-time";
 import type { FieldObj } from "@/db/schemas";
 import { type FieldValue } from "@/hooks/entry/use-entry";
 
+import { EntryLink } from "../field/entry-link";
+
 type Props = {
   /** フィールド定義 */
   field: FieldObj;
@@ -42,6 +44,10 @@ export function EntryFieldItem({ field, value, setValue, edit = false }: Props) 
       return (
         <EntryNumber {...shared} defaultValue={typeof value === "number" ? value : undefined} />
       );
+    case "link":
+      return <EntryLink {...shared} defaultValue={typeof value === "string" ? value : undefined} />;
+    case "media":
+      return <EntryMedia {...shared} />;
     case "check":
       return (
         <EntryCheck {...shared} defaultValue={typeof value === "boolean" ? value : undefined} />
@@ -50,8 +56,6 @@ export function EntryFieldItem({ field, value, setValue, edit = false }: Props) 
       return <EntryDate {...shared} defaultValue={value instanceof Date ? value : undefined} />;
     case "time":
       return <EntryTime {...shared} defaultValue={value instanceof Date ? value : undefined} />;
-    case "media":
-      return <EntryMedia {...shared} />;
     case "location":
       return (
         <EntryLocation {...shared} defaultValue={typeof value === "string" ? value : undefined} />

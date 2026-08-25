@@ -9,14 +9,14 @@ export type FieldValue = z.infer<typeof fieldValueSchema>;
 const fieldValueSchemaByType: Record<FieldType, z.ZodType<FieldValue>> = {
   text: z.string().max(40),
   longText: z.string(),
-  link: z.string(),
+  link: z.union([z.url(), z.literal(""), z.null()]),
   number: z.number(),
-  rating: z.number().min(0).max(5),
-  check: z.boolean(),
-  date: z.date(),
-  time: z.date(),
   media: z.null(),
   audio: z.null(),
+  date: z.date(),
+  time: z.date(),
+  check: z.boolean(),
+  rating: z.number().min(0).max(5),
   location: z.string(),
 };
 
