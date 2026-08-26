@@ -31,6 +31,8 @@ export const formatFieldValue = (value: string | null, type: FieldType): string 
       return formatTime(new Date(Number(value)));
     case "check":
       return value === "true" ? "✓" : "";
+    case "media":
+      return value ? "📷" : "";
     case "location":
       return parseLocation(value)?.address ?? value;
     default:

@@ -47,7 +47,9 @@ export function EntryFieldItem({ field, value, setValue, edit = false }: Props) 
     case "link":
       return <EntryLink {...shared} defaultValue={typeof value === "string" ? value : undefined} />;
     case "media":
-      return <EntryMedia {...shared} />;
+      return (
+        <EntryMedia {...shared} defaultValue={typeof value === "string" ? value : undefined} />
+      );
     case "check":
       return (
         <EntryCheck {...shared} defaultValue={typeof value === "boolean" ? value : undefined} />

@@ -11,7 +11,7 @@ const fieldValueSchemaByType: Record<FieldType, z.ZodType<FieldValue>> = {
   longText: z.string(),
   link: z.union([z.url(), z.literal(""), z.null()]),
   number: z.number(),
-  media: z.null(),
+  media: z.string().nullable(),
   audio: z.null(),
   date: z.date(),
   time: z.date(),
@@ -97,7 +97,7 @@ export const deserializeValue = (value: string | null, type: FieldType): FieldVa
     case "time":
       return new Date(Number(value));
     case "media":
-      return null;
+      return value;
     case "location":
       return value;
     default:
