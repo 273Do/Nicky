@@ -67,7 +67,13 @@
       "expo-sqlite",
       "expo-localization",
       "./plugins/with-settings-bundle",
-      "expo-maps"
+      "expo-maps",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "ジャーナルに画像を添付するために使用します"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
