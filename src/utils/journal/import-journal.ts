@@ -8,7 +8,7 @@ import { journalIconSchema } from "@/constants/journal";
 import type { JournalDetail } from "@/db/queries/journals";
 import { fieldSelectSchema, journalSelectSchema } from "@/db/schemas";
 import i18n from "@/i18n";
-import { generateSignature } from "@/utils/days/export-journal";
+import { generateSignature } from "@/utils/journal/export-journal";
 
 const journalDetailSchema = journalSelectSchema.extend({
   icon: journalIconSchema,
