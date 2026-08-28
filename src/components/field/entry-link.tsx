@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { PlatformColor } from "react-native-reanimated";
 
 import { Link, Text, TextField } from "@expo/ui/swift-ui";
-import { foregroundStyle, frame } from "@expo/ui/swift-ui/modifiers";
+import { disabled, foregroundStyle, frame } from "@expo/ui/swift-ui/modifiers";
 
 import { FieldWrapper } from "./field-wrapper";
 
@@ -16,6 +16,8 @@ type Props = {
   /** 入力かどうか */
   edit?: boolean;
 };
+
+const isUrl = (value: string) => /^https?:\/\/.+/.test(value);
 
 /**
  * リンクフィールド
@@ -33,8 +35,21 @@ export function EntryLink({ label, defaultValue = "", onValueChange, edit = fals
           modifiers={[frame({ maxWidth: 9999 })]}
         />
       ) : (
-        <Link destination={defaultValue}>
-          <Text modifiers={[foregroundStyle(PlatformColor("systemIndigo"))]}>{defaultValue}</Text>
+        <Link
+          destination={defaultValue}
+          modifiers={[disabled(!defaultValue || !isUrl(defaultValue))]}
+        >
+          <Text
+            modifiers={[
+              foregroundStyle(
+                PlatformColor(
+                  defaultValue && isUrl(defaultValue) ? "systemIndigo" : "tertiaryLabel",
+                ),
+              ),
+            ]}
+          >
+            {defaultValue || t("field.notSet")}
+          </Text>
         </Link>
       )}
     </FieldWrapper>
