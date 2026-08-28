@@ -2,8 +2,9 @@ import { and, eq, gte, lt } from "drizzle-orm";
 
 import { db } from "@/db/client";
 import { addDays, startOfDay } from "@/utils/date";
+import { deleteMediaImage } from "@/utils/entry/media-file";
 
-import { entries, EntryObj, EntryValueObj, entryValues } from "../schemas";
+import { entries, EntryObj, EntryValueObj, entryValues, fields } from "../schemas";
 
 /**
  * ジャーナルに紐付いたエントリー一覧をフィールドとともに取得するクエリ
@@ -82,6 +83,17 @@ export const bookmarkEntry = async (entryId: string, bookmark: boolean) => {
  * @param entryId エントリーID
  */
 export const deleteEntry = async (entryId: string) => {
+  // エントリーに紐づくメディア画像を削除
+  const mediaValues = await db
+    .select({ value: entryValues.value })
+    .from(entryValues)
+    .innerJoin(fields, eq(entryValues.fieldId, fields.id))
+    .where(and(eq(entryValues.entryId, entryId), eq(fields.type, "media")));
+
+  for (const row of mediaValues) {
+    if (row.value) deleteMediaImage(row.value);
+  }
+
   await db.delete(entries).where(eq(entries.id, entryId));
 };
 
@@ -90,6 +102,21 @@ export const deleteEntry = async (entryId: string) => {
  * @param journalId ジャーナルID
  */
 export const deleteAllEntries = async (journalId?: string) => {
+  // 削除対象エントリーに紐づくメディア画像を削除
+  const baseQuery = db
+    .select({ value: entryValues.value })
+    .from(entryValues)
+    .innerJoin(fields, eq(entryValues.fieldId, fields.id))
+    .innerJoin(entries, eq(entryValues.entryId, entries.id));
+
+  const mediaValues = journalId
+    ? await baseQuery.where(and(eq(fields.type, "media"), eq(entries.journalId, journalId)))
+    : await baseQuery.where(eq(fields.type, "media"));
+
+  for (const row of mediaValues) {
+    if (row.value) deleteMediaImage(row.value);
+  }
+
   if (journalId) {
     await db.delete(entries).where(eq(entries.journalId, journalId));
   } else {
