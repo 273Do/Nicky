@@ -1,6 +1,7 @@
 import { and, eq, notInArray, sql } from "drizzle-orm";
 
 import { db } from "@/db/client";
+import { deleteAllEntries } from "@/db/queries/entries";
 import { entries, fields, JournalObj, journals } from "@/db/schemas";
 import { FieldWithSortObj, JournalMetaObj } from "@/hooks/journal/use-journal-field";
 
@@ -110,6 +111,7 @@ export const updateJournal = async (
  * @param journalId ジャーナルID
  */
 export const deleteJournal = async (journalId: string) => {
+  await deleteAllEntries(journalId);
   await db.delete(journals).where(eq(journals.id, journalId));
 };
 
