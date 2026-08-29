@@ -16,7 +16,7 @@ const fieldValueSchemaByType: Record<FieldType, z.ZodType<FieldValue>> = {
   date: z.date(),
   time: z.date(),
   check: z.boolean(),
-  rating: z.number().min(0).max(5),
+  rating: z.number().min(0),
   location: z.string().nullable(),
 };
 
@@ -64,6 +64,9 @@ export const getDefaultValue = (type: FieldType): FieldValue => {
     case "longText":
     case "link":
       return "";
+    case "number":
+    case "rating":
+      return 0;
     case "check":
       return false;
     case "date":
@@ -90,6 +93,7 @@ export const deserializeValue = (value: string | null, type: FieldType): FieldVa
   if (value === null) return getDefaultValue(type);
   switch (type) {
     case "number":
+    case "rating":
       return Number(value);
     case "check":
       return value === "true";

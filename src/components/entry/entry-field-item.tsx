@@ -10,6 +10,7 @@ import type { FieldObj } from "@/db/schemas";
 import { type FieldValue } from "@/hooks/entry/use-entry";
 
 import { EntryLink } from "../field/entry-link";
+import { EntryRating } from "../field/entry-rating";
 
 type Props = {
   /** フィールド定義 */
@@ -58,6 +59,10 @@ export function EntryFieldItem({ field, value, setValue, edit = false }: Props) 
       return <EntryDate {...shared} defaultValue={value instanceof Date ? value : undefined} />;
     case "time":
       return <EntryTime {...shared} defaultValue={value instanceof Date ? value : undefined} />;
+    case "rating":
+      return (
+        <EntryRating {...shared} defaultValue={typeof value === "number" ? value : undefined} />
+      );
     case "location":
       return (
         <EntryLocation {...shared} defaultValue={typeof value === "string" ? value : undefined} />
