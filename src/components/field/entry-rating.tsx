@@ -35,9 +35,11 @@ export function EntryRating({ label, defaultValue = 0, onValueChange, edit = fal
       {edit ? (
         <VStack>
           <HStack>
+            <Spacer modifiers={[frame({ maxWidth: value * 3 })]} />
             <Text>{value}</Text>
-            <Spacer />
+            <Spacer modifiers={[frame({ maxWidth: (100 - value) * 3 })]} />
           </HStack>
+          <Spacer />
           <Slider
             label={<Text>{t("field.rating")}</Text>}
             value={value}
@@ -55,6 +57,7 @@ export function EntryRating({ label, defaultValue = 0, onValueChange, edit = fal
             <Text>{defaultValue}</Text>
             <Spacer modifiers={[frame({ maxWidth: (100 - defaultValue) * 3 })]} />
           </HStack>
+          <Spacer />
           <HStack>
             <Text>0</Text>
             <Spacer />

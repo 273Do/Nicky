@@ -30,11 +30,11 @@ export function EntryNumber({ label, defaultValue, onValueChange, edit = false }
    * @param v 数値
    */
   const handleValueChange = async (v: string) => {
-    const cleaned = v.replace(/[^0-9.]/g, "").replace(/^(\d*\.?\d*).*/, "$1");
+    const cleaned = v.replace(/[^0-9.-]/g, "").replace(/^(-?\d*\.?\d*).*/, "$1");
 
     if (cleaned !== v) await numberFieldRef.current?.setText(cleaned);
 
-    const parsed = cleaned === "" || cleaned === "." ? 0 : parseFloat(cleaned);
+    const parsed = cleaned === "" || cleaned === "." || cleaned === "-" ? 0 : parseFloat(cleaned);
 
     setNumber(parsed);
     await onValueChange?.(parsed);
