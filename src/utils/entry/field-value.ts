@@ -12,7 +12,6 @@ const fieldValueSchemaByType: Record<FieldType, z.ZodType<FieldValue>> = {
   link: z.union([z.url(), z.literal(""), z.null()]),
   number: z.number(),
   media: z.string().nullable(),
-  audio: z.null(),
   date: z.date(),
   time: z.date(),
   check: z.boolean(),
