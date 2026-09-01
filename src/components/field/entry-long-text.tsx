@@ -22,6 +22,7 @@ type Props = {
 export function EntryLongText({ label, defaultValue = "", onValueChange, edit = false }: Props) {
   const { t } = useTranslation();
 
+  // TODO: md対応
   return (
     <FieldWrapper label={label}>
       {edit ? (

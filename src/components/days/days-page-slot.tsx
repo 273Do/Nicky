@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import Animated, { type SharedValue, useAnimatedStyle } from "react-native-reanimated";
 
-import { slotDiff } from "./slot-diff";
+import { slotDiff } from "@/utils/days/slot-diff";
 
 type Props = {
   slotIndex: number;
