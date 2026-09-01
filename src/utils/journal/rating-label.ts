@@ -1,7 +1,6 @@
-import { RatingLabel, ratingLabelSchema } from "../entry/field-value";
+import { RATING_DEFAULT_MAX, RATING_DEFAULT_MIN } from "@/constants/validation";
 
-const DEFAULT_MIN = 0;
-const DEFAULT_MAX = 100;
+import { RatingLabel, ratingLabelSchema } from "../entry/field-value";
 
 /**
  * rating フィールドのラベルを JSON エンコードする
@@ -21,6 +20,6 @@ export const decodeRatingLabel = (label: string): RatingLabel => {
   try {
     return ratingLabelSchema.parse(JSON.parse(label));
   } catch {
-    return { name: label, min: DEFAULT_MIN, max: DEFAULT_MAX };
+    return { name: label, min: RATING_DEFAULT_MIN, max: RATING_DEFAULT_MAX };
   }
 };

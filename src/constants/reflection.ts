@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { REFLECTION_CONTENT_MAX, REFLECTION_ITEMS_COUNT, REFLECTION_TITLE_MAX } from "./validation";
+
 export const reflectionCategories = {
   Highlights: "Pick out memorable or positive moments from the day",
   Emotions: "Read emotional changes and mental states from the records",
@@ -30,7 +32,7 @@ Rules:
 - Do not predict the future.
 - Do not force a positive interpretation.
 - Do not include category names or meta phrases like "from the records" in the output. Talk about the content directly.
-- Each content must be within 80 characters.
+- Each content must be within ${REFLECTION_CONTENT_MAX} characters.
 - ${LANGUAGE_INSTRUCTIONS[lang]}
 - Output ONLY the specified JSON format. No other text.
 
@@ -51,12 +53,15 @@ For items, choose the 2 most relevant categories from the list above and write a
 
 export type ReflectionCategory = keyof typeof reflectionCategories;
 
+/** AI 振り返りのデフォルト時刻 */
+export const DEFAULT_REFLECTION_HOUR = 21;
+
 /**
  * AI Reflection の出力スキーマ
  */
 export const reflectionSchema = z.object({
   /** その日を象徴する語りかけの一文 */
-  title: z.string().min(1).max(15),
+  title: z.string().min(1).max(REFLECTION_TITLE_MAX),
   /** 振り返り2項目 */
   items: z
     .array(
@@ -64,10 +69,10 @@ export const reflectionSchema = z.object({
         category: z
           .string()
           .refine((v): v is ReflectionCategory => Object.hasOwn(reflectionCategories, v)),
-        content: z.string().min(1).max(80),
+        content: z.string().min(1).max(REFLECTION_CONTENT_MAX),
       }),
     )
-    .length(2),
+    .length(REFLECTION_ITEMS_COUNT),
 });
 
 export type ReflectionResult = z.infer<typeof reflectionSchema>;

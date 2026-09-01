@@ -124,6 +124,9 @@ export const JOURNAL_ICONS = [
   "bolt.fill",
 ] satisfies SFSymbol[];
 
+/** ジャーナルのデフォルトカラー */
+export const DEFAULT_JOURNAL_COLOR = "#6d7ce1";
+
 /** JOURNAL_ICONS の Zod スキーマ（ランタイムで一覧に含まれるか検証、型は SFSymbol を維持） */
 export const journalIconSchema = z
   .string()

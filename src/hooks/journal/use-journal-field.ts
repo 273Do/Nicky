@@ -3,7 +3,8 @@ import { useState } from "react";
 import * as Crypto from "expo-crypto";
 import { z } from "zod";
 
-import { type FieldType, JOURNAL_ICONS } from "@/constants/journal";
+import { DEFAULT_JOURNAL_COLOR, type FieldType, JOURNAL_ICONS } from "@/constants/journal";
+import { RATING_DEFAULT_MAX, RATING_DEFAULT_MIN } from "@/constants/validation";
 import { storeJournal, updateJournal as updateJournalQuery } from "@/db/queries/journals";
 import { type JournalObj } from "@/db/schemas";
 import {
@@ -24,7 +25,7 @@ export { FIELD_TYPES } from "@/utils/journal/journal-field";
 
 const defaultMeta: JournalMetaObj = {
   name: "",
-  color: "#6d7ce1",
+  color: DEFAULT_JOURNAL_COLOR,
   icon: JOURNAL_ICONS[0],
 };
 
@@ -59,7 +60,7 @@ export const useJournalField = (initialData?: {
     const newField: FieldDraftObj = {
       id: Crypto.randomUUID(),
       type,
-      label: type === "rating" ? encodeRatingLabel("", 0, 100) : "",
+      label: type === "rating" ? encodeRatingLabel("", RATING_DEFAULT_MIN, RATING_DEFAULT_MAX) : "",
     };
     setFields((prev) => [...prev, newField]);
   };

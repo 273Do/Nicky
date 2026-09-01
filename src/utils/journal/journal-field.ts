@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { fieldTypeSchema, type FieldType, journalIconSchema } from "@/constants/journal";
+import { FIELD_LABEL_MAX, JOURNAL_NAME_MAX } from "@/constants/validation";
 import { fieldInsertSchema } from "@/db/schemas";
 
 import { hexColorSchema } from "./color";
@@ -9,7 +10,7 @@ import { hexColorSchema } from "./color";
  * ジャーナルメタ情報のスキーマ
  */
 export const journalMetaSchema = z.object({
-  name: z.string().trim().min(1).max(20), // 20文字まで
+  name: z.string().trim().min(1).max(JOURNAL_NAME_MAX),
   color: hexColorSchema,
   icon: journalIconSchema,
 });
@@ -20,7 +21,7 @@ export type JournalMetaObj = z.infer<typeof journalMetaSchema>;
  */
 export const fieldDraftSchema = fieldInsertSchema
   .omit({ journalId: true, sortOrder: true })
-  .extend({ label: z.string().min(1).max(100) }); // rating は JSON エンコード後の文字列が入るため余裕を持たせる
+  .extend({ label: z.string().min(1).max(FIELD_LABEL_MAX) }); // rating は JSON エンコード後の文字列が入るため余裕を持たせる
 export type FieldDraftObj = z.infer<typeof fieldDraftSchema>;
 
 /**

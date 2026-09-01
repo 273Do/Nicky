@@ -1,13 +1,14 @@
 import { z } from "zod";
 
 import type { FieldType } from "@/constants/journal";
+import { TEXT_FIELD_MAX } from "@/constants/validation";
 
 export const fieldValueSchema = z.union([z.string(), z.number(), z.boolean(), z.date(), z.null()]);
 export type FieldValue = z.infer<typeof fieldValueSchema>;
 
 /** フィールドタイプごとの値バリデーションスキーマ */
 const fieldValueSchemaByType: Record<FieldType, z.ZodType<FieldValue>> = {
-  text: z.string().max(40),
+  text: z.string().max(TEXT_FIELD_MAX),
   longText: z.string(),
   link: z.union([z.url(), z.literal(""), z.null()]),
   number: z.number(),
