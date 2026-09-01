@@ -52,6 +52,8 @@
     "time": "Time",
     "check": "Checkbox",
     "rating": "Rating",
+    "min": "Min",
+    "max": "Max",
     "location": "Location",
     "setLocation": "Set Location",
     "notSet": "None"

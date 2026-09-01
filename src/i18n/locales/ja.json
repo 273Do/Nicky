@@ -52,6 +52,8 @@
     "time": "時刻",
     "check": "チェックボックス",
     "rating": "レーティング",
+    "min": "最小値",
+    "max": "最大値",
     "location": "位置情報",
     "setLocation": "位置情報を設定",
     "notSet": "なし"
