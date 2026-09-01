@@ -176,7 +176,7 @@ export function JournalCreateView({
                         <Spacer />
                         <NumberTextField
                           defaultValue={String(ratingLabel!.min)}
-                          placeholder="Min"
+                          placeholder={t("field.min")}
                           onValueChange={(num) =>
                             updateRatingRange(field.id, num, ratingLabel!.max)
                           }
@@ -185,7 +185,7 @@ export function JournalCreateView({
                         <Spacer />
                         <NumberTextField
                           defaultValue={String(ratingLabel!.max)}
-                          placeholder="Max"
+                          placeholder={t("field.max")}
                           onValueChange={(num) =>
                             updateRatingRange(field.id, ratingLabel!.min, num)
                           }
