@@ -118,3 +118,14 @@ export const deserializeValue = (value: string | null, type: FieldType): FieldVa
       return value;
   }
 };
+
+/**
+ * 数値入力文字列から数字・小数点・マイナス以外を除去する
+ * @param v 入力文字列
+ * @param decimalPlaces 許可する小数桁数
+ */
+export const cleanNumericInput = (v: string, decimalPlaces?: number): string => {
+  const digitsOnly = v.replace(/[^0-9.-]/g, "");
+  const decimals = decimalPlaces != null ? `{0,${decimalPlaces}}` : "*";
+  return digitsOnly.replace(new RegExp(`^(-?\\d*\\.?\\d${decimals}).*`), "$1");
+};

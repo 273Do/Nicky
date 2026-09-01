@@ -29,6 +29,7 @@ import {
 
 import { FIELD_ICONS, FIELD_LABEL_KEYS, FieldType } from "@/constants/journal";
 import { JournalMetaObj, type FieldDraftObj } from "@/hooks/journal/use-journal-field";
+import { cleanNumericInput } from "@/utils/entry/field-value";
 import { hexColorSchema } from "@/utils/journal/color";
 import { decodeRatingLabel } from "@/utils/journal/rating-label";
 
@@ -51,7 +52,7 @@ function NumberTextField({
   const ref = useRef<TextFieldRef>(null);
 
   const handleChange = async (v: string) => {
-    const cleaned = v.replace(/[^0-9.-]/g, "").replace(/^(-?\d*\.?\d?).*/, "$1");
+    const cleaned = cleanNumericInput(v, 1);
     if (cleaned !== v) await ref.current?.setText(cleaned);
     const num = parseFloat(cleaned);
     if (!isNaN(num)) onValueChange(num);
