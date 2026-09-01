@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { HStack, Text, TextField, VStack } from "@expo/ui/swift-ui";
-import { clipShape, foregroundStyle, frame } from "@expo/ui/swift-ui/modifiers";
+import { HStack, Text, TextField } from "@expo/ui/swift-ui";
+import { foregroundStyle, frame } from "@expo/ui/swift-ui/modifiers";
 import * as Location from "expo-location";
-import { AppleMaps } from "expo-maps";
 
 import { type LocationData, parseLocation } from "@/utils/entry/field-value";
 
@@ -24,7 +23,7 @@ type Props = {
 /**
  * 位置情報フィールド
  */
-export const EntryLocation = ({ label, defaultValue, onValueChange, edit = false }: Props) => {
+export function EntryLocation({ label, defaultValue, onValueChange, edit = false }: Props) {
   const { t } = useTranslation();
   const [location, setLocation] = useState<LocationData | null>(() => parseLocation(defaultValue));
   const [address, setAddress] = useState(location?.address ?? "");
@@ -114,27 +113,4 @@ export const EntryLocation = ({ label, defaultValue, onValueChange, edit = false
       />
     </FieldWrapper>
   );
-};
-
-/**
- * SwiftUI List 内で使えるインラインマップ
- */
-export const InlineMapView = ({ lat, lng, title }: { lat: number; lng: number; title: string }) => {
-  return (
-    <VStack modifiers={[frame({ height: 200, maxWidth: 9999 }), clipShape("roundedRectangle", 12)]}>
-      <AppleMaps.View
-        style={{ width: "100%", height: 200 }}
-        cameraPosition={{
-          coordinates: { latitude: lat, longitude: lng },
-          zoom: 15,
-        }}
-        markers={[
-          {
-            coordinates: { latitude: lat, longitude: lng },
-            title,
-          },
-        ]}
-      />
-    </VStack>
-  );
-};
+}

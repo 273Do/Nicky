@@ -15,14 +15,14 @@ type Props = {
 /**
  * ヘッダー日付のローテーティングスロット
  */
-export const DaysHeaderSlot = ({
+export function DaysHeaderSlot({
   slotIndex,
   centerSlot,
   translateX,
   screenWidth,
   glassWidth,
   label,
-}: Props) => {
+}: Props) {
   const style = useAnimatedStyle(() => {
     const diff = slotDiff(slotIndex, centerSlot.value);
     const p = translateX.value / screenWidth;
@@ -36,7 +36,7 @@ export const DaysHeaderSlot = ({
       <Text style={styles.headerText}>{label}</Text>
     </Animated.View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   headerLabel: {

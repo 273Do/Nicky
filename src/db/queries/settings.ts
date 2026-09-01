@@ -9,7 +9,9 @@ import { settings } from "@/db/schemas";
 export const useSettingsQuery = () => useLiveQuery(db.select().from(settings));
 
 /**
- * 設定値を書き込む (upsert)
+ * 設定値を書き込む
+ * @param key 設定キー
+ * @param value 設定値
  */
 export const setSetting = (key: string, value: string | null) =>
   db

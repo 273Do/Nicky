@@ -8,7 +8,7 @@ import { deserializeValue } from "@/hooks/entry/use-entry";
 import { formatDate } from "@/utils/date";
 import { parseLocation } from "@/utils/entry/field-value";
 
-import { InlineMapView } from "../field/entry-location";
+import { InlineMapView } from "../field/inline-map-view";
 import { EntryFieldItem } from "./entry-field-item";
 
 type Props = {

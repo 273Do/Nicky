@@ -87,7 +87,10 @@ export const getDefaultValue = (type: FieldType): FieldValue => {
   }
 };
 
-/** FieldValue を DB の text 型に変換 */
+/**
+ * FieldValue を DB の text 型に変換
+ * @param value フィールドの値
+ */
 export const serializeValue = (value: FieldValue): string | null => {
   if (value === null) return null;
   if (value instanceof Date) return String(value.getTime());

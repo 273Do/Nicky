@@ -15,13 +15,7 @@ type Props = {
  * ローテーティングバッファのページスロット
  * centerSlot と translateX から自身の位置を算出する
  */
-export const DaysPageSlot = ({
-  slotIndex,
-  centerSlot,
-  translateX,
-  screenWidth,
-  children,
-}: Props) => {
+export function DaysPageSlot({ slotIndex, centerSlot, translateX, screenWidth, children }: Props) {
   const style = useAnimatedStyle(() => {
     const diff = slotDiff(slotIndex, centerSlot.value);
     return {
@@ -32,7 +26,7 @@ export const DaysPageSlot = ({
   return (
     <Animated.View style={[styles.page, { width: screenWidth }, style]}>{children}</Animated.View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   page: {

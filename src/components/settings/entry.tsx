@@ -5,6 +5,9 @@ import { foregroundStyle } from "@expo/ui/swift-ui/modifiers";
 
 const primaryStyle = foregroundStyle({ type: "hierarchical", style: "primary" });
 
+/**
+ * エントリーデータの設定セクション
+ */
 export function EntrySettings() {
   const { t } = useTranslation();
 
