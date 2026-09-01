@@ -11,6 +11,7 @@ import {
 import { DailyEntryObj } from "@/db/queries/entries";
 import i18n from "@/i18n";
 import { formatFieldValue } from "@/utils/entry/preview";
+import { decodeRatingLabel } from "@/utils/journal/rating-label";
 
 /**
  * 日毎のエントリーをLLMに渡すテキストに変換する
@@ -21,7 +22,13 @@ const entriesToText = (entries: DailyEntryObj[]): string =>
       const header = `[${entry.journal.name}]`;
       const values = [...entry.values]
         .sort((a, b) => a.field.sortOrder - b.field.sortOrder)
-        .map((v) => `${v.field.label}: ${formatFieldValue(v.value, v.field.type)}`)
+        .map((v) => {
+          if (v.field.type === "rating") {
+            const { name, min, max } = decodeRatingLabel(v.field.label);
+            return `${name} (${min}-${max}): ${formatFieldValue(v.value, v.field.type)}`;
+          }
+          return `${v.field.label}: ${formatFieldValue(v.value, v.field.type)}`;
+        })
         .join("\n");
       return `${header}\n${values}`;
     })

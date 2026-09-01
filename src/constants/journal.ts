@@ -11,7 +11,7 @@ export const fieldTypeSchema = z.enum([
   "link",
   "number",
   "media",
-  "audio",
+  "audio", // 未実装
   "date",
   "time",
   "check",
@@ -33,7 +33,7 @@ export const FIELD_ICONS: Record<FieldType, SFSymbol> = {
   date: "calendar",
   time: "stopwatch",
   check: "checkmark.circle",
-  rating: "star.leadinghalf.filled",
+  rating: "slider.horizontal.below.rectangle",
   location: "mappin.and.ellipse",
 };
 

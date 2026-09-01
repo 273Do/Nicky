@@ -23,6 +23,7 @@ export default function JournalCreateScreen() {
     setFields,
     addField,
     renameField,
+    updateRatingRange,
     deleteField,
     moveField,
     meta,
@@ -88,6 +89,7 @@ export default function JournalCreateScreen() {
         fields={fields}
         addField={addField}
         renameField={renameField}
+        updateRatingRange={updateRatingRange}
         deleteField={deleteField}
         moveField={moveField}
         meta={meta}

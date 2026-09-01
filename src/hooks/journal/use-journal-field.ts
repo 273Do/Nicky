@@ -13,6 +13,7 @@ import {
   fieldDraftSchema,
   journalMetaSchema,
 } from "@/utils/journal/journal-field";
+import { decodeRatingLabel, encodeRatingLabel } from "@/utils/journal/rating-label";
 
 export type {
   FieldDraftObj,
@@ -58,7 +59,7 @@ export const useJournalField = (initialData?: {
     const newField: FieldDraftObj = {
       id: Crypto.randomUUID(),
       type,
-      label: "",
+      label: type === "rating" ? encodeRatingLabel("", 0, 100) : "",
     };
     setFields((prev) => [...prev, newField]);
   };
@@ -70,7 +71,30 @@ export const useJournalField = (initialData?: {
    */
   const renameField = (id: string, newLabel: string): void => {
     setFields((prev) =>
-      prev.map((field) => (field.id === id ? { ...field, label: newLabel } : field)),
+      prev.map((field) => {
+        if (field.id !== id) return field;
+        if (field.type === "rating") {
+          const decoded = decodeRatingLabel(field.label);
+          return { ...field, label: encodeRatingLabel(newLabel, decoded.min, decoded.max) };
+        }
+        return { ...field, label: newLabel };
+      }),
+    );
+  };
+
+  /**
+   * rating フィールドの min/max を更新する関数
+   * @param id フィールド ID
+   * @param min 最小値
+   * @param max 最大値
+   */
+  const updateRatingRange = (id: string, min: number, max: number): void => {
+    setFields((prev) =>
+      prev.map((field) => {
+        if (field.id !== id || field.type !== "rating") return field;
+        const decoded = decodeRatingLabel(field.label);
+        return { ...field, label: encodeRatingLabel(decoded.name, min, max) };
+      }),
     );
   };
 
@@ -102,7 +126,12 @@ export const useJournalField = (initialData?: {
    */
   const formDisabled =
     !journalMetaSchema.safeParse(meta).success ||
-    !z.array(fieldDraftSchema).min(1).safeParse(fields).success;
+    !z.array(fieldDraftSchema).min(1).safeParse(fields).success ||
+    fields.some((f) => {
+      if (f.type !== "rating") return false;
+      const { name, min, max } = decodeRatingLabel(f.label);
+      return !name.trim() || min >= max;
+    });
 
   /**
    * 新規ジャーナルをフィールドと共にDBに保存する
@@ -157,6 +186,7 @@ export const useJournalField = (initialData?: {
     setFields,
     addField,
     renameField,
+    updateRatingRange,
     deleteField,
     moveField,
 

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlatformColor, View } from "react-native";
 
@@ -11,7 +11,9 @@ import {
   RoundedRectangle,
   Section,
   Spacer,
+  Text,
   TextField,
+  type TextFieldRef,
   ZStack,
 } from "@expo/ui/swift-ui";
 import {
@@ -28,9 +30,42 @@ import {
 import { FIELD_ICONS, FIELD_LABEL_KEYS, FieldType } from "@/constants/journal";
 import { JournalMetaObj, type FieldDraftObj } from "@/hooks/journal/use-journal-field";
 import { hexColorSchema } from "@/utils/journal/color";
+import { decodeRatingLabel } from "@/utils/journal/rating-label";
 
+import { secondary } from "../entry/entry-row";
 import { FieldBottomSheet } from "./field-bottom-sheet";
 import { IconSelectBottomSheet } from "./icon-select-bottom-sheet";
+
+/**
+ * 数値のみ入力可能な TextField
+ */
+function NumberTextField({
+  defaultValue,
+  placeholder,
+  onValueChange,
+}: {
+  defaultValue: string;
+  placeholder: string;
+  onValueChange: (num: number) => void;
+}) {
+  const ref = useRef<TextFieldRef>(null);
+
+  const handleChange = async (v: string) => {
+    const cleaned = v.replace(/[^0-9.-]/g, "").replace(/^(-?\d*\.?\d?).*/, "$1");
+    if (cleaned !== v) await ref.current?.setText(cleaned);
+    const num = parseFloat(cleaned);
+    if (!isNaN(num)) onValueChange(num);
+  };
+
+  return (
+    <TextField
+      ref={ref}
+      defaultValue={defaultValue}
+      placeholder={placeholder}
+      onValueChange={handleChange}
+    />
+  );
+}
 
 type Props = {
   /** フィールド一覧 */
@@ -39,6 +74,8 @@ type Props = {
   addField: (type: FieldType) => void;
   /** フィールドのラベルを更新する関数 */
   renameField: (id: string, newLabel: string) => void;
+  /** rating フィールドの min/max を更新する関数 */
+  updateRatingRange: (id: string, min: number, max: number) => void;
   /** フィールドを削除する関数 */
   deleteField: (indices: number[]) => void;
   /** フィールドを並び替える関数 */
@@ -56,6 +93,7 @@ export function JournalCreateView({
   fields,
   addField,
   renameField,
+  updateRatingRange,
   deleteField,
   moveField,
   meta,
@@ -116,31 +154,61 @@ export function JournalCreateView({
           {/* フィールド */}
           <Section title={t("journal.fields")}>
             <List.ForEach onMove={moveField} onDelete={deleteField}>
-              {fields.map((field) => (
-                <HStack key={field.id} spacing={16} modifiers={[listRowInsets({ leading: 16 })]}>
-                  <Image
-                    systemName={FIELD_ICONS[field.type]}
-                    color={PlatformColor("systemIndigo")}
-                    size={22}
-                    modifiers={[frame({ width: 24 })]}
-                  />
-                  <TextField
-                    placeholder={t("journal.fieldPlaceholder", {
-                      type: t(FIELD_LABEL_KEYS[field.type]),
-                    })}
-                    defaultValue={field.label}
-                    onValueChange={(value) => renameField(field.id, value)}
-                    modifiers={[frame({ maxWidth: 9999 })]}
-                  />
-                  <Spacer />
-                  <Image
-                    systemName="line.3.horizontal"
-                    color={PlatformColor("tertiaryLabel")}
-                    size={22}
-                    modifiers={[frame({ width: 28 }), padding({ trailing: 14 })]}
-                  />
-                </HStack>
-              ))}
+              {fields.map((field) => {
+                const isRating = field.type === "rating";
+                const ratingLabel = isRating ? decodeRatingLabel(field.label) : null;
+
+                return (
+                  <HStack
+                    key={field.id}
+                    spacing={isRating ? 8 : 16}
+                    modifiers={[listRowInsets({ leading: 16 })]}
+                  >
+                    <Image
+                      systemName={FIELD_ICONS[field.type]}
+                      color={PlatformColor("systemIndigo")}
+                      size={22}
+                      modifiers={[frame({ width: 24 })]}
+                    />
+                    {isRating && (
+                      <HStack modifiers={[frame({ width: 100 })]}>
+                        <Spacer />
+                        <NumberTextField
+                          defaultValue={String(ratingLabel!.min)}
+                          placeholder="Min"
+                          onValueChange={(num) =>
+                            updateRatingRange(field.id, num, ratingLabel!.max)
+                          }
+                        />
+                        <Text modifiers={[secondary]}>~</Text>
+                        <Spacer />
+                        <NumberTextField
+                          defaultValue={String(ratingLabel!.max)}
+                          placeholder="Max"
+                          onValueChange={(num) =>
+                            updateRatingRange(field.id, ratingLabel!.min, num)
+                          }
+                        />
+                      </HStack>
+                    )}
+                    <TextField
+                      placeholder={t("journal.fieldPlaceholder", {
+                        type: t(FIELD_LABEL_KEYS[field.type]),
+                      })}
+                      defaultValue={isRating ? ratingLabel!.name : field.label}
+                      onValueChange={(value) => renameField(field.id, value)}
+                      modifiers={[frame({ maxWidth: 9999 })]}
+                    />
+                    <Spacer />
+                    <Image
+                      systemName="line.3.horizontal"
+                      color={PlatformColor("tertiaryLabel")}
+                      size={22}
+                      modifiers={[frame({ width: 28 }), padding({ trailing: 14 })]}
+                    />
+                  </HStack>
+                );
+              })}
             </List.ForEach>
 
             <Button

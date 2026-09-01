@@ -39,6 +39,7 @@ function JournalEditForm({ journal }: FormProps) {
     fields,
     addField,
     renameField,
+    updateRatingRange,
     deleteField,
     moveField,
     meta,
@@ -124,6 +125,7 @@ function JournalEditForm({ journal }: FormProps) {
         fields={fields}
         addField={addField}
         renameField={renameField}
+        updateRatingRange={updateRatingRange}
         deleteField={deleteField}
         moveField={moveField}
         meta={meta}

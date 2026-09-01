@@ -1,5 +1,6 @@
 import { FieldType } from "@/constants/journal";
 import { EntryDetailObj } from "@/db/queries/entries";
+import { decodeRatingLabel } from "@/utils/journal/rating-label";
 
 import { formatDate, formatTime } from "../date";
 import { parseLocation } from "./field-value";
@@ -56,6 +57,9 @@ export const buildPreviewEntry = (entry: EntryDetailObj): PreviewEntryObj => {
   if (first) {
     if (first.field.type === "check") {
       titleFromField = first.value === "true" ? `${first.field.label}: ✓` : first.field.label;
+    } else if (first.field.type === "rating") {
+      const { name } = decodeRatingLabel(first.field.label);
+      titleFromField = `${name}: ${formatFieldValue(first.value, first.field.type)}`;
     } else {
       titleFromField = formatFieldValue(first.value, first.field.type);
     }

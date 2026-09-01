@@ -8,6 +8,7 @@ import { EntryText } from "@/components/field/entry-text";
 import { EntryTime } from "@/components/field/entry-time";
 import type { FieldObj } from "@/db/schemas";
 import { type FieldValue } from "@/hooks/entry/use-entry";
+import { decodeRatingLabel } from "@/utils/journal/rating-label";
 
 import { EntryLink } from "../field/entry-link";
 import { EntryRating } from "../field/entry-rating";
@@ -59,10 +60,18 @@ export function EntryFieldItem({ field, value, setValue, edit = false }: Props) 
       return <EntryDate {...shared} defaultValue={value instanceof Date ? value : undefined} />;
     case "time":
       return <EntryTime {...shared} defaultValue={value instanceof Date ? value : undefined} />;
-    case "rating":
+    case "rating": {
+      const ratingLabel = decodeRatingLabel(field.label);
       return (
-        <EntryRating {...shared} defaultValue={typeof value === "number" ? value : undefined} />
+        <EntryRating
+          {...shared}
+          label={ratingLabel.name}
+          min={ratingLabel.min}
+          max={ratingLabel.max}
+          defaultValue={typeof value === "number" ? value : undefined}
+        />
       );
+    }
     case "location":
       return (
         <EntryLocation {...shared} defaultValue={typeof value === "string" ? value : undefined} />

@@ -20,7 +20,7 @@ export type JournalMetaObj = z.infer<typeof journalMetaSchema>;
  */
 export const fieldDraftSchema = fieldInsertSchema
   .omit({ journalId: true, sortOrder: true })
-  .extend({ label: z.string().trim().min(1).max(30) }); // 30 文字まで
+  .extend({ label: z.string().min(1).max(100) }); // rating は JSON エンコード後の文字列が入るため余裕を持たせる
 export type FieldDraftObj = z.infer<typeof fieldDraftSchema>;
 
 /**

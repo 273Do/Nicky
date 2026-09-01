@@ -9,6 +9,10 @@ import { FieldWrapper } from "./field-wrapper";
 type Props = {
   /** フィールドラベル */
   label: string;
+  /** 最小値 */
+  min?: number;
+  /** 最大値 */
+  max?: number;
   /** デフォルト値 */
   defaultValue?: number;
   /** 値変更時のコールバック */
@@ -20,50 +24,60 @@ type Props = {
 /**
  * レーティングフィールド
  */
-export function EntryRating({ label, defaultValue = 0, onValueChange, edit = false }: Props) {
+export function EntryRating({
+  label,
+  min = 0,
+  max = 100,
+  defaultValue = 0,
+  onValueChange,
+  edit = false,
+}: Props) {
   const { t } = useTranslation();
+  const range = max - min || 1;
   const [value, setValue] = useState<number>(defaultValue);
 
   const handleValueChange = async (v: number | string) => {
-    const rounded = Math.round(Number(v));
+    const rounded = Math.round(Number(v) * 10) / 10;
     setValue(rounded);
     await onValueChange?.(rounded);
   };
+
+  const ratio = (v: number) => (v - min) / range;
 
   return (
     <FieldWrapper label={label}>
       {edit ? (
         <VStack>
           <HStack>
-            <Spacer modifiers={[frame({ maxWidth: value * 3 })]} />
+            <Spacer modifiers={[frame({ maxWidth: ratio(value) * 300 })]} />
             <Text>{value}</Text>
-            <Spacer modifiers={[frame({ maxWidth: (100 - value) * 3 })]} />
+            <Spacer modifiers={[frame({ maxWidth: (1 - ratio(value)) * 300 })]} />
           </HStack>
           <Spacer />
           <Slider
             label={<Text>{t("field.rating")}</Text>}
             value={value}
-            min={0}
-            max={100}
-            minimumValueLabel={<Text>0</Text>}
-            maximumValueLabel={<Text>100</Text>}
+            min={min}
+            max={max}
+            minimumValueLabel={<Text>{min}</Text>}
+            maximumValueLabel={<Text>{max}</Text>}
             onValueChange={handleValueChange}
           />
         </VStack>
       ) : (
         <VStack>
           <HStack>
-            <Spacer modifiers={[frame({ maxWidth: defaultValue * 3 })]} />
+            <Spacer modifiers={[frame({ maxWidth: ratio(defaultValue) * 300 })]} />
             <Text>{defaultValue}</Text>
-            <Spacer modifiers={[frame({ maxWidth: (100 - defaultValue) * 3 })]} />
+            <Spacer modifiers={[frame({ maxWidth: (1 - ratio(defaultValue)) * 300 })]} />
           </HStack>
           <Spacer />
           <HStack>
-            <Text>0</Text>
+            <Text>{min}</Text>
             <Spacer />
-            <ProgressView value={defaultValue / 100} />
+            <ProgressView value={ratio(defaultValue)} />
             <Spacer />
-            <Text>100</Text>
+            <Text>{max}</Text>
           </HStack>
         </VStack>
       )}

@@ -30,6 +30,16 @@ export const locationDataSchema = z.object({
 /** 位置情報の JSON 構造 */
 export type LocationData = z.infer<typeof locationDataSchema>;
 
+/** レーティングのスキーマ */
+export const ratingLabelSchema = z.object({
+  name: z.string(),
+  min: z.number(),
+  max: z.number(),
+});
+
+/** レーティング JSON 構造 */
+export type RatingLabel = z.infer<typeof ratingLabelSchema>;
+
 /** JSON 文字列をパースして LocationData を返す */
 export const parseLocation = (value: string | undefined): LocationData | null => {
   if (!value) return null;
