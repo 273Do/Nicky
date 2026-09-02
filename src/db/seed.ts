@@ -43,6 +43,7 @@ const FIELD_POOL: Record<string, FieldTemplate[]> = {
     { type: "longText", label: "Notes" },
     { type: "check", label: "Stretched" },
     { type: "time", label: "Duration" },
+    { type: "location", label: "Location" },
   ],
   "Reading Notes": [
     { type: "text", label: "Book Title" },
@@ -50,7 +51,8 @@ const FIELD_POOL: Record<string, FieldTemplate[]> = {
     { type: "number", label: "Pages Read" },
     { type: "longText", label: "Key Takeaways" },
     { type: "check", label: "Finished" },
-    { type: "number", label: "Rating (1-5)" },
+    { type: "rating", label: JSON.stringify({ name: "Rating", min: 1, max: 5 }) },
+    { type: "link", label: "Link" },
     { type: "date", label: "Date" },
   ],
   "Cooking Diary": [
@@ -61,6 +63,7 @@ const FIELD_POOL: Record<string, FieldTemplate[]> = {
     { type: "check", label: "Would Make Again" },
     { type: "check", label: "New Recipe" },
     { type: "time", label: "Cooking Time" },
+    { type: "link", label: "Reference Link" },
   ],
 };
 
@@ -131,32 +134,32 @@ const TEXT_VALUES: Record<string, string[]> = {
 
 const LONG_TEXT_VALUES: Record<string, string[]> = {
   "How was your day?": [
-    "Today was really productive. Finished the project I've been working on and had a nice walk in the park.",
-    "Spent most of the day reading and relaxing. Sometimes you need a slow day to recharge.",
-    "Had a challenging meeting at work but it ended up going well. Feeling accomplished.",
-    "Woke up early and went for a run. The rest of the day flew by with errands and cooking dinner.",
-    "A quiet day at home. Organized my desk, did some journaling, and watched a documentary.",
+    "# Productive Day\n\nFinished the project I've been working on.\n\n## Highlights\n- Completed the **API integration**\n- Had a nice walk in the park\n- Read 30 pages of *Atomic Habits*",
+    "## Slow Sunday\n\nSpent most of the day reading and relaxing.\n\n> Sometimes you need a slow day to recharge.\n\nWatched a documentary about `machine learning` — fascinating stuff.",
+    "Had a **challenging meeting** at work but it ended up going well.\n\n### Action Items\n1. Follow up with design team\n2. Update the ~~old~~ new spec doc\n3. Review [PR #42](https://github.com)",
+    "Woke up early and went for a run.\n\n## Todo\n- Cleaned the kitchen\n- Did laundry\n- Organize bookshelf\n\nThe rest of the day flew by with errands and *cooking dinner*.",
+    "# Quiet Day\n\nA quiet day at home. Organized my desk, did some journaling.\n\n**Note to self:** Try the `pomodoro technique` tomorrow.\n\n---\n\nOverall mood: *calm and content*.",
   ],
   Notes: [
-    "Form felt good today. Need to focus on keeping core tight during heavy sets.",
-    "Took it easy today, still recovering from yesterday's session.",
-    "New personal best! Felt strong and well-rested going in.",
-    "Focused on technique over weight. Slow reps with full range of motion.",
-    "Quick session before work. Got the essentials in.",
+    "## Form Check\n\nForm felt good today.\n\n**Focus areas:**\n- Keep core tight during heavy sets\n- Don't rush the eccentric phase\n- Breathe at the top of each rep",
+    "Took it easy today, *still recovering* from yesterday's session.\n\n> Rest is part of the program.\n\nDid some light stretching and ~~skipped cardio~~ 10 min walk instead.",
+    "# New PR!\n\nFelt **strong** and well-rested going in.\n\n- Squat: `120kg` x 5\n- Bench: `80kg` x 8\n- Deadlift: `140kg` x 3",
+    "## Technique Day\n\nFocused on *technique* over weight.\n\n1. Slow reps with full range of motion\n2. Paused at the bottom for `2 seconds`\n3. Controlled the **negative**",
+    "Quick session before work. Got the essentials in.\n\n- Deadlift: 3x5 @ 100kg\n- Pull-ups: 4x8\n- Plank: 3x60s\n\n*Total time: 35 min*",
   ],
   "Key Takeaways": [
-    "The compound effect of small habits is remarkable. 1% better every day really adds up over time.",
-    "Deep focus requires eliminating distractions. Block scheduling works well for this.",
-    "Good code should read like well-written prose. Naming things clearly is half the battle.",
-    "History is shaped by collective myths and shared beliefs. Fascinating perspective on human civilization.",
-    "System 1 thinking is fast but error-prone. Being aware of cognitive biases is the first step.",
+    "# The Power of Habits\n\nThe **compound effect** of small habits is remarkable.\n\n> 1% better every day = 37x better in a year.\n\n## Key Principles\n- Start *small*\n- Be **consistent**\n- Track progress with `measurable` goals",
+    "## Deep Work\n\nDeep focus requires eliminating distractions.\n\n### Strategies\n1. `Block scheduling` — dedicate 2-4 hour blocks\n2. **No notifications** during focus time\n3. Have a [shutdown ritual](https://calnewport.com) at end of day",
+    "Good code should read like well-written prose.\n\n**Naming things clearly** is half the battle:\n- Use *descriptive* variable names\n- Avoid abbreviations\n- Functions should do ~~many things~~ one thing",
+    "# Sapiens\n\nHistory is shaped by *collective myths* and shared beliefs.\n\n## Three Revolutions\n1. **Cognitive** — language and imagination\n2. **Agricultural** — settled civilizations\n3. **Scientific** — progress through ignorance",
+    "## Thinking, Fast and Slow\n\nSystem 1 thinking is fast but error-prone.\n\n> Being aware of [cognitive biases](https://en.wikipedia.org/wiki/Cognitive_bias) is the first step.\n\n**Common traps:**\n- Anchoring effect\n- ~~Sunk cost~~ Sunk cost *fallacy*\n- Confirmation bias",
   ],
   "Recipe Notes": [
-    "Added extra garlic and a splash of lemon juice. The secret is to let it simmer on low heat for at least 30 minutes.",
-    "Used fresh pasta instead of dried — huge difference in texture. Will always do this from now on.",
-    "Kept it simple with just salt, pepper, and olive oil. Sometimes less is more.",
-    "Substituted cream with coconut milk for a lighter version. Turned out surprisingly well.",
-    "Mom's recipe with a twist — added smoked paprika. Family loved it!",
+    "# Chicken Curry\n\nAdded extra garlic and a splash of **lemon juice**.\n\n## Tips\n- Simmer on *low heat* for at least `30 minutes`\n- Toast the spices first\n- Finish with fresh cilantro",
+    "## Fresh Pasta\n\nUsed *fresh pasta* instead of dried — **huge difference** in texture.\n\n### Ingredients\n- 200g flour\n- 2 eggs\n- Pinch of salt\n- 1 tbsp olive oil\n\n> Will always make fresh from now on.",
+    "Kept it simple with just salt, pepper, and olive oil.\n\n*Sometimes less is more.*\n\n---\n\n**Verdict:** Perfect weeknight dinner. Ready in `15 minutes`.",
+    "## Lighter Version\n\nSubstituted cream with **coconut milk** for a lighter version.\n\n1. Sauté onions and garlic\n2. Add coconut milk + curry paste\n3. Simmer for 20 min\n\nTurned out *surprisingly* well!",
+    "# Mom's Recipe\n\nAdded ~~cayenne pepper~~ **smoked paprika** instead.\n\n## Changes\n- Swapped butter for olive oil\n- Added `roasted garlic`\n- Used [this technique](https://example.com/cooking-tips)\n\nFamily **loved** it!",
   ],
 };
 
@@ -178,7 +181,6 @@ function generateValue(fieldType: FieldType, label: string): string | null {
         Reps: [5, 15],
         "Weight (kg)": [20, 100],
         "Pages Read": [5, 80],
-        "Rating (1-5)": [2, 5],
         Servings: [1, 6],
         "Prep Time (min)": [5, 60],
       };
@@ -199,6 +201,26 @@ function generateValue(fieldType: FieldType, label: string): string | null {
       d.setHours(hours, minutes, 0, 0);
       return String(d.getTime());
     }
+    case "rating": {
+      const parsed = JSON.parse(label);
+      return String(rand(parsed.min, parsed.max));
+    }
+    case "link":
+      return pick([
+        "https://example.com/article/1",
+        "https://example.com/recipe/pasta",
+        "https://en.wikipedia.org/wiki/Main_Page",
+        "https://developer.mozilla.org/en-US/docs/Web",
+        "https://github.com",
+      ]);
+    case "location":
+      return pick([
+        JSON.stringify({ address: "Shibuya, Tokyo", lat: 35.6595, lng: 139.7004 }),
+        JSON.stringify({ address: "Shinjuku, Tokyo", lat: 35.6938, lng: 139.7034 }),
+        JSON.stringify({ address: "Osaka Station", lat: 34.7024, lng: 135.4959 }),
+        JSON.stringify({ address: "Kyoto Tower", lat: 34.9875, lng: 135.7592 }),
+        JSON.stringify({ address: "Yokohama, Kanagawa", lat: 35.4437, lng: 139.638 }),
+      ]);
     default:
       return null;
   }

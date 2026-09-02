@@ -1,7 +1,9 @@
 import { FieldType } from "@/constants/journal";
 import { EntryDetailObj } from "@/db/queries/entries";
+import { decodeRatingLabel } from "@/utils/journal/rating-label";
 
 import { formatDate, formatTime } from "../date";
+import { parseLocation } from "./field-value";
 
 export type PreviewEntryObj = {
   /** エントリー id */
@@ -15,6 +17,14 @@ export type PreviewEntryObj = {
   /** 日付 */
   createdAt: Date;
 };
+
+const stripMarkdown = (text: string): string =>
+  text
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/\*(.+?)\*/g, "$1")
+    .replace(/~~(.+?)~~/g, "$1")
+    .replace(/`(.+?)`/g, "$1")
+    .replace(/\[(.+?)\]\(.+?\)/g, "$1");
 
 /**
  * DB の value 文字列をフィールド型に応じた表示文字列に変換
@@ -30,6 +40,12 @@ export const formatFieldValue = (value: string | null, type: FieldType): string 
       return formatTime(new Date(Number(value)));
     case "check":
       return value === "true" ? "✓" : "";
+    case "media":
+      return value ? "📷" : "";
+    case "location":
+      return parseLocation(value)?.address ?? value;
+    case "longText":
+      return stripMarkdown(value);
     default:
       return value;
   }
@@ -51,6 +67,9 @@ export const buildPreviewEntry = (entry: EntryDetailObj): PreviewEntryObj => {
   if (first) {
     if (first.field.type === "check") {
       titleFromField = first.value === "true" ? `${first.field.label}: ✓` : first.field.label;
+    } else if (first.field.type === "rating") {
+      const { name } = decodeRatingLabel(first.field.label);
+      titleFromField = `${name}: ${formatFieldValue(first.value, first.field.type)}`;
     } else {
       titleFromField = formatFieldValue(first.value, first.field.type);
     }

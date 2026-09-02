@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { Text, TextField, type TextFieldRef } from "@expo/ui/swift-ui";
 import { frame } from "@expo/ui/swift-ui/modifiers";
 
+import { cleanNumericInput } from "@/utils/entry/field-value";
+
 import { FieldWrapper } from "./field-wrapper";
 
 type Props = {
@@ -29,15 +31,15 @@ export function EntryNumber({ label, defaultValue, onValueChange, edit = false }
    * 値が変更された時に発火する関数
    * @param v 数値
    */
-  const handleValueChange = (v: string) => {
-    const cleaned = v.replace(/[^0-9.]/g, "").replace(/^(\d*\.?\d*).*/, "$1");
+  const handleValueChange = async (v: string) => {
+    const cleaned = cleanNumericInput(v);
 
-    if (cleaned !== v) numberFieldRef.current?.setText(cleaned);
+    if (cleaned !== v) await numberFieldRef.current?.setText(cleaned);
 
-    const parsed = cleaned === "" || cleaned === "." ? 0 : parseFloat(cleaned);
+    const parsed = cleaned === "" || cleaned === "." || cleaned === "-" ? 0 : parseFloat(cleaned);
 
     setNumber(parsed);
-    onValueChange?.(parsed);
+    await onValueChange?.(parsed);
   };
 
   return (
@@ -51,7 +53,7 @@ export function EntryNumber({ label, defaultValue, onValueChange, edit = false }
           modifiers={[frame({ maxWidth: 9999 })]}
         />
       ) : (
-        <Text>{String(number ?? "")}</Text>
+        <Text>{number ?? ""}</Text>
       )}
     </FieldWrapper>
   );

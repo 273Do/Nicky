@@ -7,9 +7,9 @@ import { Stack, useRouter } from "expo-router";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
 import { useJournalField } from "@/hooks/journal/use-journal-field";
-import { importJournal } from "@/utils/days/import-journal";
 import { handleSaveError } from "@/utils/handle-save-error";
 import { setCreatedJournalId } from "@/utils/journal/created-journal";
+import { importJournal } from "@/utils/journal/import-journal";
 
 /**
  * ジャーナル作成
@@ -23,6 +23,7 @@ export default function JournalCreateScreen() {
     setFields,
     addField,
     renameField,
+    updateRatingRange,
     deleteField,
     moveField,
     meta,
@@ -88,6 +89,7 @@ export default function JournalCreateScreen() {
         fields={fields}
         addField={addField}
         renameField={renameField}
+        updateRatingRange={updateRatingRange}
         deleteField={deleteField}
         moveField={moveField}
         meta={meta}

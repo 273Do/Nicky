@@ -12,8 +12,8 @@ import { deleteJournal, getJournalDetailQuery, JournalDetail } from "@/db/querie
 import { FieldObj } from "@/db/schemas";
 import { FieldDraftObj, useJournalField } from "@/hooks/journal/use-journal-field";
 import { useValidatedParams } from "@/hooks/use-validated-params";
-import { exportJournal } from "@/utils/days/export-journal";
 import { handleSaveError } from "@/utils/handle-save-error";
+import { exportJournal } from "@/utils/journal/export-journal";
 
 type FormProps = {
   journal: JournalDetail;
@@ -39,6 +39,7 @@ function JournalEditForm({ journal }: FormProps) {
     fields,
     addField,
     renameField,
+    updateRatingRange,
     deleteField,
     moveField,
     meta,
@@ -124,6 +125,7 @@ function JournalEditForm({ journal }: FormProps) {
         fields={fields}
         addField={addField}
         renameField={renameField}
+        updateRatingRange={updateRatingRange}
         deleteField={deleteField}
         moveField={moveField}
         meta={meta}

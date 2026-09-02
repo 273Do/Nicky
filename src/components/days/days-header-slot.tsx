@@ -1,7 +1,7 @@
 import { PlatformColor, StyleSheet, Text } from "react-native";
 import Animated, { type SharedValue, useAnimatedStyle } from "react-native-reanimated";
 
-import { slotDiff } from "./slot-diff";
+import { slotDiff } from "@/utils/days/slot-diff";
 
 type Props = {
   slotIndex: number;
@@ -15,14 +15,14 @@ type Props = {
 /**
  * ヘッダー日付のローテーティングスロット
  */
-export const DaysHeaderSlot = ({
+export function DaysHeaderSlot({
   slotIndex,
   centerSlot,
   translateX,
   screenWidth,
   glassWidth,
   label,
-}: Props) => {
+}: Props) {
   const style = useAnimatedStyle(() => {
     const diff = slotDiff(slotIndex, centerSlot.value);
     const p = translateX.value / screenWidth;
@@ -36,7 +36,7 @@ export const DaysHeaderSlot = ({
       <Text style={styles.headerText}>{label}</Text>
     </Animated.View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   headerLabel: {

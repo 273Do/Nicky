@@ -8,11 +8,13 @@ import { z } from "zod";
 export const fieldTypeSchema = z.enum([
   "text",
   "longText",
+  "link",
   "number",
-  "media",
-  "check",
   "date",
   "time",
+  "media",
+  "check",
+  "rating",
   "location",
 ]);
 export type FieldType = z.infer<typeof fieldTypeSchema>;
@@ -23,12 +25,14 @@ export type FieldType = z.infer<typeof fieldTypeSchema>;
 export const FIELD_ICONS: Record<FieldType, SFSymbol> = {
   text: "character.textbox",
   longText: "text.quote",
+  link: "link",
   number: "numbers.rectangle",
-  media: "photo",
-  check: "checkmark.circle",
-  location: "mappin.and.ellipse",
   date: "calendar",
   time: "stopwatch",
+  media: "photo",
+  check: "checkmark.circle",
+  rating: "slider.horizontal.below.rectangle",
+  location: "mappin.and.ellipse",
 };
 
 /**
@@ -37,12 +41,14 @@ export const FIELD_ICONS: Record<FieldType, SFSymbol> = {
 export const FIELD_LABEL_KEYS: Record<FieldType, string> = {
   text: "field.text",
   longText: "field.longText",
+  link: "field.link",
   number: "field.number",
   media: "field.media",
-  check: "field.check",
-  location: "field.location",
   date: "field.date",
   time: "field.time",
+  check: "field.check",
+  rating: "field.rating",
+  location: "field.location",
 };
 
 /** ジャーナルで使用するSFシンボル一覧 */
@@ -117,6 +123,9 @@ export const JOURNAL_ICONS = [
   "crown.fill",
   "bolt.fill",
 ] satisfies SFSymbol[];
+
+/** ジャーナルのデフォルトカラー */
+export const DEFAULT_JOURNAL_COLOR = "#6d7ce1";
 
 /** JOURNAL_ICONS の Zod スキーマ（ランタイムで一覧に含まれるか検証、型は SFSymbol を維持） */
 export const journalIconSchema = z

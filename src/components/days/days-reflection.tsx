@@ -15,9 +15,9 @@ type Props = {
 };
 
 /**
- * AI Reflection を表示する
+ * Reflection を表示する
  */
-export function DaysLLMReflection({ date }: Props) {
+export function DaysReflection({ date }: Props) {
   const { aiReflectionEnabled } = useAIReflectionSettings();
   const { data: reflection } = useLiveQuery(getReflectionByDateQuery(date), [date.getTime()]);
 

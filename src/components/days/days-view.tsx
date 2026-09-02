@@ -7,7 +7,7 @@ import { frame, listSectionSpacing, listStyle } from "@expo/ui/swift-ui/modifier
 import { type DailyEntryObj } from "@/db/queries/entries";
 
 import { DaysCard } from "./days-card";
-import { DaysLLMReflection } from "./days-llm-reflection";
+import { DaysReflection } from "./days-reflection";
 
 /** エントリーをジャーナルごとにグループ化 */
 const groupByJournal = (entries: DailyEntryObj[]): [string, DailyEntryObj[]][] => {
@@ -63,7 +63,7 @@ export function DaysView({ date, entries }: Props) {
             listSectionSpacing(0),
           ]}
         >
-          <DaysLLMReflection date={date} />
+          <DaysReflection date={date} />
           {groupByJournal(entries).map(([journalId, journalEntries]) => (
             <DaysCard key={journalId} journalEntries={journalEntries} />
           ))}

@@ -1,9 +1,10 @@
+import { DEFAULT_REFLECTION_HOUR } from "@/constants/reflection";
 import { setSetting, useSettingsQuery } from "@/db/queries/settings";
 
 /** デフォルトの振り返り時間 */
 const defaultReflectionTime = () => {
   const d = new Date();
-  d.setHours(21, 0, 0, 0);
+  d.setHours(DEFAULT_REFLECTION_HOUR, 0, 0, 0);
   return d;
 };
 

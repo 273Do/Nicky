@@ -42,6 +42,10 @@ export function DaysCard({ journalEntries }: Props) {
           >
             {journal.name}
           </Text>
+          <Spacer />
+          <Text modifiers={[foregroundStyle(PlatformColor("secondary"))]}>
+            {journalEntries.length > 1 && journalEntries.length}
+          </Text>
         </HStack>
       }
     >

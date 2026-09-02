@@ -3,6 +3,9 @@ import { useTranslation } from "react-i18next";
 import { Section, Text } from "@expo/ui/swift-ui";
 import { padding } from "@expo/ui/swift-ui/modifiers";
 
+/**
+ * サポート・法的情報セクション
+ */
 export function Support() {
   const { t } = useTranslation();
 

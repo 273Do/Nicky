@@ -3,9 +3,11 @@ import { useState } from "react";
 import * as Crypto from "expo-crypto";
 import { z } from "zod";
 
-import { type FieldType, JOURNAL_ICONS } from "@/constants/journal";
+import { DEFAULT_JOURNAL_COLOR, type FieldType, JOURNAL_ICONS } from "@/constants/journal";
+import { RATING_DEFAULT_MAX, RATING_DEFAULT_MIN } from "@/constants/validation";
 import { storeJournal, updateJournal as updateJournalQuery } from "@/db/queries/journals";
 import { type JournalObj } from "@/db/schemas";
+import { ratingLabelSchema } from "@/utils/entry/field-value";
 import {
   type FieldDraftObj,
   type FieldWithSortObj,
@@ -13,6 +15,7 @@ import {
   fieldDraftSchema,
   journalMetaSchema,
 } from "@/utils/journal/journal-field";
+import { decodeRatingLabel, encodeRatingLabel } from "@/utils/journal/rating-label";
 
 export type {
   FieldDraftObj,
@@ -23,7 +26,7 @@ export { FIELD_TYPES } from "@/utils/journal/journal-field";
 
 const defaultMeta: JournalMetaObj = {
   name: "",
-  color: "#6d7ce1",
+  color: DEFAULT_JOURNAL_COLOR,
   icon: JOURNAL_ICONS[0],
 };
 
@@ -58,7 +61,7 @@ export const useJournalField = (initialData?: {
     const newField: FieldDraftObj = {
       id: Crypto.randomUUID(),
       type,
-      label: "",
+      label: type === "rating" ? encodeRatingLabel("", RATING_DEFAULT_MIN, RATING_DEFAULT_MAX) : "",
     };
     setFields((prev) => [...prev, newField]);
   };
@@ -70,7 +73,30 @@ export const useJournalField = (initialData?: {
    */
   const renameField = (id: string, newLabel: string): void => {
     setFields((prev) =>
-      prev.map((field) => (field.id === id ? { ...field, label: newLabel } : field)),
+      prev.map((field) => {
+        if (field.id !== id) return field;
+        if (field.type === "rating") {
+          const decoded = decodeRatingLabel(field.label);
+          return { ...field, label: encodeRatingLabel(newLabel, decoded.min, decoded.max) };
+        }
+        return { ...field, label: newLabel };
+      }),
+    );
+  };
+
+  /**
+   * rating フィールドの min/max を更新する関数
+   * @param id フィールド ID
+   * @param min 最小値
+   * @param max 最大値
+   */
+  const updateRatingRange = (id: string, min: number, max: number): void => {
+    setFields((prev) =>
+      prev.map((field) => {
+        if (field.id !== id || field.type !== "rating") return field;
+        const decoded = decodeRatingLabel(field.label);
+        return { ...field, label: encodeRatingLabel(decoded.name, min, max) };
+      }),
     );
   };
 
@@ -102,7 +128,12 @@ export const useJournalField = (initialData?: {
    */
   const formDisabled =
     !journalMetaSchema.safeParse(meta).success ||
-    !z.array(fieldDraftSchema).min(1).safeParse(fields).success;
+    !z.array(fieldDraftSchema).min(1).safeParse(fields).success ||
+    fields.some((f) => {
+      if (f.type !== "rating") return false;
+      const { name, min, max } = decodeRatingLabel(f.label);
+      return !name.trim() || min >= max;
+    });
 
   /**
    * 新規ジャーナルをフィールドと共にDBに保存する
@@ -110,6 +141,9 @@ export const useJournalField = (initialData?: {
   const createJournal = async (): Promise<JournalObj> => {
     journalMetaSchema.parse(meta);
     z.array(fieldDraftSchema).min(1).parse(fields);
+    for (const f of fields) {
+      if (f.type === "rating") ratingLabelSchema.parse(JSON.parse(f.label));
+    }
 
     const now = Date.now();
 
@@ -141,6 +175,9 @@ export const useJournalField = (initialData?: {
   const updateJournal = async (journalId: string): Promise<void> => {
     journalMetaSchema.parse(meta);
     z.array(fieldDraftSchema).min(1).parse(fields);
+    for (const f of fields) {
+      if (f.type === "rating") ratingLabelSchema.parse(JSON.parse(f.label));
+    }
 
     const fieldUpdates: FieldWithSortObj[] = fields.map((field, i) => ({
       id: field.id,
@@ -157,6 +194,7 @@ export const useJournalField = (initialData?: {
     setFields,
     addField,
     renameField,
+    updateRatingRange,
     deleteField,
     moveField,
 

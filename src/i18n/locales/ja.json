@@ -44,14 +44,20 @@
   "field": {
     "text": "テキスト",
     "longText": "ロングテキスト",
+    "link": "リンク",
     "number": "数値",
     "media": "メディア",
-    "check": "チェックボックス",
-    "location": "位置情報",
     "date": "日付",
     "time": "時刻",
+    "check": "チェックボックス",
+    "rating": "レーティング",
+    "min": "最小値",
+    "max": "最大値",
+    "location": "位置情報",
     "setLocation": "位置情報を設定",
-    "notSet": "なし"
+    "notSet": "なし",
+    "preview": "プレビュー",
+    "edit": "編集"
   },
   "settings": {
     "title": "設定",

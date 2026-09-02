@@ -44,14 +44,20 @@
   "field": {
     "text": "Text",
     "longText": "Long Text",
+    "link": "Link",
     "number": "Number",
     "media": "Media",
-    "check": "Checkbox",
-    "location": "Location",
     "date": "Date",
     "time": "Time",
+    "check": "Checkbox",
+    "rating": "Rating",
+    "min": "Min",
+    "max": "Max",
+    "location": "Location",
     "setLocation": "Set Location",
-    "notSet": "None"
+    "notSet": "None",
+    "preview": "Preview",
+    "edit": "Edit"
   },
   "settings": {
     "title": "Settings",
