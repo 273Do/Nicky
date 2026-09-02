@@ -66,9 +66,9 @@ export function EntryLongText({ label, defaultValue = "", onValueChange, edit = 
   const [editorHeight, setEditorHeight] = useState(() => calcHeight(defaultValue));
   const textRef = useRef(defaultValue);
 
-  const handleValueChange = (value: string) => {
+  const handleValueChange = async (value: string) => {
     textRef.current = value;
-    onValueChange?.(value);
+    await onValueChange?.(value);
   };
 
   if (!edit) {

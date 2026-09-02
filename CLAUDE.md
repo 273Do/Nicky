@@ -19,7 +19,7 @@ pnpm drizzle-kit generate  # Generate migration files from schema
 
 ## Commit Convention
 
-Enforced by lefthook (pre-commit: lint, commit-msg: format):
+Enforced by vite-hooks + commitlint (pre-commit: lint, commit-msg: format):
 
 ```
 feat: add new feature
@@ -171,7 +171,7 @@ All field values are stored as `text | null` in `entry_values.value`. Serializat
 
 - `serializeValue(FieldValue) → string | null` — converts to DB text
 - `deserializeValue(string | null, FieldType) → FieldValue` — converts from DB text
-- `FieldType` values: `"text" | "longText" | "number" | "media" | "check" | "date" | "time" | "location"`
+- `FieldType` values: `"text" | "longText" | "number" | "media" | "check" | "date" | "time" | "location" | "rating" | "link"`
 - Dates/times are stored as millisecond timestamps (`String(date.getTime())`)
 
 `buildEntryFormData` in `src/utils/entry/entry-form.ts` extracts fields (sorted by `sortOrder`) and initial values from an `EntryDetailObj`.
@@ -208,18 +208,22 @@ Always call `Keyboard.dismiss()` **before** any `async` save operation that trig
 
 ### Key Technologies
 
-| Package                            | Usage                                                                                                                                                                                                   |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `expo-router`                      | File-based routing, `useRouter`, `useLocalSearchParams`                                                                                                                                                 |
-| `@expo/ui/swift-ui`                | SwiftUI components: `Host`, `ZStack`, `VStack`, `HStack`, `Spacer`, `Grid`, `ScrollView`, `List`, `Section`, `Button`, `Image`, `Text`, `RoundedRectangle`, `ColorPicker`, `BottomSheet`, `ContextMenu` |
-| `@expo/ui/swift-ui/modifiers`      | `frame`, `padding`, `foregroundStyle`, `onTapGesture`, `listStyle`, `presentationDetents`, `environment`, `fixedSize`, `font`, `lineLimit`                                                              |
-| `expo-router/unstable-native-tabs` | `NativeTabs` — iOS native tab bar                                                                                                                                                                       |
-| `expo-symbols`                     | `SymbolView` — SF Symbols in RN (non-SwiftUI) header components                                                                                                                                         |
-| `expo-sqlite` + `drizzle-orm`      | Local SQLite persistence                                                                                                                                                                                |
-| `expo-crypto`                      | `Crypto.randomUUID()` for ID generation at the app layer                                                                                                                                                |
-| `PlatformColor`                    | Adaptive system colors: `"label"`, `"systemBackground"`, `"systemIndigo"`                                                                                                                               |
-| `@react-native-ai/llama`           | On-device GGUF model download + inference via `downloadModel()` and `llama.languageModel()`                                                                                                             |
-| `ai` (Vercel AI SDK)               | `generateText()` with structured prompts — used with llama model provider                                                                                                                               |
+| Package                                    | Usage                                                                                                                                                                                                   |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `expo-router`                              | File-based routing, `useRouter`, `useLocalSearchParams`                                                                                                                                                 |
+| `@expo/ui/swift-ui`                        | SwiftUI components: `Host`, `ZStack`, `VStack`, `HStack`, `Spacer`, `Grid`, `ScrollView`, `List`, `Section`, `Button`, `Image`, `Text`, `RoundedRectangle`, `ColorPicker`, `BottomSheet`, `ContextMenu` |
+| `@expo/ui/swift-ui/modifiers`              | `frame`, `padding`, `foregroundStyle`, `onTapGesture`, `listStyle`, `presentationDetents`, `environment`, `fixedSize`, `font`, `lineLimit`                                                              |
+| `expo-router/unstable-native-tabs`         | `NativeTabs` — iOS native tab bar                                                                                                                                                                       |
+| `expo-symbols`                             | `SymbolView` — SF Symbols in RN (non-SwiftUI) header components                                                                                                                                         |
+| `expo-sqlite` + `drizzle-orm`              | Local SQLite persistence                                                                                                                                                                                |
+| `expo-crypto`                              | `Crypto.randomUUID()` for ID generation at the app layer                                                                                                                                                |
+| `PlatformColor`                            | Adaptive system colors: `"label"`, `"systemBackground"`, `"systemIndigo"`                                                                                                                               |
+| `@react-native-ai/llama`                   | On-device GGUF model download + inference via `downloadModel()` and `llama.languageModel()`                                                                                                             |
+| `ai` (Vercel AI SDK)                       | `generateText()` with structured prompts — used with llama model provider                                                                                                                               |
+| `@expensify/react-native-live-markdown`    | Live Markdown editor — import from `src/MarkdownTextInput` to avoid `parseExpensiMark` auto-loading `html-entities`. Custom `parser` must be a worklet.                                                 |
+| `@ronradtke/react-native-markdown-display` | Full Markdown rendering (headers, lists, code blocks) for longText view mode                                                                                                                            |
+| `expo-maps`                                | Apple Maps via `AppleMaps.View` — used for location field display                                                                                                                                       |
+| `expo-image-picker`                        | Media field — pick images/videos from camera roll                                                                                                                                                       |
 
 ### SwiftUI Component Rules
 
@@ -231,6 +235,34 @@ Always call `Keyboard.dismiss()` **before** any `async` save operation that trig
 - `fixedSize()` on a component prevents it from stretching in an HStack, allowing siblings to fill remaining space
 - Gradients: `RoundedRectangle` + `foregroundStyle({ type: "linearGradient", ... })` + `clipShape` on parent `ZStack`
 - Native navigation bar buttons: use `unstable_headerRightItems` on `Stack.Screen` (not `headerRight` + RN `Pressable`)
+- **Never nest RN views (e.g. `Pressable`, `TextInput`) containing SwiftUI children without `<Host>`** — this causes a `SwiftUIVirtualViewException` crash. If you need an RN interactive element alongside SwiftUI content, use SwiftUI's `Button` instead of RN's `Pressable`.
+
+### Embedding RN Views in SwiftUI List
+
+RN native views (e.g. `TextInput`, `AppleMaps.View`, `Markdown`) inside a SwiftUI `List` do **not** auto-size. Use this pattern:
+
+1. Wrap the RN view in a SwiftUI `VStack` + `frame({ height, maxWidth: 9999 })`
+2. Measure the RN content height via `onLayout` or `onContentSizeChange`
+3. Pass the measured height to `frame({ height })` via state
+
+Example (`InlineMapView`, `MarkdownPreview`):
+
+```tsx
+const [contentHeight, setContentHeight] = useState(MIN_HEIGHT);
+const onLayout = (e) => setContentHeight(Math.max(MIN_HEIGHT, e.nativeEvent.layout.height));
+
+<VStack modifiers={[frame({ height: contentHeight, maxWidth: 9999 })]}>
+  <View onLayout={onLayout}>
+    <MyRNComponent />
+  </View>
+</VStack>;
+```
+
+For text-based inputs, calculate height from line count instead of `onLayout`:
+
+```tsx
+const calcHeight = (text: string) => Math.max(MIN_HEIGHT, text.split("\n").length * LINE_HEIGHT);
+```
 
 ### Naming Conventions
 
