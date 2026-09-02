@@ -18,6 +18,14 @@ export type PreviewEntryObj = {
   createdAt: Date;
 };
 
+const stripMarkdown = (text: string): string =>
+  text
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/\*(.+?)\*/g, "$1")
+    .replace(/~~(.+?)~~/g, "$1")
+    .replace(/`(.+?)`/g, "$1")
+    .replace(/\[(.+?)\]\(.+?\)/g, "$1");
+
 /**
  * DB の value 文字列をフィールド型に応じた表示文字列に変換
  * @param value 値
@@ -36,6 +44,8 @@ export const formatFieldValue = (value: string | null, type: FieldType): string 
       return value ? "📷" : "";
     case "location":
       return parseLocation(value)?.address ?? value;
+    case "longText":
+      return stripMarkdown(value);
     default:
       return value;
   }

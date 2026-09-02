@@ -55,7 +55,9 @@
     "max": "Max",
     "location": "Location",
     "setLocation": "Set Location",
-    "notSet": "None"
+    "notSet": "None",
+    "preview": "Preview",
+    "edit": "Edit"
   },
   "settings": {
     "title": "Settings",
