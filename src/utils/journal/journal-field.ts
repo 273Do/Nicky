@@ -21,7 +21,7 @@ export type JournalMetaObj = z.infer<typeof journalMetaSchema>;
  */
 export const fieldDraftSchema = fieldInsertSchema
   .omit({ journalId: true, sortOrder: true })
-  .extend({ label: z.string().min(1).max(FIELD_LABEL_MAX) }); // rating は JSON エンコード後の文字列が入るため余裕を持たせる
+  .extend({ label: z.string().trim().min(1).max(FIELD_LABEL_MAX) }); // rating は JSON エンコード後の文字列が入るため余裕を持たせる
 export type FieldDraftObj = z.infer<typeof fieldDraftSchema>;
 
 /**

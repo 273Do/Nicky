@@ -66,14 +66,16 @@ export function EntryLocation({ label, defaultValue, onValueChange, edit = false
       return;
     }
 
-    // 即座に住所テキストだけ親に反映（既存の座標を保持）
-    const updated: LocationData = {
-      address: text,
-      lat: location?.lat ?? 0,
-      lng: location?.lng ?? 0,
-    };
+    // 既存の座標がある場合のみ住所テキストを即座に反映
+    if (location?.lat != null && location?.lng != null) {
+      const updated: LocationData = {
+        address: text,
+        lat: location.lat,
+        lng: location.lng,
+      };
 
-    await onValueChange?.(JSON.stringify(updated));
+      await onValueChange?.(JSON.stringify(updated));
+    }
     // 500ms 後にジオコーディングして座標を確定
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(async () => {

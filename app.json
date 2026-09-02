@@ -67,11 +67,12 @@
       "expo-sqlite",
       "expo-localization",
       "./plugins/with-settings-bundle",
+      "./plugins/with-infoplist-strings",
       "expo-maps",
       [
         "expo-image-picker",
         {
-          "photosPermission": "ジャーナルに画像を添付するために使用します"
+          "photosPermission": "Used to attach images to journal entries."
         }
       ]
     ],

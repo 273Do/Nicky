@@ -55,7 +55,7 @@ function NumberTextField({
     const cleaned = cleanNumericInput(v, 1);
     if (cleaned !== v) await ref.current?.setText(cleaned);
     const num = parseFloat(cleaned);
-    if (!isNaN(num)) onValueChange(num);
+    if (Number.isFinite(num)) onValueChange(num);
   };
 
   return (

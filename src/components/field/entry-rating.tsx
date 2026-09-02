@@ -42,7 +42,7 @@ export function EntryRating({
     await onValueChange?.(rounded);
   };
 
-  const ratio = (v: number) => (v - min) / range;
+  const ratio = (v: number) => Math.min(1, Math.max(0, (v - min) / range));
 
   return (
     <FieldWrapper label={label}>

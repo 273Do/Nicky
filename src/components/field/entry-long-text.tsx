@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { type LayoutChangeEvent, PlatformColor, StyleSheet, View } from "react-native";
 
@@ -42,7 +42,7 @@ const markdownStyle = {
  * Markdown プレビュー
  */
 function MarkdownPreview({ text }: { text: string }) {
-  const [contentHeight, setContentHeight] = useState(MIN_HEIGHT);
+  const [contentHeight, setContentHeight] = useState<number>(MIN_HEIGHT);
 
   const onLayout = (e: LayoutChangeEvent) => {
     setContentHeight(Math.max(MIN_HEIGHT, e.nativeEvent.layout.height));
@@ -64,10 +64,10 @@ export function EntryLongText({ label, defaultValue = "", onValueChange, edit = 
   const { t } = useTranslation();
   const [preview, setPreview] = useState(false);
   const [editorHeight, setEditorHeight] = useState(() => calcHeight(defaultValue));
-  const textRef = useRef(defaultValue);
+  const [currentText, setCurrentText] = useState(defaultValue);
 
   const handleValueChange = async (value: string) => {
-    textRef.current = value;
+    setCurrentText(value);
     await onValueChange?.(value);
   };
 
@@ -99,7 +99,7 @@ export function EntryLongText({ label, defaultValue = "", onValueChange, edit = 
         </Button>
       </HStack>
       {preview ? (
-        <MarkdownPreview text={textRef.current} />
+        <MarkdownPreview text={currentText} />
       ) : (
         <VStack modifiers={[frame({ height: editorHeight, maxWidth: 9999 })]}>
           <MarkdownEditor

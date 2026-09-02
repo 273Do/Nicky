@@ -43,7 +43,8 @@ export const useEntry = (fields: FieldObj[], initialValues?: Record<string, Fiel
     if (isCreateMode || isEditModeReady) {
       initialized.current = true;
       valuesRef.current =
-        initialValues ?? Object.fromEntries(fields.map((f) => [f.id, getDefaultValue(f.type)]));
+        initialValues ??
+        Object.fromEntries(fields.map((f) => [f.id, getDefaultValue(f.type, f.label)]));
     }
   }
 
@@ -82,7 +83,7 @@ export const useEntry = (fields: FieldObj[], initialValues?: Record<string, Fiel
 
     // フィールドごとのバリデーション
     for (const field of fields) {
-      validateFieldValue(valuesRef.current[field.id], field.type);
+      validateFieldValue(valuesRef.current[field.id], field.type, field.label);
     }
 
     entrySelectSchema.parse(newEntry);
@@ -102,7 +103,7 @@ export const useEntry = (fields: FieldObj[], initialValues?: Record<string, Fiel
 
     // フィールドごとのバリデーション
     for (const field of fields) {
-      validateFieldValue(valuesRef.current[field.id], field.type);
+      validateFieldValue(valuesRef.current[field.id], field.type, field.label);
     }
 
     const values = Object.entries(valuesRef.current).map(([fieldId, value]) => ({

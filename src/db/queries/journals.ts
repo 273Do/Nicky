@@ -1,9 +1,9 @@
 import { and, eq, notInArray, sql } from "drizzle-orm";
 
 import { db } from "@/db/client";
-import { deleteAllEntries } from "@/db/queries/entries";
-import { entries, fields, JournalObj, journals } from "@/db/schemas";
+import { entries, entryValues, fields, JournalObj, journals } from "@/db/schemas";
 import { FieldWithSortObj, JournalMetaObj } from "@/hooks/journal/use-journal-field";
+import { deleteMediaImage } from "@/utils/entry/media-file";
 
 /**
  * ジャーナル一覧を取得するクエリ
@@ -111,8 +111,24 @@ export const updateJournal = async (
  * @param journalId ジャーナルID
  */
 export const deleteJournal = async (journalId: string) => {
-  await deleteAllEntries(journalId);
-  await db.delete(journals).where(eq(journals.id, journalId));
+  // メディアパスを収集
+  const mediaValues = await db
+    .select({ value: entryValues.value })
+    .from(entryValues)
+    .innerJoin(fields, eq(entryValues.fieldId, fields.id))
+    .innerJoin(entries, eq(entryValues.entryId, entries.id))
+    .where(and(eq(fields.type, "media"), eq(entries.journalId, journalId)));
+
+  // エントリーとジャーナルを同一トランザクションで削除
+  await db.transaction(async (tx) => {
+    await tx.delete(entries).where(eq(entries.journalId, journalId));
+    await tx.delete(journals).where(eq(journals.id, journalId));
+  });
+
+  // コミット後にメディア画像を削除
+  for (const row of mediaValues) {
+    if (row.value) deleteMediaImage(row.value);
+  }
 };
 
 /** ジャーナル一覧の型 */

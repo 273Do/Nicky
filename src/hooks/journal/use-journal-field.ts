@@ -7,6 +7,7 @@ import { DEFAULT_JOURNAL_COLOR, type FieldType, JOURNAL_ICONS } from "@/constant
 import { RATING_DEFAULT_MAX, RATING_DEFAULT_MIN } from "@/constants/validation";
 import { storeJournal, updateJournal as updateJournalQuery } from "@/db/queries/journals";
 import { type JournalObj } from "@/db/schemas";
+import { ratingLabelSchema } from "@/utils/entry/field-value";
 import {
   type FieldDraftObj,
   type FieldWithSortObj,
@@ -140,6 +141,9 @@ export const useJournalField = (initialData?: {
   const createJournal = async (): Promise<JournalObj> => {
     journalMetaSchema.parse(meta);
     z.array(fieldDraftSchema).min(1).parse(fields);
+    for (const f of fields) {
+      if (f.type === "rating") ratingLabelSchema.parse(JSON.parse(f.label));
+    }
 
     const now = Date.now();
 
@@ -171,6 +175,9 @@ export const useJournalField = (initialData?: {
   const updateJournal = async (journalId: string): Promise<void> => {
     journalMetaSchema.parse(meta);
     z.array(fieldDraftSchema).min(1).parse(fields);
+    for (const f of fields) {
+      if (f.type === "rating") ratingLabelSchema.parse(JSON.parse(f.label));
+    }
 
     const fieldUpdates: FieldWithSortObj[] = fields.map((field, i) => ({
       id: field.id,

@@ -83,18 +83,19 @@ export const bookmarkEntry = async (entryId: string, bookmark: boolean) => {
  * @param entryId エントリーID
  */
 export const deleteEntry = async (entryId: string) => {
-  // エントリーに紐づくメディア画像を削除
+  // エントリーに紐づくメディアパスを収集
   const mediaValues = await db
     .select({ value: entryValues.value })
     .from(entryValues)
     .innerJoin(fields, eq(entryValues.fieldId, fields.id))
     .where(and(eq(entryValues.entryId, entryId), eq(fields.type, "media")));
 
+  await db.delete(entries).where(eq(entries.id, entryId));
+
+  // DB 削除成功後にメディア画像を削除
   for (const row of mediaValues) {
     if (row.value) deleteMediaImage(row.value);
   }
-
-  await db.delete(entries).where(eq(entries.id, entryId));
 };
 
 /**
@@ -102,7 +103,7 @@ export const deleteEntry = async (entryId: string) => {
  * @param journalId ジャーナルID
  */
 export const deleteAllEntries = async (journalId?: string) => {
-  // 削除対象エントリーに紐づくメディア画像を削除
+  // 削除対象エントリーに紐づくメディアパスを収集
   const baseQuery = db
     .select({ value: entryValues.value })
     .from(entryValues)
@@ -113,14 +114,15 @@ export const deleteAllEntries = async (journalId?: string) => {
     ? await baseQuery.where(and(eq(fields.type, "media"), eq(entries.journalId, journalId)))
     : await baseQuery.where(eq(fields.type, "media"));
 
-  for (const row of mediaValues) {
-    if (row.value) deleteMediaImage(row.value);
-  }
-
   if (journalId) {
     await db.delete(entries).where(eq(entries.journalId, journalId));
   } else {
     await db.delete(entries);
+  }
+
+  // DB 削除成功後にメディア画像を削除
+  for (const row of mediaValues) {
+    if (row.value) deleteMediaImage(row.value);
   }
 };
 

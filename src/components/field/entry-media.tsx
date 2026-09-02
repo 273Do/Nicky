@@ -44,24 +44,28 @@ export function EntryMedia({ label, defaultValue, onValueChange, edit = false }:
 
     if (result.canceled || !result.assets[0]) return;
 
-    // 既存の画像があれば削除
-    if (imagePath) {
-      deleteMediaImage(imagePath);
-    }
-
+    const oldPath = imagePath;
     const relativePath = saveMediaImage(result.assets[0].uri);
 
     setImagePath(relativePath);
     onValueChange?.(relativePath);
+
+    // 新しい画像の保存成功後に古い画像を削除
+    if (oldPath) {
+      deleteMediaImage(oldPath);
+    }
   };
 
   const removeImage = () => {
-    if (imagePath) {
-      deleteMediaImage(imagePath);
-    }
+    const oldPath = imagePath;
 
     setImagePath(null);
     onValueChange?.(null);
+
+    // 値のクリア後に画像を削除
+    if (oldPath) {
+      deleteMediaImage(oldPath);
+    }
   };
 
   if (!edit) {

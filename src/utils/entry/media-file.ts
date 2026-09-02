@@ -19,7 +19,7 @@ const ensureMediaDir = (): Directory => {
  */
 export const saveMediaImage = (pickerUri: string): string => {
   const dir = ensureMediaDir();
-  const ext = pickerUri.split(".").pop() ?? "jpg";
+  const ext = /\.([a-zA-Z0-9]{1,5})(?:[?#].*)?$/.exec(pickerUri)?.[1] ?? "jpg";
   const filename = `${Crypto.randomUUID()}.${ext}`;
 
   const src = new File(pickerUri);

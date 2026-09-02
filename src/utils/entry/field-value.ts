@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import type { FieldType } from "@/constants/journal";
-import { TEXT_FIELD_MAX } from "@/constants/validation";
+import { RATING_DEFAULT_MAX, RATING_DEFAULT_MIN, TEXT_FIELD_MAX } from "@/constants/validation";
 
 export const fieldValueSchema = z.union([z.string(), z.number(), z.boolean(), z.date(), z.null()]);
 export type FieldValue = z.infer<typeof fieldValueSchema>;
@@ -16,7 +16,7 @@ const fieldValueSchemaByType: Record<FieldType, z.ZodType<FieldValue>> = {
   date: z.date(),
   time: z.date(),
   check: z.boolean(),
-  rating: z.number().min(0),
+  rating: z.number(),
   location: z.string().nullable(),
 };
 
@@ -31,11 +31,13 @@ export const locationDataSchema = z.object({
 export type LocationData = z.infer<typeof locationDataSchema>;
 
 /** レーティングのスキーマ */
-export const ratingLabelSchema = z.object({
-  name: z.string(),
-  min: z.number(),
-  max: z.number(),
-});
+export const ratingLabelSchema = z
+  .object({
+    name: z.string(),
+    min: z.number(),
+    max: z.number(),
+  })
+  .refine((d) => d.min < d.max, { message: "min must be less than max" });
 
 /** レーティング JSON 構造 */
 export type RatingLabel = z.infer<typeof ratingLabelSchema>;
@@ -55,9 +57,17 @@ export const parseLocation = (value: string | undefined): LocationData | null =>
  * フィールドタイプに応じた値のバリデーション
  * @param value フィールドの値
  * @param type フィールドタイプ
+ * @param label フィールドラベル
  */
-export const validateFieldValue = (value: FieldValue, type: FieldType): void => {
+export const validateFieldValue = (value: FieldValue, type: FieldType, label?: string): void => {
   fieldValueSchemaByType[type].parse(value);
+
+  if (type === "rating" && typeof value === "number" && label) {
+    const parsed = ratingLabelSchema.safeParse(JSON.parse(label));
+    const min = parsed.success ? parsed.data.min : RATING_DEFAULT_MIN;
+    const max = parsed.success ? parsed.data.max : RATING_DEFAULT_MAX;
+    z.number().min(min).max(max).parse(value);
+  }
 
   if (type === "location" && typeof value === "string" && value) {
     locationDataSchema.parse(JSON.parse(value));
@@ -67,16 +77,21 @@ export const validateFieldValue = (value: FieldValue, type: FieldType): void => 
 /**
  * 各エントリー入力のデフォルト値
  * @param type フィールドタイプ
+ * @param label フィールドラベル（rating の場合に min を取得するために使用）
  */
-export const getDefaultValue = (type: FieldType): FieldValue => {
+export const getDefaultValue = (type: FieldType, label?: string): FieldValue => {
   switch (type) {
     case "text":
     case "longText":
     case "link":
       return "";
     case "number":
-    case "rating":
       return 0;
+    case "rating": {
+      if (!label) return RATING_DEFAULT_MIN;
+      const parsed = ratingLabelSchema.safeParse(JSON.parse(label));
+      return parsed.success ? parsed.data.min : RATING_DEFAULT_MIN;
+    }
     case "check":
       return false;
     case "date":
