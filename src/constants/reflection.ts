@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { REFLECTION_CONTENT_MAX, REFLECTION_ITEMS_COUNT, REFLECTION_TITLE_MAX } from "./validation";
+import { REFLECTION_ITEMS_COUNT, REFLECTION_LIMITS } from "./validation";
 
 export const reflectionCategories = {
   Highlights: "Pick out memorable or positive moments from the day",
@@ -32,7 +32,8 @@ Rules:
 - Do not predict the future.
 - Do not force a positive interpretation.
 - Do not include category names or meta phrases like "from the records" in the output. Talk about the content directly.
-- Each content must be within ${REFLECTION_CONTENT_MAX} characters.
+- title must be within ${REFLECTION_LIMITS[lang].title} characters.
+- Each content must be within ${REFLECTION_LIMITS[lang].content} characters.
 - ${LANGUAGE_INSTRUCTIONS[lang]}
 - Output ONLY the specified JSON format. No other text.
 
@@ -57,22 +58,23 @@ export type ReflectionCategory = keyof typeof reflectionCategories;
 export const DEFAULT_REFLECTION_HOUR = 21;
 
 /**
- * AI Reflection の出力スキーマ
+ * AI Reflection の出力スキーマ（言語別の文字数制限）
  */
-export const reflectionSchema = z.object({
-  /** その日を象徴する語りかけの一文 */
-  title: z.string().min(1).max(REFLECTION_TITLE_MAX),
-  /** 振り返り2項目 */
-  items: z
-    .array(
-      z.object({
-        category: z
-          .string()
-          .refine((v): v is ReflectionCategory => Object.hasOwn(reflectionCategories, v)),
-        content: z.string().min(1).max(REFLECTION_CONTENT_MAX),
-      }),
-    )
-    .length(REFLECTION_ITEMS_COUNT),
-});
+export const buildReflectionSchema = (lang: "ja" | "en") => {
+  const { title, content } = REFLECTION_LIMITS[lang];
+  return z.object({
+    title: z.string().min(1).max(title),
+    items: z
+      .array(
+        z.object({
+          category: z
+            .string()
+            .refine((v): v is ReflectionCategory => Object.hasOwn(reflectionCategories, v)),
+          content: z.string().min(1).max(content),
+        }),
+      )
+      .length(REFLECTION_ITEMS_COUNT),
+  });
+};
 
-export type ReflectionResult = z.infer<typeof reflectionSchema>;
+export type ReflectionResult = z.infer<ReturnType<typeof buildReflectionSchema>>;
