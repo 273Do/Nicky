@@ -26,7 +26,7 @@ export function useAIReflectionSettings() {
 
   const get = (key: string) => rows.find((r) => r.key === key)?.value ?? null;
 
-  const aiReflectionEnabled = get(KEYS.aiReflectionEnabled) !== "false";
+  const aiReflectionEnabled = get(KEYS.aiReflectionEnabled) === "true";
 
   const setAIReflectionEnabled = async (enabled: boolean) => {
     await setSetting(KEYS.aiReflectionEnabled, String(enabled));

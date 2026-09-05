@@ -15,6 +15,15 @@ export default function JournalLayout() {
         },
         headerBackButtonDisplayMode: "minimal",
       }}
-    />
+    >
+      <Stack.Screen
+        name="onboarding"
+        options={{
+          presentation: "modal",
+          gestureEnabled: false,
+          headerShown: false,
+        }}
+      />
+    </Stack>
   );
 }

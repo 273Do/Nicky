@@ -1,4 +1,4 @@
-import { downloadModel, llama } from "@react-native-ai/llama";
+import { getModelPath, isModelDownloaded, llama } from "@react-native-ai/llama";
 import { generateText } from "ai";
 
 import { AI_MODEL } from "@/constants/ai-models";
@@ -43,7 +43,10 @@ const categoryList = Object.entries(reflectionCategories)
  * @param entries その日のエントリーの一覧
  */
 export const getReflection = async (entries: DailyEntryObj[]): Promise<ReflectionResult | null> => {
-  const modelPath = await downloadModel(AI_MODEL.gguf);
+  const downloaded = await isModelDownloaded(AI_MODEL.gguf);
+  if (!downloaded) return null;
+
+  const modelPath = getModelPath(AI_MODEL.gguf);
   const model = llama.languageModel(modelPath);
 
   try {

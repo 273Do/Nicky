@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Alert, Button, Host, Text } from "@expo/ui/swift-ui";
@@ -8,6 +8,7 @@ import { Stack, useFocusEffect, useRouter } from "expo-router";
 import { EntryListView } from "@/components/entry/entry-list-view";
 import { deleteAllEntries } from "@/db/queries/entries";
 import { getJournalsQuery, JournalWithCountObj } from "@/db/queries/journals";
+import { useSettingsQuery } from "@/db/queries/settings";
 import { consumeCreatedJournalId } from "@/utils/journal/created-journal";
 
 /**
@@ -16,6 +17,18 @@ import { consumeCreatedJournalId } from "@/utils/journal/created-journal";
 export default function JournalScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+
+  const { data: settingsRows } = useSettingsQuery();
+  const onboardingCompleted =
+    settingsRows.find((r) => r.key === "onboarding_completed")?.value === "true";
+  const onboardingNavigated = useRef(false);
+
+  useEffect(() => {
+    if (!onboardingCompleted && !onboardingNavigated.current) {
+      onboardingNavigated.current = true;
+      router.push("/(journal)/onboarding");
+    }
+  }, [onboardingCompleted, router]);
 
   const { data: journals } = useLiveQuery(getJournalsQuery);
   const journalList: JournalWithCountObj[] = journals ?? [];

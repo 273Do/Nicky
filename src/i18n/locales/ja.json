@@ -64,6 +64,7 @@
     "notification": "通知",
     "aiReflection": "AI振り返り",
     "reflectionTime": "振り返りの時刻",
+    "clearModel": "AIモデルを削除",
     "language": "言語",
     "currentLanguage": "日本語",
     "exportDialogTitle": "ジャーナルテンプレートを書き出す",
@@ -93,5 +94,18 @@
   "search": {
     "title": "検索",
     "placeholder": "検索"
+  },
+  "onboarding": {
+    "welcome": "Nickyへようこそ",
+    "welcomeDesc": "オンデバイスAIの振り返り機能を備えた、シンプルなジャーナルアプリです。",
+    "journalTitle": "ジャーナル",
+    "journalDesc": "日々の記録や活動を記録する",
+    "reflectionTitle": "AI振り返り",
+    "reflectionDesc": "オンデバイスAIによる毎日の振り返り",
+    "searchTitle": "検索",
+    "searchDesc": "すべてのジャーナルからエントリーを検索",
+    "enableReflection": "AI振り返りを有効にする",
+    "downloadingModel": "AIモデルをダウンロード中…",
+    "getStarted": "はじめる"
   }
 }

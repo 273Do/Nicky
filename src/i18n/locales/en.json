@@ -64,6 +64,7 @@
     "notification": "Notifications",
     "aiReflection": "AI Reflection",
     "reflectionTime": "Reflection Time",
+    "clearModel": "Clear AI Model",
     "language": "Language",
     "currentLanguage": "English",
     "exportDialogTitle": "Export Journal Template",
@@ -93,5 +94,18 @@
   "search": {
     "title": "Search",
     "placeholder": "Search"
+  },
+  "onboarding": {
+    "welcome": "Welcome to Nicky",
+    "welcomeDesc": "A simple journaling app with on-device AI reflections to help you understand your day.",
+    "journalTitle": "Journal",
+    "journalDesc": "Record your daily thoughts and activities",
+    "reflectionTitle": "AI Reflection",
+    "reflectionDesc": "Get daily insights powered by on-device AI",
+    "searchTitle": "Search",
+    "searchDesc": "Find any entry across all journals",
+    "enableReflection": "Enable AI Reflection",
+    "downloadingModel": "Downloading AI model…",
+    "getStarted": "Get Started"
   }
 }
