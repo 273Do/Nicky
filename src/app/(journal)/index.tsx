@@ -1,14 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Alert, Button, Host, Text } from "@expo/ui/swift-ui";
+import { eq } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
 
 import { EntryListView } from "@/components/entry/entry-list-view";
+import { db } from "@/db/client";
 import { deleteAllEntries } from "@/db/queries/entries";
 import { getJournalsQuery, JournalWithCountObj } from "@/db/queries/journals";
-import { useSettingsQuery } from "@/db/queries/settings";
+import { settings } from "@/db/schemas";
 import { consumeCreatedJournalId } from "@/utils/journal/created-journal";
 
 /**
@@ -18,17 +20,15 @@ export default function JournalScreen() {
   const { t } = useTranslation();
   const router = useRouter();
 
-  const { data: settingsRows } = useSettingsQuery();
-  const onboardingCompleted =
-    settingsRows.find((r) => r.key === "onboarding_completed")?.value === "true";
   const onboardingNavigated = useRef(false);
 
-  useEffect(() => {
-    if (!onboardingCompleted && !onboardingNavigated.current) {
+  if (!onboardingNavigated.current) {
+    const rows = db.select().from(settings).where(eq(settings.key, "onboarding_completed")).get();
+    if (rows?.value !== "true") {
       onboardingNavigated.current = true;
       router.push("/(journal)/onboarding");
     }
-  }, [onboardingCompleted, router]);
+  }
 
   const { data: journals } = useLiveQuery(getJournalsQuery);
   const journalList: JournalWithCountObj[] = journals ?? [];

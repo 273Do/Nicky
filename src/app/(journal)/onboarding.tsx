@@ -34,16 +34,10 @@ import { useAIReflectionSettings } from "@/hooks/settings/use-ai-reflection-sett
 export default function OnboardingScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { setAIReflectionEnabled } = useAIReflectionSettings();
+  const { aiReflectionEnabled, setAIReflectionEnabled } = useAIReflectionSettings();
 
-  const [aiEnabled, setAiEnabled] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [progress, setProgress] = useState(0);
-
-  const handleToggle = async (enabled: boolean) => {
-    setAiEnabled(enabled);
-    await setAIReflectionEnabled(enabled);
-  };
 
   const handleGetStarted = async () => {
     await setSetting("onboarding_completed", "true");
@@ -186,8 +180,8 @@ export default function OnboardingScreen() {
 
           <VStack modifiers={[padding({ horizontal: 32, top: 8 })]}>
             <Toggle
-              isOn={aiEnabled}
-              onIsOnChange={handleToggle}
+              isOn={aiReflectionEnabled}
+              onIsOnChange={setAIReflectionEnabled}
               label={t("onboarding.enableReflection")}
               modifiers={[tint(PlatformColor("systemIndigo"))]}
             />
