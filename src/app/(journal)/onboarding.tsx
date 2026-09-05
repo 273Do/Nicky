@@ -9,6 +9,7 @@ import {
   Image,
   ProgressView,
   ScrollView,
+  Spacer,
   Text,
   Toggle,
   VStack,
@@ -42,19 +43,17 @@ export default function OnboardingScreen() {
   const handleToggle = async (enabled: boolean) => {
     setAiEnabled(enabled);
     await setAIReflectionEnabled(enabled);
-    if (enabled) {
-      setDownloading(true);
-      try {
-        await downloadModel(AI_MODEL.gguf, (p) => setProgress(p.percentage));
-      } catch (e) {
-        console.warn("[model-download]", e);
-      }
-      setDownloading(false);
-    }
   };
 
   const handleGetStarted = async () => {
     await setSetting("onboarding_completed", "true");
+    setDownloading(true);
+    try {
+      await downloadModel(AI_MODEL.gguf, (p) => setProgress(p.percentage));
+    } catch (e) {
+      console.warn("[model-download]", e);
+    }
+    setDownloading(false);
     router.back();
   };
 
@@ -99,7 +98,7 @@ export default function OnboardingScreen() {
               />
               <VStack alignment="leading" modifiers={[padding({ leading: 12 })]}>
                 <Text modifiers={[font({ size: 17, weight: "semibold" }), padding({ bottom: 2 })]}>
-                  {t("onboarding.journalTitle")}
+                  {t("onboarding.customJournalsTitle")}
                 </Text>
                 <Text
                   modifiers={[
@@ -107,7 +106,31 @@ export default function OnboardingScreen() {
                     font({ size: 15 }),
                   ]}
                 >
-                  {t("onboarding.journalDesc")}
+                  {t("onboarding.customJournalsDesc")}
+                </Text>
+              </VStack>
+            </HStack>
+
+            <HStack alignment="top" modifiers={[padding({ bottom: 24 })]}>
+              <Image
+                systemName="pencil.line"
+                modifiers={[
+                  foregroundStyle({ type: "color", color: PlatformColor("systemTeal") }),
+                  font({ size: 28 }),
+                  frame({ width: 40, height: 40 }),
+                ]}
+              />
+              <VStack alignment="leading" modifiers={[padding({ leading: 12 })]}>
+                <Text modifiers={[font({ size: 17, weight: "semibold" }), padding({ bottom: 2 })]}>
+                  {t("onboarding.dailyEntriesTitle")}
+                </Text>
+                <Text
+                  modifiers={[
+                    foregroundStyle({ type: "color", color: PlatformColor("secondaryLabel") }),
+                    font({ size: 15 }),
+                  ]}
+                >
+                  {t("onboarding.dailyEntriesDesc")}
                 </Text>
               </VStack>
             </HStack>
@@ -138,16 +161,16 @@ export default function OnboardingScreen() {
 
             <HStack alignment="top" modifiers={[padding({ bottom: 24 })]}>
               <Image
-                systemName="magnifyingglass"
+                systemName="square.and.arrow.up.on.square"
                 modifiers={[
-                  foregroundStyle({ type: "color", color: PlatformColor("systemTeal") }),
+                  foregroundStyle({ type: "color", color: PlatformColor("systemGreen") }),
                   font({ size: 28 }),
                   frame({ width: 40, height: 40 }),
                 ]}
               />
               <VStack alignment="leading" modifiers={[padding({ leading: 12 })]}>
                 <Text modifiers={[font({ size: 17, weight: "semibold" }), padding({ bottom: 2 })]}>
-                  {t("onboarding.searchTitle")}
+                  {t("onboarding.importExportTitle")}
                 </Text>
                 <Text
                   modifiers={[
@@ -155,7 +178,7 @@ export default function OnboardingScreen() {
                     font({ size: 15 }),
                   ]}
                 >
-                  {t("onboarding.searchDesc")}
+                  {t("onboarding.importExportDesc")}
                 </Text>
               </VStack>
             </HStack>
@@ -170,7 +193,11 @@ export default function OnboardingScreen() {
             />
             {downloading ? (
               <VStack modifiers={[padding({ top: 8 })]}>
-                <ProgressView value={progress / 100} />
+                <Spacer />
+                <ProgressView
+                  value={progress / 100}
+                  modifiers={[tint(PlatformColor("systemIndigo"))]}
+                />
                 <Text
                   modifiers={[
                     foregroundStyle({ type: "color", color: PlatformColor("secondaryLabel") }),
