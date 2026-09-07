@@ -1,5 +1,5 @@
 /**
- * AI Reflection に使用するモデル（Gemma 3 4B 固定）
+ * AI Reflection に使用するモデル
  */
 export const AI_MODEL = {
   id: "gemma-3-4b",

@@ -64,6 +64,7 @@
     "notification": "通知",
     "aiReflection": "AI振り返り",
     "reflectionTime": "振り返りの時刻",
+    "clearModel": "AIモデルを削除",
     "language": "言語",
     "currentLanguage": "日本語",
     "exportDialogTitle": "ジャーナルテンプレートを書き出す",
@@ -93,5 +94,20 @@
   "search": {
     "title": "検索",
     "placeholder": "検索"
+  },
+  "onboarding": {
+    "welcome": "Nickyへようこそ",
+    "welcomeDesc": "あなたの毎日を、あなたらしく記録できます。",
+    "customJournalsTitle": "自分だけのジャーナル",
+    "customJournalsDesc": "テキスト、数値、日付、位置情報、写真など、記録したい内容に合わせてジャーナルを自由にカスタマイズできます。",
+    "dailyEntriesTitle": "毎日を記録する",
+    "dailyEntriesDesc": "エントリーを書いて、大切なものをブックマーク。検索でいつでも見つけられます。",
+    "reflectionTitle": "AIによる振り返り",
+    "reflectionDesc": "デバイス上のAIが、あなたのエントリーから毎日の振り返りを好きな時間に届けます。",
+    "importExportTitle": "どこへでも持ち出せる",
+    "importExportDesc": "テンプレートを読み込んですぐに始められます。ジャーナルやエントリーはいつでも書き出せます。",
+    "enableReflection": "AI振り返りを有効にする",
+    "downloadingModel": "AIモデルをダウンロード中…",
+    "getStarted": "はじめる"
   }
 }
