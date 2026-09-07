@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking, PlatformColor } from "react-native";
 
@@ -6,8 +7,12 @@ import { foregroundStyle, tint } from "@expo/ui/swift-ui/modifiers";
 import { downloadModel, removeModel } from "@react-native-ai/llama";
 
 import { AI_MODEL } from "@/constants/ai-models";
+import { getEntriesByDateQuery } from "@/db/queries/entries";
+import { storeReflection } from "@/db/queries/reflections";
 import { useAIReflectionSettings } from "@/hooks/settings/use-ai-reflection-settings";
 import { useModelDownloaded } from "@/hooks/settings/use-model-downloaded";
+import { startOfDay } from "@/utils/date";
+import { getReflection } from "@/utils/days/reflection/get-reflection";
 
 /**
  * アプリの機能設定
@@ -17,6 +22,28 @@ export function Application() {
   const { aiReflectionEnabled, reflectionTime, setAIReflectionEnabled, setReflectionTime } =
     useAIReflectionSettings();
   const { downloaded, refresh } = useModelDownloaded();
+  const [generating, setGenerating] = useState(false);
+  const generatingRef = useRef(false);
+
+  const handleGenerateReflection = async () => {
+    if (generatingRef.current) return;
+    generatingRef.current = true;
+    setGenerating(true);
+    try {
+      const today = startOfDay();
+      const entries = await getEntriesByDateQuery(today);
+      console.log("[manual-reflection] entries:", entries.length);
+      if (entries.length === 0) return;
+      const result = await getReflection(entries);
+      console.log("[manual-reflection] result:", result);
+      if (result) await storeReflection(today, result);
+    } catch (e) {
+      console.warn("[manual-reflection]", e);
+    } finally {
+      generatingRef.current = false;
+      setGenerating(false);
+    }
+  };
 
   return (
     <Section>
@@ -56,7 +83,15 @@ export function Application() {
         selection={reflectionTime}
         onDateChange={setReflectionTime}
       />
-      {downloaded ? (
+      {__DEV__ ? (
+        <Button
+          onPress={handleGenerateReflection}
+          modifiers={[foregroundStyle({ type: "color", color: PlatformColor("systemIndigo") })]}
+        >
+          <Text>{generating ? "Generating…" : "Generate Reflection Now"}</Text>
+        </Button>
+      ) : null}
+      {__DEV__ && downloaded ? (
         <Button
           role="destructive"
           onPress={() => {

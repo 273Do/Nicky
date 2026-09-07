@@ -6,7 +6,7 @@ import {
   type ReflectionResult,
   buildSystemPrompt,
   reflectionCategories,
-  reflectionSchema,
+  buildReflectionSchema,
 } from "@/constants/reflection";
 import { DailyEntryObj } from "@/db/queries/entries";
 import i18n from "@/i18n";
@@ -60,16 +60,31 @@ export const getReflection = async (entries: DailyEntryObj[]): Promise<Reflectio
       system: buildSystemPrompt(categoryList, i18n.language === "ja" ? "ja" : "en"),
       prompt,
     });
-    const json = text.match(/\{[\s\S]*\}/)?.[0];
+    if (__DEV__) console.log("[reflection] raw:", text);
+    const stripped = text.replace(/```(?:json)?\s*/g, "").replace(/```\s*/g, "");
+    const json = stripped.match(/\{[\s\S]*\}/)?.[0];
 
     if (!json) return null;
-    const result = reflectionSchema.safeParse(JSON.parse(json));
+
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(json);
+    } catch (e) {
+      if (__DEV__) console.warn("[reflection] JSON parse error:", e);
+      return null;
+    }
+
+    const lang = i18n.language === "ja" ? "ja" : "en";
+    const result = buildReflectionSchema(lang).safeParse(parsed);
+    if (__DEV__ && !result.success) console.warn("[reflection] validation:", result.error.issues);
 
     return result.success ? result.data : null;
   } catch (error) {
-    console.warn("[reflection]", error);
+    if (__DEV__) console.warn("[reflection] error:", error);
     return null;
   } finally {
-    await model.unload();
+    await model.unload().catch((e: unknown) => {
+      if (__DEV__) console.warn("[reflection] unload error:", e);
+    });
   }
 };

@@ -35,7 +35,7 @@ Rules:
 - title must be within ${REFLECTION_LIMITS[lang].title} characters.
 - Each content must be within ${REFLECTION_LIMITS[lang].content} characters.
 - ${LANGUAGE_INSTRUCTIONS[lang]}
-- Output ONLY the specified JSON format. No other text.
+- Output ONLY raw JSON. No markdown, no code fences, no explanation.
 
 Categories:
 ${categoryList}
