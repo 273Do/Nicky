@@ -33,7 +33,8 @@
   },
   "entry": {
     "newEntry": "新規エントリー",
-    "export": "書き出す",
+    "export": "エントリーを書き出す",
+    "exportAllEntry": "すべてのエントリーを書き出す",
     "deleteEntry": "エントリーを削除",
     "bookmark": "ブックマークに追加",
     "unbookmark": "ブックマークを解除",

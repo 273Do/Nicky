@@ -108,7 +108,7 @@ export default function JournalScreen() {
                             type: "sfSymbol" as const,
                             name: "square.and.arrow.up.on.square" as const,
                           },
-                          label: t("entry.export"),
+                          label: t("entry.exportAllEntry"),
                           state: "off" as const,
                           onPress: () => {
                             console.log("Export", activeJournal?.name);

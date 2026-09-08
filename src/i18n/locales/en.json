@@ -33,7 +33,8 @@
   },
   "entry": {
     "newEntry": "New Entry",
-    "export": "Export",
+    "export": "Export Entry",
+    "exportAllEntry": "Export All Entries",
     "deleteEntry": "Delete Entry",
     "bookmark": "Add Bookmark",
     "unbookmark": "Remove Bookmark",
