@@ -33,6 +33,7 @@ export const exportEntry = async (entry: EntryDetailObj, journalName: string): P
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(file.uri, {
         mimeType: "text/plain",
+        dialogTitle: i18n.t("settings.exportEntryDialogTitle"),
         UTI: "public.plain-text",
       });
     }

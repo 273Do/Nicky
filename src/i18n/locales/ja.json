@@ -68,7 +68,8 @@
     "clearModel": "AIモデルを削除",
     "language": "言語",
     "currentLanguage": "日本語",
-    "exportDialogTitle": "ジャーナルテンプレートを書き出す",
+    "exportJournalDialogTitle": "ジャーナルテンプレートを書き出す",
+    "exportEntryDialogTitle": "エントリーを書き出す",
     "exportAllJournals": "すべてのジャーナルを書き出す",
     "exportAllEntries": "すべてのエントリーを書き出す",
     "deleteAllData": "すべてのデータを削除"

@@ -68,7 +68,8 @@
     "clearModel": "Clear AI Model",
     "language": "Language",
     "currentLanguage": "English",
-    "exportDialogTitle": "Export Journal Template",
+    "exportJournalDialogTitle": "Export Journal Template",
+    "exportEntryDialogTitle": "Export Entry",
     "exportAllJournals": "Export All Journals",
     "exportAllEntries": "Export All Entries",
     "deleteAllData": "Delete All Data"
