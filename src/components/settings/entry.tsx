@@ -1,9 +1,10 @@
 import { useTranslation } from "react-i18next";
+import { PlatformColor } from "react-native";
 
 import { Button, Section, Text } from "@expo/ui/swift-ui";
 import { foregroundStyle } from "@expo/ui/swift-ui/modifiers";
 
-const primaryStyle = foregroundStyle({ type: "hierarchical", style: "primary" });
+import { exportAllJournals } from "@/utils/journal/export-journal";
 
 /**
  * エントリーデータの設定セクション
@@ -13,13 +14,18 @@ export function EntrySettings() {
 
   return (
     <Section>
-      <Button modifiers={[primaryStyle]}>
+      <Button
+        onPress={async () => await exportAllJournals()}
+        modifiers={[foregroundStyle({ type: "color", color: PlatformColor("systemIndigo") })]}
+      >
         <Text>{t("settings.exportAllJournals")}</Text>
       </Button>
-      <Button modifiers={[primaryStyle]}>
+      <Button
+        modifiers={[foregroundStyle({ type: "color", color: PlatformColor("systemIndigo") })]}
+      >
         <Text>{t("settings.exportAllEntries")}</Text>
       </Button>
-      <Button role="destructive" modifiers={[primaryStyle]}>
+      <Button role="destructive">
         <Text>{t("settings.deleteAllData")}</Text>
       </Button>
     </Section>
