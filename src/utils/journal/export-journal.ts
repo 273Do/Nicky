@@ -88,12 +88,12 @@ export const exportAllJournals = async (): Promise<void> => {
       zip.file(`${journal.name} template.json`, JSON.stringify(signedExport, null, 2));
     }
 
-    const base64 = await zip.generateAsync({ type: "base64" });
+    const uint8 = await zip.generateAsync({ type: "uint8array" });
 
     const file = new File(Paths.document, "journals.zip");
     if (file.exists) file.delete();
     file.create();
-    file.write(base64, { encoding: "base64" });
+    file.write(uint8);
 
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(file.uri, {
