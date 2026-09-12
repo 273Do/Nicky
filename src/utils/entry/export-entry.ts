@@ -48,6 +48,8 @@ export const exportEntry = async (entry: EntryDetailObj, journalName: string): P
         UTI: "public.plain-text",
       });
     }
+
+    file.delete();
   } catch (error) {
     Alert.alert(i18n.t("error.exportFailed"), i18n.t("error.exportFailedMessage"));
     console.error("Export Entry Failed:", error);
@@ -99,6 +101,8 @@ const exportEntriesAsZip = async (
         UTI: "com.pkware.zip-archive",
       });
     }
+
+    file.delete();
   } catch (error) {
     Alert.alert(i18n.t("error.exportFailed"), i18n.t("error.exportFailedMessage"));
     console.error("Export Entries Failed:", error);

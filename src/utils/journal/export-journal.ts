@@ -66,6 +66,8 @@ export const exportJournal = async (journal: JournalDetail): Promise<void> => {
         UTI: "public.json",
       });
     }
+
+    file.delete();
   } catch (error) {
     Alert.alert(i18n.t("error.exportFailed"), i18n.t("error.exportFailedMessage"));
     console.error("Export Failed:", error);
@@ -102,6 +104,8 @@ export const exportAllJournals = async (): Promise<void> => {
         UTI: "com.pkware.zip-archive",
       });
     }
+
+    file.delete();
   } catch (error) {
     Alert.alert(i18n.t("error.exportFailed"), i18n.t("error.exportFailedMessage"));
     console.error("Export All Journals Failed:", error);
