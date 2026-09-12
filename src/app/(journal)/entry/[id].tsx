@@ -10,6 +10,7 @@ import { EntryDetailView } from "@/components/entry/entry-detail";
 import { EntryEditView } from "@/components/entry/entry-edit-view";
 import { bookmarkEntry, deleteEntry, getEntryDetailQuery } from "@/db/queries/entries";
 import { useValidatedParams } from "@/hooks/use-validated-params";
+import { exportEntry } from "@/utils/entry/export-entry";
 
 /**
  * エントリー詳細
@@ -72,7 +73,9 @@ export default function EntryDetailScreen() {
                           name: "square.and.arrow.up",
                         },
                         label: t("entry.export"),
-                        onPress: () => console.log("Export Entry"),
+                        onPress: async () => {
+                          if (entry) await exportEntry(entry, journalName);
+                        },
                       },
                       {
                         type: "action",

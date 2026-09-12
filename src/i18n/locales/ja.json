@@ -33,7 +33,8 @@
   },
   "entry": {
     "newEntry": "新規エントリー",
-    "export": "書き出す",
+    "export": "エントリーを書き出す",
+    "exportAllEntry": "すべてのエントリーを書き出す",
     "deleteEntry": "エントリーを削除",
     "bookmark": "ブックマークに追加",
     "unbookmark": "ブックマークを解除",
@@ -67,10 +68,13 @@
     "clearModel": "AIモデルを削除",
     "language": "言語",
     "currentLanguage": "日本語",
-    "exportDialogTitle": "ジャーナルテンプレートを書き出す",
+    "exportJournalDialogTitle": "ジャーナルテンプレートを書き出す",
+    "exportEntryDialogTitle": "エントリーを書き出す",
     "exportAllJournals": "すべてのジャーナルを書き出す",
     "exportAllEntries": "すべてのエントリーを書き出す",
-    "deleteAllData": "すべてのデータを削除"
+    "deleteAllData": "すべてのデータを削除",
+    "deleteAllDataTitle": "すべてのデータを削除しますか？",
+    "deleteAllDataConfirm": "この操作は取り消せません。すべてのジャーナルとエントリーが削除されます。"
   },
   "support": {
     "support": "サポート",

@@ -47,7 +47,7 @@ src/app/
   days/
     _layout.tsx                # Stack — scoped to days tab
     index.tsx                  # Daily reflection list
-    settings.tsx               # AI reflection settings (model, time, enabled)
+    settings.tsx               # App settings (AI reflection, export, data management)
   search/
     _layout.tsx                # Stack — scoped to search tab
     index.tsx                  # Journal entry search
@@ -202,6 +202,29 @@ On-device LLM generates daily reflections from journal entries:
 - `aiReflectionModelId` — selected GGUF model
 - `aiReflectionTime` — time of day to auto-generate (via `use-auto-reflection.ts`)
 
+### Export / Import Pipeline
+
+**Journal template export** (`src/utils/journal/export-journal.ts`):
+
+- `exportJournal` — single journal: generates new IDs, signs with HMAC (`generateSignature`), writes JSON, shares via `expo-sharing`
+- `exportAllJournals` — all journals: same signing per journal, bundled into a zip via `jszip`
+- Common helper: `buildSignedJournal` generates signed export data for one journal
+
+**Entry export** (`src/utils/entry/export-entry.ts`):
+
+- `exportEntry` — single entry: plain text (field labels + values)
+- `exportJournalEntries` — all entries in one journal: zip with text files
+- `exportAllEntries` — all entries across all journals: zip with journal-name folders
+- Common helpers: `buildEntryText` generates text for one entry, `exportEntriesAsZip` handles zip creation/sharing
+
+**Journal template import** (`src/utils/journal/import-journal.ts`): validates JSON structure with Zod, verifies HMAC signature, returns `JournalDetail`.
+
+**Key rules:**
+
+- All exports write to `Paths.document` as a temporary staging area, then call `Sharing.shareAsync`, then **delete the temp file**. Forgetting the cleanup leaves files in the app's Documents directory.
+- Zip files must be written as `Uint8Array` (`zip.generateAsync({ type: "uint8array" })`) — base64 encoding via `file.write(base64, { encoding: "base64" })` causes `NSCocoaErrorDomain Code=3328` on iOS.
+- File names for entries use `toISOString().slice(0, 10)` for stable `YYYY-MM-DD` format (not `toLocaleDateString()` which is locale-dependent).
+
 ### Keyboard Dismiss Rule
 
 Always call `Keyboard.dismiss()` **before** any `async` save operation that triggers navigation. Skipping this causes a `RemoteTextInput` session crash on iOS when the keyboard is mid-input as the screen unmounts.
@@ -224,6 +247,7 @@ Always call `Keyboard.dismiss()` **before** any `async` save operation that trig
 | `@ronradtke/react-native-markdown-display` | Full Markdown rendering (headers, lists, code blocks) for longText view mode                                                                                                                            |
 | `expo-maps`                                | Apple Maps via `AppleMaps.View` — used for location field display                                                                                                                                       |
 | `expo-image-picker`                        | Media field — pick images/videos from camera roll                                                                                                                                                       |
+| `jszip`                                    | Zip file generation for bulk export (`Uint8Array` output)                                                                                                                                               |
 
 ### SwiftUI Component Rules
 
