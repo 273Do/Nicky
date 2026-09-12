@@ -4,7 +4,15 @@ import { db } from "@/db/client";
 import { addDays, startOfDay } from "@/utils/date";
 import { deleteMediaImage } from "@/utils/entry/media-file";
 
-import { entries, EntryObj, EntryValueObj, entryValues, fields } from "../schemas";
+import {
+  entries,
+  EntryObj,
+  EntryValueObj,
+  entryValues,
+  fields,
+  journals,
+  reflections,
+} from "../schemas";
 
 /**
  * ジャーナルに紐付いたエントリー一覧をフィールドとともに取得するクエリ
@@ -166,3 +174,25 @@ export type EntryDetailObj = Awaited<ReturnType<typeof getEntriesQuery>>[number]
 
 /** 日付ベースのエントリー詳細の型（journal を含む） */
 export type DailyEntryObj = Awaited<ReturnType<typeof getEntriesByDateQuery>>[number];
+
+/**
+ * すべてのジャーナル・エントリー・振り返りを削除する
+ */
+export const deleteAllData = async () => {
+  // メディアパスを収集
+  const mediaValues = await db
+    .select({ value: entryValues.value })
+    .from(entryValues)
+    .innerJoin(fields, eq(entryValues.fieldId, fields.id))
+    .where(eq(fields.type, "media"));
+
+  await db.transaction(async (tx) => {
+    await tx.delete(reflections);
+    await tx.delete(entries);
+    await tx.delete(journals);
+  });
+
+  for (const row of mediaValues) {
+    if (row.value) deleteMediaImage(row.value);
+  }
+};

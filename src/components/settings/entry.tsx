@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { PlatformColor } from "react-native";
 
@@ -7,10 +8,14 @@ import { foregroundStyle } from "@expo/ui/swift-ui/modifiers";
 import { exportAllEntries } from "@/utils/entry/export-entry";
 import { exportAllJournals } from "@/utils/journal/export-journal";
 
+type Props = {
+  setShowDeleteAlert: Dispatch<SetStateAction<boolean>>;
+};
+
 /**
  * エントリーデータの設定セクション
  */
-export function EntrySettings() {
+export function EntrySettings({ setShowDeleteAlert }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -27,7 +32,7 @@ export function EntrySettings() {
       >
         <Text>{t("settings.exportAllEntries")}</Text>
       </Button>
-      <Button role="destructive">
+      <Button role="destructive" onPress={() => setShowDeleteAlert(true)}>
         <Text>{t("settings.deleteAllData")}</Text>
       </Button>
     </Section>

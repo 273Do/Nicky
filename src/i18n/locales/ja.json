@@ -72,7 +72,9 @@
     "exportEntryDialogTitle": "エントリーを書き出す",
     "exportAllJournals": "すべてのジャーナルを書き出す",
     "exportAllEntries": "すべてのエントリーを書き出す",
-    "deleteAllData": "すべてのデータを削除"
+    "deleteAllData": "すべてのデータを削除",
+    "deleteAllDataTitle": "すべてのデータを削除しますか？",
+    "deleteAllDataConfirm": "この操作は取り消せません。すべてのジャーナルとエントリーが削除されます。"
   },
   "support": {
     "support": "サポート",

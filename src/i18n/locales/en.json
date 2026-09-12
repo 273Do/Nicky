@@ -72,7 +72,9 @@
     "exportEntryDialogTitle": "Export Entry",
     "exportAllJournals": "Export All Journals",
     "exportAllEntries": "Export All Entries",
-    "deleteAllData": "Delete All Data"
+    "deleteAllData": "Delete All Data",
+    "deleteAllDataTitle": "Delete All Data?",
+    "deleteAllDataConfirm": "This action cannot be undone. All journals and entries will be deleted."
   },
   "support": {
     "support": "Support",
