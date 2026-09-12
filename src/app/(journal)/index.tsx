@@ -11,6 +11,7 @@ import { db } from "@/db/client";
 import { deleteAllEntries } from "@/db/queries/entries";
 import { getJournalsQuery, JournalWithCountObj } from "@/db/queries/journals";
 import { settings } from "@/db/schemas";
+import { exportJournalEntries } from "@/utils/entry/export-entry";
 import { consumeCreatedJournalId } from "@/utils/journal/created-journal";
 
 /**
@@ -110,8 +111,8 @@ export default function JournalScreen() {
                           },
                           label: t("entry.exportAllEntry"),
                           state: "off" as const,
-                          onPress: () => {
-                            console.log("Export", activeJournal?.name);
+                          onPress: async () => {
+                            await exportJournalEntries(activeJournal.id, activeJournal.name);
                           },
                         },
                         {
