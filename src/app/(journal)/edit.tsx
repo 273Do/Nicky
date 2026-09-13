@@ -27,9 +27,9 @@ function JournalEditForm({ journal }: FormProps) {
   const router = useRouter();
   const [showDeleteAllAlert, setShowDeleteAllAlert] = useState(false);
 
-  const { name, icon, color } = journal;
+  const { name, icon, color, oneEntry, notificationTime } = journal;
 
-  const initialMeta = { name, icon, color };
+  const initialMeta = { name, icon, color, oneEntry, notificationTime };
 
   const initialFields: FieldDraftObj[] = [...journal.fields]
     .sort((a: FieldObj, b: FieldObj) => a.sortOrder - b.sortOrder)

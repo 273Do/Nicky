@@ -51,9 +51,9 @@ export default function JournalCreateScreen() {
 
     if (!journal) return;
 
-    const { name, color, icon, fields } = journal;
+    const { name, color, icon, oneEntry, notificationTime, fields } = journal;
 
-    setMeta({ name, color, icon });
+    setMeta({ name, color, icon, oneEntry, notificationTime });
     setFields(fields.map(({ type, label }) => ({ id: Crypto.randomUUID(), type, label })));
     setImportKey((prev) => prev + 1);
   };

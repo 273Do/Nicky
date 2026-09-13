@@ -112,13 +112,7 @@ export function JournalCreateView({
     icon: false,
   });
 
-  const [oneEntryPerDay, setOneEntryPerDay] = useState(false);
-  const [notificationEnabled, setNotificationEnabled] = useState(false);
-  const [notificationTime, setNotificationTime] = useState(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d;
-  });
+  const notificationEnabled = meta.notificationTime !== null;
 
   return (
     <View style={{ flex: 1 }}>
@@ -163,14 +157,22 @@ export function JournalCreateView({
               />
             </HStack>
             <Toggle
-              isOn={oneEntryPerDay}
-              onIsOnChange={setOneEntryPerDay}
+              isOn={meta.oneEntry}
+              onIsOnChange={(v) => setMeta((prev) => ({ ...prev, oneEntry: v }))}
               label={t("journal.oneEntryPerDay")}
               modifiers={[tint(PlatformColor("systemIndigo"))]}
             />
             <Toggle
               isOn={notificationEnabled}
-              onIsOnChange={setNotificationEnabled}
+              onIsOnChange={(enabled) => {
+                if (enabled) {
+                  const d = new Date();
+                  d.setHours(0, 0, 0, 0);
+                  setMeta((prev) => ({ ...prev, notificationTime: d.getTime() }));
+                } else {
+                  setMeta((prev) => ({ ...prev, notificationTime: null }));
+                }
+              }}
               label={t("journal.notification")}
               modifiers={[tint(PlatformColor("systemIndigo"))]}
             />
@@ -178,8 +180,10 @@ export function JournalCreateView({
               <DatePicker
                 title={t("journal.notificationTime")}
                 displayedComponents={["hourAndMinute"]}
-                selection={notificationTime}
-                onDateChange={setNotificationTime}
+                selection={new Date(meta.notificationTime!)}
+                onDateChange={(v) =>
+                  setMeta((prev) => ({ ...prev, notificationTime: v.getTime() }))
+                }
               />
             )}
           </Section>
