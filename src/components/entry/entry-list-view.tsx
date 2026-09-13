@@ -11,18 +11,17 @@ import { JournalChipList } from "@/components/journal/journal-chip";
 import { deleteEntry } from "@/db/queries/entries";
 import { type JournalWithCountObj } from "@/db/queries/journals";
 import { useEntryList } from "@/hooks/entry/use-entry-list";
+import { startOfDay } from "@/utils/date";
 
 import { EntryRow } from "./entry-row";
 
 type Props = {
   /** ジャーナル一覧（チップリスト表示時に必要） */
   journals?: JournalWithCountObj[];
-  /** 選択中のジャーナル id */
-  activeJournalId: string;
+  /** 選択中のジャーナル */
+  activeJournal: JournalWithCountObj;
   /** ジャーナル切り替え（チップリスト表示時に必要） */
   onSelectJournal?: (id: string) => void;
-  /** ジャーナル名 */
-  journalName: string;
   /** ブックマークのみ表示 */
   bookmarkOnly?: boolean;
   /** チップリストの再マウント用キー（作成後にスクロール位置をリセット） */
@@ -34,13 +33,14 @@ type Props = {
  */
 export function EntryListView({
   journals,
-  activeJournalId,
+  activeJournal,
   onSelectJournal,
-  journalName,
   bookmarkOnly = false,
   chipScrollKey = 0,
 }: Props) {
   const router = useRouter();
+
+  const { id: activeJournalId, name: activeJournalName, oneEntry } = activeJournal;
 
   const { entries } = useEntryList({
     journalId: activeJournalId,
@@ -48,6 +48,10 @@ export function EntryListView({
   });
 
   const [fade, setFade] = useState(1);
+
+  const todayStart = startOfDay();
+  const hasTodayEntry = entries.some((e) => e.createdAt >= todayStart);
+  const disabled = oneEntry && hasTodayEntry;
 
   useEffect(() => {
     setFade(0.25);
@@ -80,30 +84,32 @@ export function EntryListView({
               modifiers={[opacity(fade), animation(Animation.easeInOut({ duration: 0.1 }), fade)]}
             >
               {entries.map((entry) => (
-                <EntryRow key={entry.id} journalName={journalName} entry={entry} />
+                <EntryRow key={entry.id} journalName={activeJournalName} entry={entry} />
               ))}
             </List.ForEach>
           </Section>
         </List>
       </Host>
 
-      <Pressable
-        onPress={() =>
-          router.push(
-            `/(journal)/entry/create?journalId=${activeJournalId}&journalName=${journalName}`,
-          )
-        }
-        style={styles.fab}
-      >
-        <GlassView
-          glassEffectStyle="regular"
-          tintColor={PlatformColor("systemGray3").toString()}
-          isInteractive
-          style={styles.glassButton}
+      {!disabled && (
+        <Pressable
+          onPress={() =>
+            router.push(
+              `/(journal)/entry/create?journalId=${activeJournalId}&journalName=${activeJournalName}`,
+            )
+          }
+          style={styles.fab}
         >
-          <SymbolView name="plus" tintColor={PlatformColor("label")} />
-        </GlassView>
-      </Pressable>
+          <GlassView
+            glassEffectStyle="regular"
+            tintColor={PlatformColor("systemGray3").toString()}
+            isInteractive
+            style={styles.glassButton}
+          >
+            <SymbolView name="plus" tintColor={PlatformColor("label")} />
+          </GlassView>
+        </Pressable>
+      )}
     </View>
   );
 }
@@ -113,6 +119,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 102,
     right: 22,
+  },
+  fabDisabled: {
+    opacity: 0.3,
   },
   glassButton: {
     width: 62,
