@@ -18,6 +18,10 @@ export const journals = sqliteTable("journals", {
   icon: text().notNull().$type<SFSymbol>(),
   /** HEXカラーコード */
   color: text().notNull(),
+  /** 1日1エントリー設定 */
+  oneEntry: integer({ mode: "boolean" }).notNull().default(false),
+  /** 通知時刻 */
+  notificationTime: integer(),
   createdAt: integer()
     .notNull()
     .$defaultFn(() => Date.now()),
