@@ -4,6 +4,7 @@ import { PlatformColor, View } from "react-native";
 
 import {
   Button,
+  DatePicker,
   Host,
   HStack,
   Image,
@@ -14,6 +15,7 @@ import {
   Text,
   TextField,
   type TextFieldRef,
+  Toggle,
   ZStack,
 } from "@expo/ui/swift-ui";
 import {
@@ -25,6 +27,7 @@ import {
   listRowInsets,
   onTapGesture,
   padding,
+  tint,
 } from "@expo/ui/swift-ui/modifiers";
 
 import { FIELD_ICONS, FIELD_LABEL_KEYS, FieldType } from "@/constants/journal";
@@ -109,6 +112,14 @@ export function JournalCreateView({
     icon: false,
   });
 
+  const [oneEntryPerDay, setOneEntryPerDay] = useState(false);
+  const [notificationEnabled, setNotificationEnabled] = useState(false);
+  const [notificationTime, setNotificationTime] = useState(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  });
+
   return (
     <View style={{ flex: 1 }}>
       <Host
@@ -120,6 +131,7 @@ export function JournalCreateView({
             frame({ maxWidth: 9999, maxHeight: 9999 }),
             environment("editMode", "inactive"),
             animation(Animation.easeInOut({ duration: 0.25 }), fields.length),
+            animation(Animation.easeInOut({ duration: 0.25 }), notificationEnabled),
           ]}
         >
           {/* ジャーナル名・アイコン・カラー */}
@@ -150,6 +162,26 @@ export function JournalCreateView({
                 modifiers={[frame({ maxWidth: 9999 })]}
               />
             </HStack>
+            <Toggle
+              isOn={oneEntryPerDay}
+              onIsOnChange={setOneEntryPerDay}
+              label={t("journal.oneEntryPerDay")}
+              modifiers={[tint(PlatformColor("systemIndigo"))]}
+            />
+            <Toggle
+              isOn={notificationEnabled}
+              onIsOnChange={setNotificationEnabled}
+              label={t("journal.notification")}
+              modifiers={[tint(PlatformColor("systemIndigo"))]}
+            />
+            {notificationEnabled && (
+              <DatePicker
+                title={t("journal.notificationTime")}
+                displayedComponents={["hourAndMinute"]}
+                selection={notificationTime}
+                onDateChange={setNotificationTime}
+              />
+            )}
           </Section>
 
           {/* フィールド */}

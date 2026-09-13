@@ -29,7 +29,10 @@
     "fields": "フィールド",
     "fieldPlaceholder": "{{type}}の名前",
     "addField": "フィールドを追加",
-    "selectColor": "カラー"
+    "selectColor": "カラー",
+    "oneEntryPerDay": "一日一つのエントリー",
+    "notification": "通知",
+    "notificationTime": "通知時刻"
   },
   "entry": {
     "newEntry": "新規エントリー",
