@@ -13,6 +13,8 @@ export const journalMetaSchema = z.object({
   name: z.string().trim().min(1).max(JOURNAL_NAME_MAX),
   color: hexColorSchema,
   icon: journalIconSchema,
+  oneEntry: z.boolean().default(false),
+  notificationTime: z.number().nullable().default(null),
 });
 export type JournalMetaObj = z.infer<typeof journalMetaSchema>;
 

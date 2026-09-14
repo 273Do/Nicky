@@ -11,6 +11,7 @@ import { getEntriesByDateQuery } from "@/db/queries/entries";
 import { storeReflection } from "@/db/queries/reflections";
 import { useAIReflectionSettings } from "@/hooks/settings/use-ai-reflection-settings";
 import { useModelDownloaded } from "@/hooks/settings/use-model-downloaded";
+import { useNotificationSettings } from "@/hooks/settings/use-notification-settings";
 import { startOfDay } from "@/utils/date";
 import { getReflection } from "@/utils/days/reflection/get-reflection";
 
@@ -19,6 +20,7 @@ import { getReflection } from "@/utils/days/reflection/get-reflection";
  */
 export function Application() {
   const { t } = useTranslation();
+  const { notificationEnabled, setNotificationEnabled } = useNotificationSettings();
   const { aiReflectionEnabled, reflectionTime, setAIReflectionEnabled, setReflectionTime } =
     useAIReflectionSettings();
   const { downloaded, refresh } = useModelDownloaded();
@@ -62,7 +64,8 @@ export function Application() {
         </HStack>
       </Button>
       <Toggle
-        isOn={true}
+        isOn={notificationEnabled}
+        onIsOnChange={setNotificationEnabled}
         label={t("settings.notification")}
         modifiers={[tint(PlatformColor("systemIndigo"))]}
       />

@@ -29,7 +29,10 @@
     "fields": "Fields",
     "fieldPlaceholder": "{{type}} Name",
     "addField": "Add Field",
-    "selectColor": "Colour"
+    "selectColor": "Colour",
+    "oneEntryPerDay": "One Entry Per Day",
+    "notification": "Notification",
+    "notificationTime": "Notification Time"
   },
   "entry": {
     "newEntry": "New Entry",

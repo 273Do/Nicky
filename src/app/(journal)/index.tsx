@@ -137,9 +137,8 @@ export default function JournalScreen() {
       {activeJournal ? (
         <EntryListView
           journals={journalList}
-          activeJournalId={activeJournal.id}
+          activeJournal={activeJournal}
           onSelectJournal={setSelectedJournalId}
-          journalName={activeJournal.name}
           bookmarkOnly={bookmarkOnly}
           chipScrollKey={chipScrollKey}
         />

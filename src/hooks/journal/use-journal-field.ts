@@ -28,6 +28,8 @@ const defaultMeta: JournalMetaObj = {
   name: "",
   color: DEFAULT_JOURNAL_COLOR,
   icon: JOURNAL_ICONS[0],
+  oneEntry: false,
+  notificationTime: null,
 };
 
 /**
@@ -127,7 +129,7 @@ export const useJournalField = (initialData?: {
    * formDisabled フォームが送信可能かどうかのフラグ
    */
   const formDisabled =
-    !journalMetaSchema.safeParse(meta).success ||
+    !journalMetaSchema.pick({ name: true, color: true, icon: true }).safeParse(meta).success ||
     !z.array(fieldDraftSchema).min(1).safeParse(fields).success ||
     fields.some((f) => {
       if (f.type !== "rating") return false;
@@ -139,7 +141,7 @@ export const useJournalField = (initialData?: {
    * 新規ジャーナルをフィールドと共にDBに保存する
    */
   const createJournal = async (): Promise<JournalObj> => {
-    journalMetaSchema.parse(meta);
+    journalMetaSchema.pick({ name: true, color: true, icon: true }).parse(meta);
     z.array(fieldDraftSchema).min(1).parse(fields);
     for (const f of fields) {
       if (f.type === "rating") ratingLabelSchema.parse(JSON.parse(f.label));
@@ -152,6 +154,8 @@ export const useJournalField = (initialData?: {
       name: meta.name,
       icon: meta.icon,
       color: meta.color,
+      oneEntry: meta.oneEntry,
+      notificationTime: meta.notificationTime,
       createdAt: now,
       updatedAt: now,
     };
