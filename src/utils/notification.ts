@@ -71,6 +71,7 @@ export const scheduleJournalNotification = async (
     content: {
       title: "Nicky",
       body: getNotificationBody(journalName),
+      data: { journalId, journalName },
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DAILY,
