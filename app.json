@@ -68,6 +68,7 @@
       "expo-localization",
       "./plugins/with-settings-bundle",
       "./plugins/with-infoplist-strings",
+      "expo-notifications",
       "expo-maps",
       [
         "expo-image-picker",
