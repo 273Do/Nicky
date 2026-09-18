@@ -8,7 +8,7 @@
     "scheme": "nicky",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon",
+      "icon": "./assets/Nicky.icon",
       "bundleIdentifier": "com.273dodev.Nicky",
       "infoPlist": {
         "CFBundleLocalizations": ["en", "ja"]
