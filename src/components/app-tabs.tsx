@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { PlatformColor, useColorScheme } from "react-native";
 
-import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import { DarkTheme, DefaultTheme, ThemeProvider } from "expo-router";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 
 export default function AppTabs() {

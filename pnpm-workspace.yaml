@@ -1,13 +1,15 @@
 allowBuilds:
   esbuild: true
   llama.rn: true
+  react-native-enriched-markdown: true
   unrs-resolver: true
+blockExoticSubdeps: false
 catalog:
   vite: npm:@voidzero-dev/vite-plus-core@latest
   vite-plus: ^0.3.0
 overrides:
-  vite: "catalog:"
   "@voidzero-dev/vite-plus-core": 0.3.0
+  vite: "catalog:"
 peerDependencyRules:
   allowAny:
     - vite
