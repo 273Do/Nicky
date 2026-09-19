@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Alert, Button, Host, Text } from "@expo/ui/swift-ui";
@@ -23,13 +23,14 @@ export default function JournalScreen() {
 
   const onboardingNavigated = useRef(false);
 
-  if (!onboardingNavigated.current) {
+  useEffect(() => {
+    if (onboardingNavigated.current) return;
     const rows = db.select().from(settings).where(eq(settings.key, "onboarding_completed")).get();
-    if (rows?.value !== "true") {
+    if (!rows || rows.value !== "true") {
       onboardingNavigated.current = true;
       router.push("/(journal)/onboarding");
     }
-  }
+  }, [router]);
 
   const { data: journals } = useLiveQuery(getJournalsQuery);
   const journalList: JournalWithCountObj[] = journals ?? [];
