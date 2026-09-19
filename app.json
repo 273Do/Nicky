@@ -67,6 +67,7 @@
       "expo-sqlite",
       "expo-localization",
       "./plugins/with-settings-bundle",
+      "./plugins/with-app-icon-resource",
       "./plugins/with-infoplist-strings",
       "expo-notifications",
       "expo-maps",

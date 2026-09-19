@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { PlatformColor } from "react-native";
+import { PlatformColor, useColorScheme } from "react-native";
 
 import {
   Button,
@@ -16,15 +16,18 @@ import {
 } from "@expo/ui/swift-ui";
 import {
   buttonStyle,
+  clipShape,
   controlSize,
   disabled,
   font,
   foregroundStyle,
   frame,
   padding,
+  resizable,
   tint,
 } from "@expo/ui/swift-ui/modifiers";
 import { downloadModel } from "@react-native-ai/llama";
+import { Paths } from "expo-file-system";
 import { useRouter } from "expo-router";
 
 import { AI_MODEL } from "@/constants/ai-models";
@@ -34,6 +37,9 @@ import { useAIReflectionSettings } from "@/hooks/settings/use-ai-reflection-sett
 export default function OnboardingScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const colorScheme = useColorScheme();
+  const iconFile = colorScheme === "dark" ? "Nicky-app-icon-dark.png" : "Nicky-app-icon.png";
+  const appIconUri = `${Paths.bundle.uri}${iconFile}`;
   const { aiReflectionEnabled, setAIReflectionEnabled } = useAIReflectionSettings();
 
   const [downloading, setDownloading] = useState(false);
@@ -60,10 +66,11 @@ export default function OnboardingScreen() {
         <ScrollView modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 })]}>
           <VStack alignment="center" modifiers={[padding({ top: 60, bottom: 24, horizontal: 32 })]}>
             <Image
-              systemName="book.fill"
+              uiImage={appIconUri}
               modifiers={[
-                foregroundStyle({ type: "color", color: PlatformColor("systemIndigo") }),
-                font({ size: 56 }),
+                resizable(),
+                frame({ width: 80, height: 80 }),
+                clipShape("roundedRectangle", 18),
                 padding({ bottom: 16 }),
               ]}
             />
@@ -109,7 +116,7 @@ export default function OnboardingScreen() {
               <Image
                 systemName="pencil.line"
                 modifiers={[
-                  foregroundStyle({ type: "color", color: PlatformColor("systemTeal") }),
+                  foregroundStyle({ type: "color", color: PlatformColor("systemIndigo") }),
                   font({ size: 28 }),
                   frame({ width: 40, height: 40 }),
                 ]}
@@ -133,7 +140,7 @@ export default function OnboardingScreen() {
               <Image
                 systemName="sparkles"
                 modifiers={[
-                  foregroundStyle({ type: "color", color: PlatformColor("systemOrange") }),
+                  foregroundStyle({ type: "color", color: PlatformColor("systemIndigo") }),
                   font({ size: 28 }),
                   frame({ width: 40, height: 40 }),
                 ]}
@@ -157,7 +164,7 @@ export default function OnboardingScreen() {
               <Image
                 systemName="square.and.arrow.up.on.square"
                 modifiers={[
-                  foregroundStyle({ type: "color", color: PlatformColor("systemGreen") }),
+                  foregroundStyle({ type: "color", color: PlatformColor("systemIndigo") }),
                   font({ size: 28 }),
                   frame({ width: 40, height: 40 }),
                 ]}
