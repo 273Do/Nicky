@@ -47,19 +47,21 @@ export function EntryListView({
     bookmarkOnly,
   });
 
+  const fadeKey = `${activeJournalId}:${String(bookmarkOnly)}`;
+  const [prevFadeKey, setPrevFadeKey] = useState(fadeKey);
   const [fade, setFade] = useState(1);
 
+  if (fadeKey !== prevFadeKey) {
+    setPrevFadeKey(fadeKey);
+    setFade(0.25);
+  }
+
   useEffect(() => {
-    let id2 = 0;
-    const id1 = requestAnimationFrame(() => {
-      setFade(0.25);
-      id2 = requestAnimationFrame(() => setFade(1));
-    });
-    return () => {
-      cancelAnimationFrame(id1);
-      cancelAnimationFrame(id2);
-    };
-  }, [activeJournalId, bookmarkOnly]);
+    if (fade < 1) {
+      const id = requestAnimationFrame(() => setFade(1));
+      return () => cancelAnimationFrame(id);
+    }
+  }, [fade]);
 
   const todayStart = startOfDay();
   const hasTodayEntry = entries.some((e) => e.createdAt >= todayStart);
