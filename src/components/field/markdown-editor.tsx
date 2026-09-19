@@ -1,12 +1,11 @@
-import type { MarkdownRange } from "@expensify/react-native-live-markdown/src/commonTypes";
-
-import { useRef, useState } from "react";
-import { PlatformColor, StyleSheet } from "react-native";
-
-import MarkdownTextInput from "@expensify/react-native-live-markdown/src/MarkdownTextInput";
+import {
+  PlatformColor,
+  StyleSheet,
+  TextInput,
+  type TextInputContentSizeChangeEvent,
+} from "react-native";
 
 const MIN_HEIGHT = 120;
-const LINE_HEIGHT = 24;
 
 type Props = {
   /** プレースホルダー */
@@ -20,38 +19,7 @@ type Props = {
 };
 
 /**
- * Markdown テキストをパースしてレンジ配列を返す
- */
-const parseMarkdown = (text: string): MarkdownRange[] => {
-  "worklet";
-  const ranges: MarkdownRange[] = [];
-
-  const patterns: { regex: RegExp; type: MarkdownRange["type"] }[] = [
-    { regex: /\*\*(.+?)\*\*/g, type: "bold" },
-    { regex: /(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, type: "italic" },
-    { regex: /~~(.+?)~~/g, type: "strikethrough" },
-    { regex: /`([^`]+)`/g, type: "code" },
-    { regex: /\[([^\]]+)\]\(([^)]+)\)/g, type: "link" },
-  ];
-
-  for (const { regex, type } of patterns) {
-    let match;
-    while ((match = regex.exec(text)) !== null) {
-      ranges.push({ type, start: match.index, length: match[0].length });
-    }
-  }
-
-  return ranges;
-};
-
-export const calcHeight = (text: string): number => {
-  const lines = text.split("\n").length;
-  return Math.max(MIN_HEIGHT, lines * LINE_HEIGHT);
-};
-
-/**
- * ライブフォーマット付き Markdown エディター
- * コンテンツ量に応じて高さが伸びる
+ * プレーンテキスト Markdown エディター
  */
 export function MarkdownEditor({
   placeholder,
@@ -59,28 +27,23 @@ export function MarkdownEditor({
   onValueChange,
   onHeightChange,
 }: Props) {
-  const [height, setHeight] = useState(() => calcHeight(defaultValue));
-  const textRef = useRef(defaultValue);
-
-  const handleChangeText = (text: string) => {
-    textRef.current = text;
-    const newHeight = calcHeight(text);
-    setHeight(newHeight);
-    onHeightChange?.(newHeight);
-    onValueChange?.(text);
+  const handleContentSizeChange = (e: TextInputContentSizeChangeEvent) => {
+    const h = Math.max(MIN_HEIGHT, Math.ceil(e.nativeEvent.contentSize.height));
+    onHeightChange?.(h);
   };
 
   return (
-    <MarkdownTextInput
+    <TextInput
       defaultValue={defaultValue}
-      onChangeText={handleChangeText}
+      onChangeText={onValueChange}
+      onContentSizeChange={handleContentSizeChange}
       placeholder={placeholder}
       placeholderTextColor={PlatformColor("placeholderText")}
-      parser={parseMarkdown}
+      selectionColor={PlatformColor("systemIndigo")}
       multiline
       scrollEnabled={false}
       textAlignVertical="top"
-      style={[styles.editor, { height }]}
+      style={styles.editor}
     />
   );
 }
@@ -89,8 +52,8 @@ const styles = StyleSheet.create({
   editor: {
     minHeight: MIN_HEIGHT,
     width: "100%",
+    paddingRight: 16,
     fontSize: 16,
-    lineHeight: LINE_HEIGHT,
     color: PlatformColor("label"),
   },
 });
