@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import * as Crypto from "expo-crypto";
 import { z } from "zod";
@@ -27,26 +27,35 @@ export { deserializeValue } from "@/utils/entry/field-value";
  * @param fields ジャーナルに紐づくフィールド一覧
  * @param initialValues 編集時の初期値。undefined=新規作成、null=ロード中、Record=編集準備完了
  * @returns
- * - valuesRef 現在のフィールドの値
+ * - values 現在のフィールドの値
  * - setValue フィールドに値を格納する関数
  * - createEntry 新規エントリーをDBに保存する関数
  * - updateEntry 既存エントリーをDBに更新する関数
  */
 export const useEntry = (fields: FieldObj[], initialValues?: Record<string, FieldValue> | null) => {
-  const valuesRef = useRef<Record<string, FieldValue>>({});
-  const initialized = useRef(false);
+  const computeInit = (): Record<string, FieldValue> => {
+    if (!fields || fields.length === 0 || initialValues === null) return {};
+    return (
+      initialValues ??
+      Object.fromEntries(fields.map((f) => [f.id, getDefaultValue(f.type, f.label)]))
+    );
+  };
 
-  if (!initialized.current && fields && fields.length > 0) {
-    const isCreateMode = initialValues === undefined;
-    const isEditModeReady = initialValues !== null && initialValues !== undefined;
+  // State-based initialization (avoids reading refs during render)
+  const [values, setValues] = useState(computeInit);
 
-    if (isCreateMode || isEditModeReady) {
-      initialized.current = true;
-      valuesRef.current =
-        initialValues ??
-        Object.fromEntries(fields.map((f) => [f.id, getDefaultValue(f.type, f.label)]));
-    }
+  // Deferred init: for create mode where fields load asynchronously via useLiveQuery
+  if (Object.keys(values).length === 0 && fields && fields.length > 0 && initialValues !== null) {
+    setValues(computeInit());
   }
+
+  // Internal ref for mutation in event handlers (no re-render on every keystroke)
+  const valuesRef = useRef(values);
+  useEffect(() => {
+    if (Object.keys(values).length > 0) {
+      valuesRef.current = values;
+    }
+  }, [values]);
 
   /**
    * フィールドに値を格納する
@@ -118,5 +127,5 @@ export const useEntry = (fields: FieldObj[], initialValues?: Record<string, Fiel
     await updateEntryValues(entryId, values);
   };
 
-  return { valuesRef, setValue, createEntry, updateEntry };
+  return { values, setValue, createEntry, updateEntry };
 };

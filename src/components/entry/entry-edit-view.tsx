@@ -23,7 +23,7 @@ export function EntryEditView({
 }) {
   const { t } = useTranslation();
   const { fields, initialValues } = buildEntryFormData(entry);
-  const { valuesRef, setValue, updateEntry } = useEntry(fields, initialValues);
+  const { values, setValue, updateEntry } = useEntry(fields, initialValues);
 
   const handleSave = async () => {
     try {
@@ -58,7 +58,7 @@ export function EntryEditView({
       />
       <EntryCreateView
         id={entry.journalId}
-        values={valuesRef.current}
+        values={values}
         setValue={setValue}
         createdAt={entry.createdAt}
       />

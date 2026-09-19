@@ -33,7 +33,7 @@ export const useAutoReflection = () => {
     if (generating.current) return;
 
     generating.current = true;
-    (async () => {
+    void (async () => {
       try {
         const result = await getReflection(entries);
         if (result) await storeReflection(today, result);

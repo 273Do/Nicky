@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useState } from "react";
 
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
@@ -44,13 +44,11 @@ const groupByDate = (entries: DailyEntryObj[]) => {
  * スワイプのたびに DB 再購読は発生しない。
  */
 export const useDaysEntries = (selectedDate: Date) => {
-  const rangeRef = useRef<Range>(computeRange(selectedDate));
+  const [range, setRange] = useState<Range>(() => computeRange(selectedDate));
 
-  if (isNearBoundary(selectedDate, rangeRef.current)) {
-    rangeRef.current = computeRange(selectedDate);
+  if (isNearBoundary(selectedDate, range)) {
+    setRange(computeRange(selectedDate));
   }
-
-  const range = rangeRef.current;
 
   const { data: allEntries } = useLiveQuery(getEntriesByRangeQuery(range.start, range.end), [
     range.start.getTime(),

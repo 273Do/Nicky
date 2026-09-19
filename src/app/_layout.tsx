@@ -9,7 +9,7 @@ import { DrizzleProvider } from "@/components/drizzle-provider";
 import { useAutoReflection } from "@/hooks/settings/use-auto-reflection";
 import { useJournalNotifications } from "@/hooks/use-journal-notifications";
 
-SplashScreen.preventAutoHideAsync();
+void SplashScreen.preventAutoHideAsync();
 
 function AppContent() {
   useAutoReflection();

@@ -49,7 +49,7 @@ export const useJournalNotifications = () => {
     if (syncing.current) return;
     syncing.current = true;
 
-    (async () => {
+    void (async () => {
       try {
         if (!notificationEnabled) {
           await cancelAllJournalNotifications();

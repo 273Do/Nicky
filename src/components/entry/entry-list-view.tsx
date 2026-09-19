@@ -49,15 +49,21 @@ export function EntryListView({
 
   const [fade, setFade] = useState(1);
 
+  useEffect(() => {
+    let id2 = 0;
+    const id1 = requestAnimationFrame(() => {
+      setFade(0.25);
+      id2 = requestAnimationFrame(() => setFade(1));
+    });
+    return () => {
+      cancelAnimationFrame(id1);
+      cancelAnimationFrame(id2);
+    };
+  }, [activeJournalId, bookmarkOnly]);
+
   const todayStart = startOfDay();
   const hasTodayEntry = entries.some((e) => e.createdAt >= todayStart);
   const disabled = oneEntry && hasTodayEntry;
-
-  useEffect(() => {
-    setFade(0.25);
-    const id = requestAnimationFrame(() => setFade(1));
-    return () => cancelAnimationFrame(id);
-  }, [activeJournalId, bookmarkOnly]);
 
   return (
     <View style={{ flex: 1 }}>

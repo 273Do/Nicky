@@ -32,7 +32,7 @@ export function DrizzleProvider({ children }: Props) {
   const seeded = useRef(false);
   useEffect(() => {
     if (success) {
-      SplashScreen.hideAsync();
+      void SplashScreen.hideAsync();
       if (__DEV__ && !seeded.current) {
         seeded.current = true;
         seed().catch(console.error);
