@@ -90,7 +90,7 @@ export default function OnboardingScreen() {
         <VStack alignment="leading" modifiers={[padding({ horizontal: 32, top: 16 })]}>
           <HStack alignment="top" modifiers={[padding({ bottom: 24 })]}>
             <Image
-              systemName="book.fill"
+              systemName="books.vertical.fill"
               modifiers={[
                 foregroundStyle({ type: "color", color: PlatformColor("systemIndigo") }),
                 font({ size: 28 }),
