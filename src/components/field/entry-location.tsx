@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { HStack, Text, TextField } from "@expo/ui/swift-ui";
+import { HStack, Text, TextField, useNativeState } from "@expo/ui/swift-ui";
 import { foregroundStyle, frame } from "@expo/ui/swift-ui/modifiers";
 import * as Location from "expo-location";
 
@@ -27,6 +27,7 @@ export function EntryLocation({ label, defaultValue, onValueChange, edit = false
   const { t } = useTranslation();
   const [location, setLocation] = useState<LocationData | null>(() => parseLocation(defaultValue));
   const [address, setAddress] = useState(location?.address ?? "");
+  const addressText = useNativeState(address);
   const mountedRef = useRef(true);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -108,9 +109,9 @@ export function EntryLocation({ label, defaultValue, onValueChange, edit = false
   return (
     <FieldWrapper label={label}>
       <TextField
+        text={addressText}
         placeholder={t("field.location")}
-        defaultValue={address}
-        onValueChange={handleTextChange}
+        onTextChange={handleTextChange}
         modifiers={[frame({ maxWidth: 9999 })]}
       />
     </FieldWrapper>

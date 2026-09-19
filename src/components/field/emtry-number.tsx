@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { Text, TextField, type TextFieldRef } from "@expo/ui/swift-ui";
+import { Text, TextField, type TextFieldRef, useNativeState } from "@expo/ui/swift-ui";
 import { frame } from "@expo/ui/swift-ui/modifiers";
 
 import { cleanNumericInput } from "@/utils/entry/field-value";
@@ -26,6 +26,7 @@ export function EntryNumber({ label, defaultValue, onValueChange, edit = false }
   const { t } = useTranslation();
   const [number, setNumber] = useState<number | undefined>(defaultValue);
   const numberFieldRef = useRef<TextFieldRef>(null);
+  const text = useNativeState(String(defaultValue ?? ""));
 
   /**
    * 値が変更された時に発火する関数
@@ -47,9 +48,9 @@ export function EntryNumber({ label, defaultValue, onValueChange, edit = false }
       {edit ? (
         <TextField
           ref={numberFieldRef}
+          text={text}
           placeholder={t("field.number")}
-          defaultValue={String(number ?? "")}
-          onValueChange={handleValueChange}
+          onTextChange={handleValueChange}
           modifiers={[frame({ maxWidth: 9999 })]}
         />
       ) : (

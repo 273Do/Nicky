@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { PlatformColor } from "react-native-reanimated";
 
-import { Link, Text, TextField } from "@expo/ui/swift-ui";
+import { Link, Text, TextField, useNativeState } from "@expo/ui/swift-ui";
 import { disabled, foregroundStyle, frame } from "@expo/ui/swift-ui/modifiers";
 
 import { FieldWrapper } from "./field-wrapper";
@@ -24,14 +24,15 @@ const isUrl = (value: string) => /^https?:\/\/.+/.test(value);
  */
 export function EntryLink({ label, defaultValue = "", onValueChange, edit = false }: Props) {
   const { t } = useTranslation();
+  const text = useNativeState(defaultValue);
 
   return (
     <FieldWrapper label={label}>
       {edit ? (
         <TextField
+          text={text}
           placeholder={t("field.link")}
-          defaultValue={defaultValue}
-          onValueChange={onValueChange}
+          onTextChange={onValueChange}
           modifiers={[frame({ maxWidth: 9999 })]}
         />
       ) : (
