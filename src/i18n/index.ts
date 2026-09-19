@@ -8,7 +8,7 @@ import ja from "./locales/ja.json";
 
 const deviceLang = getLocales()[0]?.languageCode ?? "en";
 
-i18n.use(initReactI18next).init({
+void i18n.use(initReactI18next).init({
   resources: {
     en: { translation: en },
     ja: { translation: ja },

@@ -16,6 +16,7 @@ import {
   TextField,
   type TextFieldRef,
   Toggle,
+  useNativeState,
   ZStack,
 } from "@expo/ui/swift-ui";
 import {
@@ -53,6 +54,7 @@ function NumberTextField({
   onValueChange: (num: number) => void;
 }) {
   const ref = useRef<TextFieldRef>(null);
+  const text = useNativeState(defaultValue);
 
   const handleChange = async (v: string) => {
     const cleaned = cleanNumericInput(v, 1);
@@ -61,12 +63,28 @@ function NumberTextField({
     if (Number.isFinite(num)) onValueChange(num);
   };
 
+  return <TextField ref={ref} text={text} placeholder={placeholder} onTextChange={handleChange} />;
+}
+
+/**
+ * フィールドラベル入力用 TextField（useNativeState をループ外で呼ぶため分離）
+ */
+function FieldLabelTextField({
+  defaultValue,
+  placeholder,
+  onTextChange,
+}: {
+  defaultValue: string;
+  placeholder: string;
+  onTextChange: (value: string) => void;
+}) {
+  const text = useNativeState(defaultValue);
   return (
     <TextField
-      ref={ref}
-      defaultValue={defaultValue}
+      text={text}
       placeholder={placeholder}
-      onValueChange={handleChange}
+      onTextChange={onTextChange}
+      modifiers={[frame({ maxWidth: 9999 })]}
     />
   );
 }
@@ -104,6 +122,7 @@ export function JournalCreateView({
   setMeta,
 }: Props) {
   const { t } = useTranslation();
+  const journalName = useNativeState(meta.name);
   const [showSheet, setShowSheet] = useState<{
     field: boolean;
     icon: boolean;
@@ -150,9 +169,9 @@ export function JournalCreateView({
 
               {/* ジャーナル名 */}
               <TextField
+                text={journalName}
                 placeholder={t("journal.namePlaceholder")}
-                defaultValue={meta.name}
-                onValueChange={(value) => setMeta((prev) => ({ ...prev, name: value }))}
+                onTextChange={(value) => setMeta((prev) => ({ ...prev, name: value }))}
                 modifiers={[frame({ maxWidth: 9999 })]}
               />
             </HStack>
@@ -228,13 +247,12 @@ export function JournalCreateView({
                         />
                       </HStack>
                     )}
-                    <TextField
+                    <FieldLabelTextField
                       placeholder={t("journal.fieldPlaceholder", {
                         type: t(FIELD_LABEL_KEYS[field.type]),
                       })}
                       defaultValue={isRating ? ratingLabel!.name : field.label}
-                      onValueChange={(value) => renameField(field.id, value)}
-                      modifiers={[frame({ maxWidth: 9999 })]}
+                      onTextChange={(value) => renameField(field.id, value)}
                     />
                     <Spacer />
                     <Image

@@ -8,7 +8,7 @@
     "scheme": "nicky",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon",
+      "icon": "./assets/Nicky.icon",
       "bundleIdentifier": "com.273dodev.Nicky",
       "infoPlist": {
         "CFBundleLocalizations": ["en", "ja"]
@@ -33,10 +33,12 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
-          "android": {
-            "image": "./assets/images/splash-icon.png",
-            "imageWidth": 76
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 100,
+          "backgroundColor": "#FFFFFF",
+          "dark": {
+            "image": "./assets/images/splash-icon-dark.png",
+            "backgroundColor": "#000000"
           }
         }
       ],
@@ -67,6 +69,7 @@
       "expo-sqlite",
       "expo-localization",
       "./plugins/with-settings-bundle",
+      "./plugins/with-app-icon-resource",
       "./plugins/with-infoplist-strings",
       "expo-notifications",
       "expo-maps",
@@ -75,7 +78,10 @@
         {
           "photosPermission": "Used to attach images to journal entries."
         }
-      ]
+      ],
+      "expo-font",
+      "expo-image",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,

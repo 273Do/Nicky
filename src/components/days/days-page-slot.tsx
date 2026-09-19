@@ -8,6 +8,8 @@ type Props = {
   centerSlot: SharedValue<number>;
   translateX: SharedValue<number>;
   screenWidth: number;
+  /** ヘッダー分のトップインセット */
+  topInset?: number;
   children: React.ReactNode;
 };
 
@@ -15,7 +17,14 @@ type Props = {
  * ローテーティングバッファのページスロット
  * centerSlot と translateX から自身の位置を算出する
  */
-export function DaysPageSlot({ slotIndex, centerSlot, translateX, screenWidth, children }: Props) {
+export function DaysPageSlot({
+  slotIndex,
+  centerSlot,
+  translateX,
+  screenWidth,
+  topInset = 0,
+  children,
+}: Props) {
   const style = useAnimatedStyle(() => {
     const diff = slotDiff(slotIndex, centerSlot.value);
     return {
@@ -24,12 +33,17 @@ export function DaysPageSlot({ slotIndex, centerSlot, translateX, screenWidth, c
   });
 
   return (
-    <Animated.View style={[styles.page, { width: screenWidth }, style]}>{children}</Animated.View>
+    <Animated.View style={[styles.page, { width: screenWidth, top: topInset }, style]}>
+      {children}
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   page: {
-    ...StyleSheet.absoluteFillObject,
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 });

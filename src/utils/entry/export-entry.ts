@@ -39,7 +39,7 @@ export const exportEntry = async (entry: EntryDetailObj, journalName: string): P
 
     if (file.exists) file.delete();
     file.create();
-    file.write(content);
+    await file.write(content);
 
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(file.uri, {
@@ -92,7 +92,7 @@ const exportEntriesAsZip = async (
     const file = new File(Paths.document, fileName);
     if (file.exists) file.delete();
     file.create();
-    file.write(uint8);
+    await file.write(uint8);
 
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(file.uri, {

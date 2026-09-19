@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { PlatformColor } from "react-native";
+import { PlatformColor, useColorScheme } from "react-native";
 
 import {
   Button,
@@ -16,15 +16,18 @@ import {
 } from "@expo/ui/swift-ui";
 import {
   buttonStyle,
+  clipShape,
   controlSize,
   disabled,
   font,
   foregroundStyle,
   frame,
   padding,
+  resizable,
   tint,
 } from "@expo/ui/swift-ui/modifiers";
 import { downloadModel } from "@react-native-ai/llama";
+import { Paths } from "expo-file-system";
 import { useRouter } from "expo-router";
 
 import { AI_MODEL } from "@/constants/ai-models";
@@ -34,6 +37,10 @@ import { useAIReflectionSettings } from "@/hooks/settings/use-ai-reflection-sett
 export default function OnboardingScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+  const iconFile = isDark ? "Nicky-app-icon-dark.png" : "Nicky-app-icon.png";
+  const appIconUri = `${Paths.bundle.uri}${iconFile}`;
   const { aiReflectionEnabled, setAIReflectionEnabled } = useAIReflectionSettings();
 
   const [downloading, setDownloading] = useState(false);
@@ -56,157 +63,156 @@ export default function OnboardingScreen() {
       style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}
       useViewportSizeMeasurement
     >
-      <VStack modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 })]}>
-        <ScrollView modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 })]}>
-          <VStack alignment="center" modifiers={[padding({ top: 60, bottom: 24, horizontal: 32 })]}>
+      <ScrollView modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 })]}>
+        <VStack alignment="center" modifiers={[padding({ top: 60, bottom: 24, horizontal: 32 })]}>
+          <Image
+            uiImage={appIconUri}
+            modifiers={[
+              resizable(),
+              frame({ width: 80, height: 80 }),
+              clipShape("roundedRectangle", 18),
+              padding({ bottom: 16 }),
+            ]}
+          />
+          <Text modifiers={[font({ size: 34, weight: "bold" }), padding({ bottom: 8 })]}>
+            {t("onboarding.welcome")}
+          </Text>
+          <Text
+            modifiers={[
+              foregroundStyle({ type: "color", color: PlatformColor("secondaryLabel") }),
+              font({ size: 17 }),
+            ]}
+          >
+            {t("onboarding.welcomeDesc")}
+          </Text>
+        </VStack>
+
+        <VStack alignment="leading" modifiers={[padding({ horizontal: 32, top: 16 })]}>
+          <HStack alignment="top" modifiers={[padding({ bottom: 24 })]}>
             <Image
-              systemName="book.fill"
+              systemName="books.vertical.fill"
               modifiers={[
                 foregroundStyle({ type: "color", color: PlatformColor("systemIndigo") }),
-                font({ size: 56 }),
-                padding({ bottom: 16 }),
+                font({ size: 28 }),
+                frame({ width: 40, height: 40 }),
               ]}
             />
-            <Text modifiers={[font({ size: 34, weight: "bold" }), padding({ bottom: 8 })]}>
-              {t("onboarding.welcome")}
-            </Text>
-            <Text
+            <VStack alignment="leading" modifiers={[padding({ leading: 12 })]}>
+              <Text modifiers={[font({ size: 17, weight: "semibold" }), padding({ bottom: 2 })]}>
+                {t("onboarding.customJournalsTitle")}
+              </Text>
+              <Text
+                modifiers={[
+                  foregroundStyle({ type: "color", color: PlatformColor("secondaryLabel") }),
+                  font({ size: 15 }),
+                ]}
+              >
+                {t("onboarding.customJournalsDesc")}
+              </Text>
+            </VStack>
+          </HStack>
+
+          <HStack alignment="top" modifiers={[padding({ bottom: 24 })]}>
+            <Image
+              systemName="pencil.line"
               modifiers={[
-                foregroundStyle({ type: "color", color: PlatformColor("secondaryLabel") }),
-                font({ size: 17 }),
+                foregroundStyle({ type: "color", color: PlatformColor("systemIndigo") }),
+                font({ size: 28 }),
+                frame({ width: 40, height: 40 }),
               ]}
-            >
-              {t("onboarding.welcomeDesc")}
-            </Text>
-          </VStack>
-
-          <VStack alignment="leading" modifiers={[padding({ horizontal: 32, top: 16 })]}>
-            <HStack alignment="top" modifiers={[padding({ bottom: 24 })]}>
-              <Image
-                systemName="book.fill"
-                modifiers={[
-                  foregroundStyle({ type: "color", color: PlatformColor("systemIndigo") }),
-                  font({ size: 28 }),
-                  frame({ width: 40, height: 40 }),
-                ]}
-              />
-              <VStack alignment="leading" modifiers={[padding({ leading: 12 })]}>
-                <Text modifiers={[font({ size: 17, weight: "semibold" }), padding({ bottom: 2 })]}>
-                  {t("onboarding.customJournalsTitle")}
-                </Text>
-                <Text
-                  modifiers={[
-                    foregroundStyle({ type: "color", color: PlatformColor("secondaryLabel") }),
-                    font({ size: 15 }),
-                  ]}
-                >
-                  {t("onboarding.customJournalsDesc")}
-                </Text>
-              </VStack>
-            </HStack>
-
-            <HStack alignment="top" modifiers={[padding({ bottom: 24 })]}>
-              <Image
-                systemName="pencil.line"
-                modifiers={[
-                  foregroundStyle({ type: "color", color: PlatformColor("systemTeal") }),
-                  font({ size: 28 }),
-                  frame({ width: 40, height: 40 }),
-                ]}
-              />
-              <VStack alignment="leading" modifiers={[padding({ leading: 12 })]}>
-                <Text modifiers={[font({ size: 17, weight: "semibold" }), padding({ bottom: 2 })]}>
-                  {t("onboarding.dailyEntriesTitle")}
-                </Text>
-                <Text
-                  modifiers={[
-                    foregroundStyle({ type: "color", color: PlatformColor("secondaryLabel") }),
-                    font({ size: 15 }),
-                  ]}
-                >
-                  {t("onboarding.dailyEntriesDesc")}
-                </Text>
-              </VStack>
-            </HStack>
-
-            <HStack alignment="top" modifiers={[padding({ bottom: 24 })]}>
-              <Image
-                systemName="sparkles"
-                modifiers={[
-                  foregroundStyle({ type: "color", color: PlatformColor("systemOrange") }),
-                  font({ size: 28 }),
-                  frame({ width: 40, height: 40 }),
-                ]}
-              />
-              <VStack alignment="leading" modifiers={[padding({ leading: 12 })]}>
-                <Text modifiers={[font({ size: 17, weight: "semibold" }), padding({ bottom: 2 })]}>
-                  {t("onboarding.reflectionTitle")}
-                </Text>
-                <Text
-                  modifiers={[
-                    foregroundStyle({ type: "color", color: PlatformColor("secondaryLabel") }),
-                    font({ size: 15 }),
-                  ]}
-                >
-                  {t("onboarding.reflectionDesc")}
-                </Text>
-              </VStack>
-            </HStack>
-
-            <HStack alignment="top" modifiers={[padding({ bottom: 24 })]}>
-              <Image
-                systemName="square.and.arrow.up.on.square"
-                modifiers={[
-                  foregroundStyle({ type: "color", color: PlatformColor("systemGreen") }),
-                  font({ size: 28 }),
-                  frame({ width: 40, height: 40 }),
-                ]}
-              />
-              <VStack alignment="leading" modifiers={[padding({ leading: 12 })]}>
-                <Text modifiers={[font({ size: 17, weight: "semibold" }), padding({ bottom: 2 })]}>
-                  {t("onboarding.importExportTitle")}
-                </Text>
-                <Text
-                  modifiers={[
-                    foregroundStyle({ type: "color", color: PlatformColor("secondaryLabel") }),
-                    font({ size: 15 }),
-                  ]}
-                >
-                  {t("onboarding.importExportDesc")}
-                </Text>
-              </VStack>
-            </HStack>
-          </VStack>
-
-          <VStack modifiers={[padding({ horizontal: 32, top: 8 })]}>
-            <Toggle
-              isOn={aiReflectionEnabled}
-              onIsOnChange={setAIReflectionEnabled}
-              label={t("onboarding.enableReflection")}
-              modifiers={[tint(PlatformColor("systemIndigo"))]}
             />
-            {downloading ? (
-              <VStack modifiers={[padding({ top: 8 })]}>
-                <Spacer />
-                <ProgressView
-                  value={progress / 100}
-                  modifiers={[tint(PlatformColor("systemIndigo"))]}
-                />
-                <Text
-                  modifiers={[
-                    foregroundStyle({ type: "color", color: PlatformColor("secondaryLabel") }),
-                    font({ size: 13 }),
-                    padding({ top: 4 }),
-                  ]}
-                >
-                  {`${t("onboarding.downloadingModel")} ${Math.round(progress)}%`}
-                </Text>
-              </VStack>
-            ) : null}
-          </VStack>
-        </ScrollView>
+            <VStack alignment="leading" modifiers={[padding({ leading: 12 })]}>
+              <Text modifiers={[font({ size: 17, weight: "semibold" }), padding({ bottom: 2 })]}>
+                {t("onboarding.dailyEntriesTitle")}
+              </Text>
+              <Text
+                modifiers={[
+                  foregroundStyle({ type: "color", color: PlatformColor("secondaryLabel") }),
+                  font({ size: 15 }),
+                ]}
+              >
+                {t("onboarding.dailyEntriesDesc")}
+              </Text>
+            </VStack>
+          </HStack>
 
-        <VStack modifiers={[padding({ horizontal: 32, bottom: 40, top: 16 })]}>
+          <HStack alignment="top" modifiers={[padding({ bottom: 24 })]}>
+            <Image
+              systemName="sparkles"
+              modifiers={[
+                foregroundStyle({ type: "color", color: PlatformColor("systemIndigo") }),
+                font({ size: 28 }),
+                frame({ width: 40, height: 40 }),
+              ]}
+            />
+            <VStack alignment="leading" modifiers={[padding({ leading: 12 })]}>
+              <Text modifiers={[font({ size: 17, weight: "semibold" }), padding({ bottom: 2 })]}>
+                {t("onboarding.reflectionTitle")}
+              </Text>
+              <Text
+                modifiers={[
+                  foregroundStyle({ type: "color", color: PlatformColor("secondaryLabel") }),
+                  font({ size: 15 }),
+                ]}
+              >
+                {t("onboarding.reflectionDesc")}
+              </Text>
+            </VStack>
+          </HStack>
+
+          <HStack alignment="top" modifiers={[padding({ bottom: 24 })]}>
+            <Image
+              systemName="square.and.arrow.up.on.square"
+              modifiers={[
+                foregroundStyle({ type: "color", color: PlatformColor("systemIndigo") }),
+                font({ size: 28 }),
+                frame({ width: 40, height: 40 }),
+              ]}
+            />
+            <VStack alignment="leading" modifiers={[padding({ leading: 12 })]}>
+              <Text modifiers={[font({ size: 17, weight: "semibold" }), padding({ bottom: 2 })]}>
+                {t("onboarding.importExportTitle")}
+              </Text>
+              <Text
+                modifiers={[
+                  foregroundStyle({ type: "color", color: PlatformColor("secondaryLabel") }),
+                  font({ size: 15 }),
+                ]}
+              >
+                {t("onboarding.importExportDesc")}
+              </Text>
+            </VStack>
+          </HStack>
+        </VStack>
+
+        <VStack modifiers={[padding({ horizontal: 32 })]}>
+          <Toggle
+            isOn={aiReflectionEnabled}
+            onIsOnChange={setAIReflectionEnabled}
+            label={t("onboarding.enableReflection")}
+            modifiers={[tint(PlatformColor("systemIndigo"))]}
+          />
+          {downloading ? (
+            <VStack modifiers={[padding({ top: 8 })]}>
+              <Spacer />
+              <ProgressView
+                value={progress / 100}
+                modifiers={[tint(PlatformColor("systemIndigo"))]}
+              />
+              <Text
+                modifiers={[
+                  foregroundStyle({ type: "color", color: PlatformColor("secondaryLabel") }),
+                  font({ size: 13 }),
+                  padding({ top: 4 }),
+                ]}
+              >
+                {`${t("onboarding.downloadingModel")} ${Math.round(progress)}%`}
+              </Text>
+            </VStack>
+          ) : null}
+        </VStack>
+
+        <VStack modifiers={[padding({ horizontal: 32, top: 24, bottom: 48 })]}>
           <Button
             label={t("onboarding.getStarted")}
             onPress={handleGetStarted}
@@ -219,7 +225,7 @@ export default function OnboardingScreen() {
             ]}
           />
         </VStack>
-      </VStack>
+      </ScrollView>
     </Host>
   );
 }

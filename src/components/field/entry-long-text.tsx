@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { type LayoutChangeEvent, PlatformColor, StyleSheet, View } from "react-native";
+import { type LayoutChangeEvent, StyleSheet, useColorScheme, View } from "react-native";
+import { EnrichedMarkdownText } from "react-native-enriched-markdown";
 
 import { Button, HStack, Spacer, Text, VStack } from "@expo/ui/swift-ui";
 import {
@@ -10,10 +11,11 @@ import {
   foregroundStyle,
   frame,
 } from "@expo/ui/swift-ui/modifiers";
-import Markdown from "@ronradtke/react-native-markdown-display";
+
+import { MarkdownStyles } from "@/constants/theme";
 
 import { FieldWrapper } from "./field-wrapper";
-import { MarkdownEditor, calcHeight } from "./markdown-editor";
+import { MarkdownEditor } from "./markdown-editor";
 
 type Props = {
   /** フィールドラベル */
@@ -28,20 +30,15 @@ type Props = {
 
 const MIN_HEIGHT = 120;
 
-const markdownStyle = {
-  body: { color: PlatformColor("label"), fontSize: 16 },
-  heading1: { color: PlatformColor("label") },
-  heading2: { color: PlatformColor("label") },
-  heading3: { color: PlatformColor("label") },
-  code_inline: { color: PlatformColor("label"), backgroundColor: PlatformColor("systemGray5") },
-  fence: { color: PlatformColor("label"), backgroundColor: PlatformColor("systemGray5") },
-  link: { color: PlatformColor("link") },
+const markdownContainerStyle = {
+  fontSize: 16,
 };
 
 /**
  * Markdown プレビュー
  */
 function MarkdownPreview({ text }: { text: string }) {
+  const colorScheme = useColorScheme();
   const [contentHeight, setContentHeight] = useState<number>(MIN_HEIGHT);
 
   const onLayout = (e: LayoutChangeEvent) => {
@@ -51,7 +48,11 @@ function MarkdownPreview({ text }: { text: string }) {
   return (
     <VStack modifiers={[frame({ height: contentHeight, maxWidth: 9999 })]}>
       <View onLayout={onLayout} style={styles.previewContainer}>
-        <Markdown style={markdownStyle}>{text}</Markdown>
+        <EnrichedMarkdownText
+          markdown={text}
+          markdownStyle={colorScheme === "dark" ? MarkdownStyles.dark : MarkdownStyles.light}
+          containerStyle={markdownContainerStyle}
+        />
       </View>
     </VStack>
   );
@@ -63,7 +64,7 @@ function MarkdownPreview({ text }: { text: string }) {
 export function EntryLongText({ label, defaultValue = "", onValueChange, edit = false }: Props) {
   const { t } = useTranslation();
   const [preview, setPreview] = useState(false);
-  const [editorHeight, setEditorHeight] = useState(() => calcHeight(defaultValue));
+  const [editorHeight, setEditorHeight] = useState(MIN_HEIGHT);
   const [currentText, setCurrentText] = useState(defaultValue);
 
   const handleValueChange = async (value: string) => {
@@ -117,5 +118,6 @@ export function EntryLongText({ label, defaultValue = "", onValueChange, edit = 
 const styles = StyleSheet.create({
   previewContainer: {
     width: "100%",
+    paddingRight: 16,
   },
 });

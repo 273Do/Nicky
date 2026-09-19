@@ -2,6 +2,7 @@ import { useEffect, useRef, type ReactNode } from "react";
 
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
+import * as SplashScreen from "expo-splash-screen";
 
 import { db, expoDb } from "@/db/client";
 import { seed } from "@/db/seed";
@@ -30,9 +31,12 @@ export function DrizzleProvider({ children }: Props) {
 
   const seeded = useRef(false);
   useEffect(() => {
-    if (__DEV__ && success && !seeded.current) {
-      seeded.current = true;
-      seed().catch(console.error);
+    if (success) {
+      void SplashScreen.hideAsync();
+      if (__DEV__ && !seeded.current) {
+        seeded.current = true;
+        seed().catch(console.error);
+      }
     }
   }, [success]);
 

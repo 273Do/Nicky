@@ -57,7 +57,7 @@ export const exportJournal = async (journal: JournalDetail): Promise<void> => {
     const signedExport = await buildSignedJournal(journal);
 
     file.create();
-    file.write(JSON.stringify(signedExport, null, 2));
+    await file.write(JSON.stringify(signedExport, null, 2));
 
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(file.uri, {
@@ -95,7 +95,7 @@ export const exportAllJournals = async (): Promise<void> => {
     const file = new File(Paths.document, "journals.zip");
     if (file.exists) file.delete();
     file.create();
-    file.write(uint8);
+    await file.write(uint8);
 
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(file.uri, {

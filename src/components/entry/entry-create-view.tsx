@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { PlatformColor, View } from "react-native";
 
 import { Host, List, Section } from "@expo/ui/swift-ui";
@@ -25,7 +26,7 @@ type Props = {
  * エントリー作成画面
  */
 export function EntryCreateView({ id, values, setValue, createdAt }: Props) {
-  const now = Date.now();
+  const [now] = useState(Date.now);
 
   const { data: fields } = useLiveQuery(getFieldsQuery(id), [id]);
 

@@ -17,7 +17,7 @@ const ensureMediaDir = (): Directory => {
  * @param pickerUri ピッカーが返した file:// URI
  * @returns 相対パス
  */
-export const saveMediaImage = (pickerUri: string): string => {
+export const saveMediaImage = async (pickerUri: string): Promise<string> => {
   const dir = ensureMediaDir();
   const ext = /\.([a-zA-Z0-9]{1,5})(?:[?#].*)?$/.exec(pickerUri)?.[1] ?? "jpg";
   const filename = `${Crypto.randomUUID()}.${ext}`;
@@ -25,7 +25,7 @@ export const saveMediaImage = (pickerUri: string): string => {
   const src = new File(pickerUri);
   const dest = new File(dir, filename);
 
-  src.copy(dest);
+  await src.copy(dest);
 
   return `${MEDIA_DIR}/${filename}`;
 };

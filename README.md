@@ -1,3 +1,7 @@
+<div align="center">
+  <img width="150" src="/assets/images/app-icon/Nicky-app-icon.png">
+</div>
+
 # Nicky
 
 🚧 Nicky is a native iOS journaling app built with React Native and Expo.

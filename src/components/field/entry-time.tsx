@@ -32,7 +32,7 @@ export function EntryTime({
 
   const handleChange = (value: Date) => {
     setTime(value);
-    onValueChange?.(value);
+    void onValueChange?.(value);
   };
 
   return (

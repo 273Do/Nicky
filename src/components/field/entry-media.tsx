@@ -45,7 +45,7 @@ export function EntryMedia({ label, defaultValue, onValueChange, edit = false }:
     if (result.canceled || !result.assets[0]) return;
 
     const oldPath = imagePath;
-    const relativePath = saveMediaImage(result.assets[0].uri);
+    const relativePath = await saveMediaImage(result.assets[0].uri);
 
     setImagePath(relativePath);
     onValueChange?.(relativePath);

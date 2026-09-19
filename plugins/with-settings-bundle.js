@@ -43,11 +43,34 @@ module.exports = function withSettingsBundle(config) {
     const xcodeProject = config.modResults;
 
     if (!xcodeProject.hasFile("Settings.bundle")) {
-      const { addResourceFileToGroup } = require("@expo/config-plugins/build/ios/utils/Xcodeproj");
-      addResourceFileToGroup({
-        filepath: "Settings.bundle",
-        groupName: config.modRequest.projectName,
-        project: xcodeProject,
+      // Ensure Resources group exists so addResourceFile can resolve the path
+      if (!xcodeProject.pbxGroupByName("Resources")) {
+        const resourcesGroupUuid = xcodeProject.generateUuid();
+        const projectName = config.modRequest.projectName;
+        const mainGroupKey = xcodeProject.findPBXGroupKey({ name: projectName });
+
+        if (!xcodeProject.hash.project.objects["PBXGroup"]) {
+          xcodeProject.hash.project.objects["PBXGroup"] = {};
+        }
+        xcodeProject.hash.project.objects["PBXGroup"][resourcesGroupUuid] = {
+          isa: "PBXGroup",
+          children: [],
+          name: "Resources",
+          sourceTree: '"<group>"',
+        };
+        xcodeProject.hash.project.objects["PBXGroup"][resourcesGroupUuid + "_comment"] =
+          "Resources";
+
+        if (mainGroupKey) {
+          const mainGroup = xcodeProject.getPBXGroupByKey(mainGroupKey);
+          if (mainGroup) {
+            mainGroup.children.push({ value: resourcesGroupUuid, comment: "Resources" });
+          }
+        }
+      }
+
+      xcodeProject.addResourceFile("Settings.bundle", {
+        target: xcodeProject.getFirstTarget().uuid,
       });
     }
 

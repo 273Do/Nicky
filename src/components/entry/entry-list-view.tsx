@@ -47,17 +47,25 @@ export function EntryListView({
     bookmarkOnly,
   });
 
+  const fadeKey = `${activeJournalId}:${String(bookmarkOnly)}`;
+  const [prevFadeKey, setPrevFadeKey] = useState(fadeKey);
   const [fade, setFade] = useState(1);
+
+  if (fadeKey !== prevFadeKey) {
+    setPrevFadeKey(fadeKey);
+    setFade(0.25);
+  }
+
+  useEffect(() => {
+    if (fade < 1) {
+      const id = requestAnimationFrame(() => setFade(1));
+      return () => cancelAnimationFrame(id);
+    }
+  }, [fade]);
 
   const todayStart = startOfDay();
   const hasTodayEntry = entries.some((e) => e.createdAt >= todayStart);
   const disabled = oneEntry && hasTodayEntry;
-
-  useEffect(() => {
-    setFade(0.25);
-    const id = requestAnimationFrame(() => setFade(1));
-    return () => cancelAnimationFrame(id);
-  }, [activeJournalId, bookmarkOnly]);
 
   return (
     <View style={{ flex: 1 }}>

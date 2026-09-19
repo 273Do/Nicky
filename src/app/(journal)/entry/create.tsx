@@ -22,7 +22,7 @@ export default function EntryCreateScreen() {
   const { journalId, journalName } = useValidatedParams(schema);
 
   const { data: fields } = useLiveQuery(getFieldsQuery(journalId), [journalId]);
-  const { valuesRef, setValue, createEntry } = useEntry(fields);
+  const { values, setValue, createEntry } = useEntry(fields);
 
   const handleEntryCreate = async () => {
     Keyboard.dismiss();
@@ -54,7 +54,7 @@ export default function EntryCreateScreen() {
           ],
         }}
       />
-      <EntryCreateView id={journalId} values={valuesRef.current} setValue={setValue} />
+      <EntryCreateView id={journalId} values={values} setValue={setValue} />
     </>
   );
 }

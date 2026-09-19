@@ -1,0 +1,38 @@
+{
+  "fill": {
+    "linear-gradient": [
+      "display-p3:0.46585,0.51960,0.96783,1.00000",
+      "extended-srgb:0.38039,0.33333,0.96078,1.00000"
+    ]
+  },
+  "groups": [
+    {
+      "layers": [
+        {
+          "fill": {
+            "solid": "extended-gray:1.00000,1.00000"
+          },
+          "glass": true,
+          "hidden": false,
+          "image-name": "Nicky-logo.png",
+          "name": "Nicky-logo",
+          "position": {
+            "scale": 0.6,
+            "translation-in-points": [-13, 8]
+          }
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.5
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.3
+      }
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}

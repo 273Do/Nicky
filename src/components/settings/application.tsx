@@ -72,7 +72,7 @@ export function Application() {
       <Toggle
         isOn={aiReflectionEnabled}
         onIsOnChange={(enabled) => {
-          setAIReflectionEnabled(enabled);
+          void setAIReflectionEnabled(enabled);
           if (enabled) {
             downloadModel(AI_MODEL.gguf).catch((e) => console.warn("[model-download]", e));
           }
