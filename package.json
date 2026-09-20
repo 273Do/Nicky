@@ -82,6 +82,8 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild",
+      "llama.rn",
+      "react-native-enriched-markdown",
       "unrs-resolver"
     ]
   }
