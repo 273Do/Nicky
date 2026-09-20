@@ -1,6 +1,7 @@
 allowBuilds:
   esbuild: true
   llama.rn: true
+  node-datachannel: true
   react-native-enriched-markdown: true
   unrs-resolver: true
 blockExoticSubdeps: false
