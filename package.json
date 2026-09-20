@@ -83,6 +83,7 @@
     "onlyBuiltDependencies": [
       "esbuild",
       "llama.rn",
+      "node-datachannel",
       "react-native-enriched-markdown",
       "unrs-resolver"
     ]
