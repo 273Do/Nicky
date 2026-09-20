@@ -78,14 +78,5 @@
     "typescript": "~6.0.3",
     "vite-plus": "catalog:"
   },
-  "packageManager": "pnpm@11.0.0",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "llama.rn",
-      "node-datachannel",
-      "react-native-enriched-markdown",
-      "unrs-resolver"
-    ]
-  }
+  "packageManager": "pnpm@11.0.0"
 }
