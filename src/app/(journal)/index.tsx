@@ -13,6 +13,7 @@ import { getJournalsQuery, JournalWithCountObj } from "@/db/queries/journals";
 import { settings } from "@/db/schemas";
 import { exportJournalEntries } from "@/utils/entry/export-entry";
 import { consumeCreatedJournalId } from "@/utils/journal/created-journal";
+import { authenticate } from "@/utils/local-auth";
 
 /**
  * ジャーナル画面（チップ切り替え + エントリー一覧）
@@ -37,6 +38,8 @@ export default function JournalScreen() {
 
   const [selectedJournalId, setSelectedJournalId] = useState<string | null>(null);
   const [chipScrollKey, setChipScrollKey] = useState(0);
+  // ロック中ジャーナルの認証状態（認証済み ID を保持）
+  const [unlockedIds, setUnlockedIds] = useState<Set<string>>(new Set());
 
   // 作成直後のフォーカス復帰時に ID を受け取る（useRef で二重消費を防ぐ）
   const consumed = useRef(false);
@@ -55,6 +58,21 @@ export default function JournalScreen() {
 
   // 選択中のジャーナル（未選択 or 存在しない場合は先頭）
   const activeJournal = journalList.find((j) => j.id === selectedJournalId) ?? journalList[0];
+  const isLocked = activeJournal?.locked && !unlockedIds.has(activeJournal.id);
+
+  const unlockJournal = async (id: string): Promise<boolean> => {
+    const success = await authenticate();
+    if (success) setUnlockedIds((prev) => new Set(prev).add(id));
+    return success;
+  };
+
+  const handleSelectJournal = async (id: string) => {
+    const journal = journalList.find((j) => j.id === id);
+    if (journal?.locked && !unlockedIds.has(id)) {
+      if (!(await unlockJournal(id))) return;
+    }
+    setSelectedJournalId(id);
+  };
 
   const [bookmarkOnly, setBookmarkOnly] = useState(false);
   const [showDeleteAllAlert, setShowDeleteAllAlert] = useState(false);
@@ -139,9 +157,11 @@ export default function JournalScreen() {
         <EntryListView
           journals={journalList}
           activeJournal={activeJournal}
-          onSelectJournal={setSelectedJournalId}
+          onSelectJournal={handleSelectJournal}
           bookmarkOnly={bookmarkOnly}
           chipScrollKey={chipScrollKey}
+          locked={isLocked}
+          onUnlock={() => unlockJournal(activeJournal.id)}
         />
       ) : null}
 
