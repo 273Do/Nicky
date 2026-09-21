@@ -29,6 +29,7 @@ const defaultMeta: JournalMetaObj = {
   color: DEFAULT_JOURNAL_COLOR,
   icon: JOURNAL_ICONS[0],
   oneEntry: false,
+  locked: false,
   notificationTime: null,
 };
 
@@ -155,6 +156,7 @@ export const useJournalField = (initialData?: {
       icon: meta.icon,
       color: meta.color,
       oneEntry: meta.oneEntry,
+      locked: meta.locked,
       notificationTime: meta.notificationTime,
       createdAt: now,
       updatedAt: now,

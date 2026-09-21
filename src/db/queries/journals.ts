@@ -63,7 +63,7 @@ export const updateJournal = async (
   meta: JournalMetaObj,
   fieldUpdates: FieldWithSortObj[],
 ): Promise<void> => {
-  const { name, icon, color, oneEntry, notificationTime } = meta;
+  const { name, icon, color, oneEntry, locked, notificationTime } = meta;
 
   await db.transaction(async (tx) => {
     await tx
@@ -73,6 +73,7 @@ export const updateJournal = async (
         icon,
         color,
         oneEntry,
+        locked,
         notificationTime,
         updatedAt: Date.now(),
       })
