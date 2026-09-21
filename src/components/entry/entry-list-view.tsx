@@ -111,7 +111,7 @@ export function EntryListView({
               modifiers={[
                 font({ size: 14, weight: "semibold" }),
                 foregroundStyle(PlatformColor("label")),
-                padding({ top: 12, bottom: 16 }),
+                padding({ top: 4, bottom: 8 }),
               ]}
             >
               {t("journal.lockedMessage")}
