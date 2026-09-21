@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENT.md
 
 Nicky is a React Native journaling app built with Expo and Expo Router. It features native iOS UI via `@expo/ui/swift-ui` (SwiftUI components), native tab navigation, SQLite persistence via Drizzle ORM, and per-journal Face ID / Touch ID lock.
 

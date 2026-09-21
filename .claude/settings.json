@@ -10,5 +10,10 @@
         "repo": "expo/skills"
       }
     }
+  },
+  "pluginConfigs": {
+    "agents-md@builtin": {
+      "options": { "instructionFiles": "claude-md-and-agents-md" }
+    }
   }
 }
