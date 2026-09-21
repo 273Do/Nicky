@@ -14,6 +14,7 @@ export const journalMetaSchema = z.object({
   color: hexColorSchema,
   icon: journalIconSchema,
   oneEntry: z.boolean().default(false),
+  locked: z.boolean().default(false),
   notificationTime: z.number().nullable().default(null),
 });
 export type JournalMetaObj = z.infer<typeof journalMetaSchema>;

@@ -20,6 +20,8 @@ export const journals = sqliteTable("journals", {
   color: text().notNull(),
   /** 1日1エントリー設定 */
   oneEntry: integer({ mode: "boolean" }).notNull().default(false),
+  /** ローカル認証でロック */
+  locked: integer({ mode: "boolean" }).notNull().default(false),
   /** 通知時刻 */
   notificationTime: integer(),
   createdAt: integer()

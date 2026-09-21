@@ -32,7 +32,11 @@
     "selectColor": "Colour",
     "oneEntryPerDay": "One Entry Per Day",
     "notification": "Notification",
-    "notificationTime": "Notification Time"
+    "notificationTime": "Notification Time",
+    "requireAuth": "Require Face ID",
+    "authPrompt": "Authenticate to view this journal",
+    "lockedMessage": "This journal is locked",
+    "unlockButton": "View Journal"
   },
   "entry": {
     "newEntry": "New Entry",

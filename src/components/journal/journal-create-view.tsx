@@ -195,6 +195,12 @@ export function JournalCreateView({
               label={t("journal.notification")}
               modifiers={[tint(PlatformColor("systemIndigo"))]}
             />
+            <Toggle
+              isOn={meta.locked}
+              onIsOnChange={(v) => setMeta((prev) => ({ ...prev, locked: v }))}
+              label={t("journal.requireAuth")}
+              modifiers={[tint(PlatformColor("systemIndigo"))]}
+            />
             {notificationEnabled && (
               <DatePicker
                 title={t("journal.notificationTime")}
