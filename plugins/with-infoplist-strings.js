@@ -10,9 +10,12 @@ const path = require("path");
 const STRINGS = {
   en: {
     NSPhotoLibraryUsageDescription: "Used to attach images to journal entries.",
+    NSFaceIDUsageDescription: "Used to unlock the app with Face ID or Touch ID.",
   },
   ja: {
-    NSPhotoLibraryUsageDescription: "ジャーナルに画像を添付するために使用します。",
+    NSPhotoLibraryUsageDescription: "エントリーに画像を添付するために使用します。",
+    NSFaceIDUsageDescription:
+      "Face ID または Touch ID でアプリのロックを解除するために使用します。",
   },
 };
 
