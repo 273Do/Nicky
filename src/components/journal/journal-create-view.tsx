@@ -182,6 +182,12 @@ export function JournalCreateView({
               modifiers={[tint(PlatformColor("systemIndigo"))]}
             />
             <Toggle
+              isOn={meta.locked}
+              onIsOnChange={(v) => setMeta((prev) => ({ ...prev, locked: v }))}
+              label={t("journal.requireAuth")}
+              modifiers={[tint(PlatformColor("systemIndigo"))]}
+            />
+            <Toggle
               isOn={notificationEnabled}
               onIsOnChange={(enabled) => {
                 if (enabled) {
@@ -193,12 +199,6 @@ export function JournalCreateView({
                 }
               }}
               label={t("journal.notification")}
-              modifiers={[tint(PlatformColor("systemIndigo"))]}
-            />
-            <Toggle
-              isOn={meta.locked}
-              onIsOnChange={(v) => setMeta((prev) => ({ ...prev, locked: v }))}
-              label={t("journal.requireAuth")}
               modifiers={[tint(PlatformColor("systemIndigo"))]}
             />
             {notificationEnabled && (

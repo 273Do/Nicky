@@ -109,16 +109,16 @@ export function EntryListView({
             <Image systemName="lock.fill" color={PlatformColor("secondaryLabel")} size={42} />
             <Text
               modifiers={[
-                font({ size: 14, weight: "semibold" }),
+                font({ size: 18, weight: "semibold" }),
                 foregroundStyle(PlatformColor("label")),
-                padding({ top: 4, bottom: 8 }),
+                padding({ top: 4, bottom: 14 }),
               ]}
             >
               {t("journal.lockedMessage")}
             </Text>
             <Text
               modifiers={[
-                font({ size: 14 }),
+                font({ size: 16 }),
                 foregroundStyle(PlatformColor("systemIndigo")),
                 onTapGesture(onUnlock ?? (() => {})),
               ]}
