@@ -55,5 +55,5 @@ export const useDaysEntries = (selectedDate: Date) => {
     range.end.getTime(),
   ]);
 
-  return groupByDate(allEntries);
+  return groupByDate(allEntries.filter((e) => !e.journal.locked));
 };

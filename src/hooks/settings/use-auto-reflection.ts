@@ -28,14 +28,15 @@ export const useAutoReflection = () => {
   useEffect(() => {
     if (!aiReflectionEnabled) return;
     if (reflection) return;
-    if (!entries || entries.length === 0) return;
+    const unlocked = entries?.filter((e) => !e.journal.locked);
+    if (!unlocked || unlocked.length === 0) return;
     if (!isPastTime(reflectionTime)) return;
     if (generating.current) return;
 
     generating.current = true;
     void (async () => {
       try {
-        const result = await getReflection(entries);
+        const result = await getReflection(unlocked);
         if (result) await storeReflection(today, result);
       } catch (error) {
         console.warn("[auto-reflection]", error);
