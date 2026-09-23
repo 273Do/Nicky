@@ -20,7 +20,7 @@ export default function DaysLayout() {
           headerBackButtonDisplayMode: "minimal",
         }}
       >
-        <Stack.Screen name="index" />
+        <Stack.Screen name="index" options={{ title: t("tabs.days") }} />
         <Stack.Screen name="entry/[id]" />
         <Stack.Screen
           name="settings"
