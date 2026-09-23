@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlatformColor, View } from "react-native";
 
@@ -30,6 +30,7 @@ import {
   padding,
   tint,
 } from "@expo/ui/swift-ui/modifiers";
+import * as LocalAuthentication from "expo-local-authentication";
 
 import { FIELD_ICONS, FIELD_LABEL_KEYS, FieldType } from "@/constants/journal";
 import { JournalMetaObj, type FieldDraftObj } from "@/hooks/journal/use-journal-field";
@@ -130,6 +131,11 @@ export function JournalCreateView({
     icon: false,
   });
 
+  const [authAvailable, setAuthAvailable] = useState(true);
+  useEffect(() => {
+    LocalAuthentication.isEnrolledAsync().then(setAuthAvailable);
+  }, []);
+
   const notificationEnabled = meta.notificationTime !== null;
 
   return (
@@ -180,12 +186,14 @@ export function JournalCreateView({
               label={t("journal.oneEntryPerDay")}
               modifiers={[tint(PlatformColor("systemIndigo"))]}
             />
-            <Toggle
-              isOn={meta.locked}
-              onIsOnChange={(v) => setMeta((prev) => ({ ...prev, locked: v }))}
-              label={t("journal.requireAuth")}
-              modifiers={[tint(PlatformColor("systemIndigo"))]}
-            />
+            {authAvailable && (
+              <Toggle
+                isOn={meta.locked}
+                onIsOnChange={(v) => setMeta((prev) => ({ ...prev, locked: v }))}
+                label={t("journal.requireAuth")}
+                modifiers={[tint(PlatformColor("systemIndigo"))]}
+              />
+            )}
             <Toggle
               isOn={notificationEnabled}
               onIsOnChange={(enabled) => {
