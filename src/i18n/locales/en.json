@@ -36,7 +36,9 @@
     "requireAuth": "Require Face ID",
     "authPrompt": "Authenticate to view this journal.",
     "lockedMessage": "This journal is locked.",
-    "unlockButton": "View Journal"
+    "unlockButton": "View Journal",
+    "lock": "Lock",
+    "unlock": "Unlock"
   },
   "entry": {
     "newEntry": "New Entry",
