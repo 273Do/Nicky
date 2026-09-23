@@ -4,6 +4,7 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 
+import { hasTodayEntryForOneEntry } from "@/db/queries/entries";
 import { getJournalsQuery } from "@/db/queries/journals";
 import { useNotificationSettings } from "@/hooks/settings/use-notification-settings";
 import {
@@ -33,12 +34,14 @@ export const useJournalNotifications = () => {
         journalId?: string;
         journalName?: string;
       };
-      if (journalId && journalName) {
-        router.push({
-          pathname: "/entry/create",
-          params: { journalId, journalName },
-        });
-      }
+
+      if (!journalId || !journalName) return;
+      if (hasTodayEntryForOneEntry(journalId)) return;
+
+      router.push({
+        pathname: "/entry/create",
+        params: { journalId, journalName },
+      });
     });
 
     return () => subscription.remove();

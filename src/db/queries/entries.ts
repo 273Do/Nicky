@@ -176,6 +176,32 @@ export type EntryDetailObj = Awaited<ReturnType<typeof getEntriesQuery>>[number]
 export type DailyEntryObj = Awaited<ReturnType<typeof getEntriesByDateQuery>>[number];
 
 /**
+ * oneEntry ジャーナルで今日のエントリーが既に存在するか判定する
+ */
+export const hasTodayEntryForOneEntry = (journalId: string): boolean => {
+  const journal = db
+    .select({ oneEntry: journals.oneEntry })
+    .from(journals)
+    .where(eq(journals.id, journalId))
+    .get();
+  if (!journal?.oneEntry) return false;
+
+  const todayStart = startOfDay();
+  const todayEnd = addDays(todayStart, 1);
+  return !!db
+    .select({ id: entries.id })
+    .from(entries)
+    .where(
+      and(
+        eq(entries.journalId, journalId),
+        gte(entries.createdAt, todayStart.getTime()),
+        lt(entries.createdAt, todayEnd.getTime()),
+      ),
+    )
+    .get();
+};
+
+/**
  * すべてのジャーナル・エントリー・振り返りを削除する
  */
 export const deleteAllData = async () => {
