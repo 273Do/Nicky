@@ -59,8 +59,7 @@ function NumberTextField({
   const handleChange = async (v: string) => {
     const cleaned = cleanNumericInput(v, 1);
     if (cleaned !== v) await ref.current?.setText(cleaned);
-    const num = parseFloat(cleaned);
-    if (Number.isFinite(num)) onValueChange(num);
+    onValueChange(parseFloat(cleaned));
   };
 
   return <TextField ref={ref} text={text} placeholder={placeholder} onTextChange={handleChange} />;

@@ -135,7 +135,7 @@ export const useJournalField = (initialData?: {
     fields.some((f) => {
       if (f.type !== "rating") return false;
       const { name, min, max } = decodeRatingLabel(f.label);
-      return !name.trim() || min >= max;
+      return !name.trim() || !Number.isFinite(min) || !Number.isFinite(max) || min >= max;
     });
 
   /**
