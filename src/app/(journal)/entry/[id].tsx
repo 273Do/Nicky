@@ -6,7 +6,7 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useRouter } from "expo-router";
 import { z } from "zod";
 
-import { EntryDetailView } from "@/components/entry/entry-detail";
+import { EntryDetailView } from "@/components/entry/entry-detail-view";
 import { EntryEditView } from "@/components/entry/entry-edit-view";
 import { bookmarkEntry, deleteEntry, getEntryDetailQuery } from "@/db/queries/entries";
 import { useValidatedParams } from "@/hooks/use-validated-params";
@@ -43,13 +43,19 @@ export default function EntryDetailScreen() {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: journalName,
-          headerLargeTitleEnabled: true,
-          unstable_headerRightItems: editMode
-            ? undefined
-            : () => [
+      {entry && editMode ? (
+        <EntryEditView
+          entry={entry}
+          onSave={() => setEditMode(false)}
+          onCancel={() => setEditMode(false)}
+        />
+      ) : (
+        <>
+          <Stack.Screen
+            options={{
+              title: journalName,
+              headerLargeTitleEnabled: true,
+              unstable_headerRightItems: () => [
                 {
                   type: "button",
                   icon: {
@@ -87,26 +93,17 @@ export default function EntryDetailScreen() {
                     ],
                   },
                 },
-
                 {
                   type: "button",
                   label: t("common.edit"),
                   onPress: () => setEditMode(true),
                 },
               ],
-        }}
-      />
-
-      {entry &&
-        (editMode ? (
-          <EntryEditView
-            entry={entry}
-            onSave={() => setEditMode(false)}
-            onCancel={() => setEditMode(false)}
+            }}
           />
-        ) : (
-          <EntryDetailView entry={entry} />
-        ))}
+          {entry && <EntryDetailView entry={entry} />}
+        </>
+      )}
     </>
   );
 }
