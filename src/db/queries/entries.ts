@@ -49,6 +49,24 @@ export const getEntryDetailQuery = (entryId: string) =>
  */
 export const storeEntry = async (newEntry: EntryObj, newValues: EntryValueObj[]): Promise<void> => {
   await db.transaction(async (tx) => {
+    // oneEntry が有効なジャーナルは当日の既存エントリーを確認
+    const journal = await tx.query.journals.findFirst({
+      where: (j, { eq }) => eq(j.id, newEntry.journalId),
+    });
+    if (journal?.oneEntry) {
+      const todayStart = startOfDay();
+      const todayEnd = addDays(todayStart, 1);
+      const existing = await tx.query.entries.findFirst({
+        where: (e, { eq, and, gte, lt }) =>
+          and(
+            eq(e.journalId, newEntry.journalId),
+            gte(e.createdAt, todayStart.getTime()),
+            lt(e.createdAt, todayEnd.getTime()),
+          ),
+      });
+      if (existing) throw new Error("oneEntry: today's entry already exists");
+    }
+
     await tx.insert(entries).values(newEntry);
 
     if (newValues.length > 0) {

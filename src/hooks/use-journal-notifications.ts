@@ -29,7 +29,7 @@ export const useJournalNotifications = () => {
 
   // 通知タップ時はエントリー作成画面に遷移
   useEffect(() => {
-    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+    const handleResponse = (response: Notifications.NotificationResponse) => {
       const { journalId, journalName } = response.notification.request.content.data as {
         journalId?: string;
         journalName?: string;
@@ -42,6 +42,14 @@ export const useJournalNotifications = () => {
         pathname: "/entry/create",
         params: { journalId, journalName },
       });
+    };
+
+    // ライブリスナー
+    const subscription = Notifications.addNotificationResponseReceivedListener(handleResponse);
+
+    // コールドスタート: アプリ終了状態から通知タップで起動した場合
+    Notifications.getLastNotificationResponseAsync().then((response) => {
+      if (response) handleResponse(response);
     });
 
     return () => subscription.remove();
