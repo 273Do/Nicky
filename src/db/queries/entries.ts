@@ -205,17 +205,18 @@ export const hasTodayEntryForOneEntry = (journalId: string): boolean => {
  * すべてのジャーナル・エントリー・振り返りを削除する
  */
 export const deleteAllData = async () => {
-  // メディアパスを収集
-  const mediaValues = await db
-    .select({ value: entryValues.value })
-    .from(entryValues)
-    .innerJoin(fields, eq(entryValues.fieldId, fields.id))
-    .where(eq(fields.type, "media"));
+  const mediaValues = await db.transaction(async (tx) => {
+    const media = await tx
+      .select({ value: entryValues.value })
+      .from(entryValues)
+      .innerJoin(fields, eq(entryValues.fieldId, fields.id))
+      .where(eq(fields.type, "media"));
 
-  await db.transaction(async (tx) => {
     await tx.delete(reflections);
     await tx.delete(entries);
     await tx.delete(journals);
+
+    return media;
   });
 
   for (const row of mediaValues) {
