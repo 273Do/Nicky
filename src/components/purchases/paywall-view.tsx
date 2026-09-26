@@ -171,17 +171,6 @@ export function PaywallView() {
                   </Text>
                 ) : null}
               </Picker>
-              {plan === "yearly" && annual?.product.pricePerMonthString ? (
-                <Text
-                  modifiers={[
-                    foregroundStyle({ type: "color", color: PlatformColor("secondaryLabel") }),
-                    font({ size: 13 }),
-                    padding({ top: 8 }),
-                  ]}
-                >
-                  {t("purchases.perMonth", { price: annual.product.pricePerMonthString })}
-                </Text>
-              ) : null}
             </VStack>
           )}
         </VStack>
@@ -237,7 +226,7 @@ export function PaywallView() {
                 padding({ horizontal: 6 }),
               ]}
             >
-              {"・"}
+              {"|"}
             </Text>
             <Link
               label={t("support.privacyPolicy")}

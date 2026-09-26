@@ -34,6 +34,7 @@ import * as LocalAuthentication from "expo-local-authentication";
 
 import { FIELD_ICONS, FIELD_LABEL_KEYS, FieldType } from "@/constants/journal";
 import { JournalMetaObj, type FieldDraftObj } from "@/hooks/journal/use-journal-field";
+import { useProGate } from "@/hooks/purchases/use-pro-gate";
 import { cleanNumericInput } from "@/utils/entry/field-value";
 import { hexColorSchema } from "@/utils/journal/color";
 import { decodeRatingLabel } from "@/utils/journal/rating-label";
@@ -131,6 +132,8 @@ export function JournalCreateView({
     icon: false,
   });
 
+  const { isPro, openPaywall } = useProGate();
+
   const [authAvailable, setAuthAvailable] = useState(true);
   useEffect(() => {
     LocalAuthentication.isEnrolledAsync().then(setAuthAvailable);
@@ -182,14 +185,26 @@ export function JournalCreateView({
             </HStack>
             <Toggle
               isOn={meta.oneEntry}
-              onIsOnChange={(v) => setMeta((prev) => ({ ...prev, oneEntry: v }))}
+              onIsOnChange={(v) => {
+                if (!isPro) {
+                  openPaywall();
+                  return;
+                }
+                setMeta((prev) => ({ ...prev, oneEntry: v }));
+              }}
               label={t("journal.oneEntryPerDay")}
               modifiers={[tint(PlatformColor("systemIndigo"))]}
             />
             {authAvailable && (
               <Toggle
                 isOn={meta.locked}
-                onIsOnChange={(v) => setMeta((prev) => ({ ...prev, locked: v }))}
+                onIsOnChange={(v) => {
+                  if (!isPro) {
+                    openPaywall();
+                    return;
+                  }
+                  setMeta((prev) => ({ ...prev, locked: v }));
+                }}
                 label={t("journal.requireAuth")}
                 modifiers={[tint(PlatformColor("systemIndigo"))]}
               />
@@ -292,6 +307,8 @@ export function JournalCreateView({
           isPresented={showSheet.field}
           onIsPresentedChange={(v) => setShowSheet((prev) => ({ ...prev, field: v }))}
           onAdd={addField}
+          isPro={isPro}
+          onRequirePro={openPaywall}
         />
 
         {/* アイコン選択ボトムシート */}
@@ -300,6 +317,8 @@ export function JournalCreateView({
           onIsPresentedChange={(v) => setShowSheet((prev) => ({ ...prev, icon: v }))}
           selectedIcon={meta.icon}
           selectedColor={meta.color}
+          isPro={isPro}
+          onRequirePro={openPaywall}
           onSelectIcon={(icon) => setMeta((prev) => ({ ...prev, icon }))}
           onSelectColor={(color) => {
             if (hexColorSchema.safeParse(color).success) setMeta((prev) => ({ ...prev, color }));

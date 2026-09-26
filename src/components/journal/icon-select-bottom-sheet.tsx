@@ -14,7 +14,9 @@ import {
 import {
   foregroundStyle,
   frame,
+  offset,
   onTapGesture,
+  opacity,
   padding,
   presentationDetents,
   presentationDragIndicator,
@@ -22,6 +24,7 @@ import {
 import { SFSymbol } from "expo-symbols";
 
 import { JOURNAL_ICONS } from "@/constants/journal";
+import { FREE_ICON_COUNT } from "@/constants/purchases";
 import { chunkArray } from "@/utils/chunk-array";
 
 type Props = {
@@ -33,6 +36,10 @@ type Props = {
   selectedIcon: SFSymbol;
   /** 選択中のカラー */
   selectedColor: string;
+  /** Pro が有効かどうか */
+  isPro: boolean;
+  /** Pro 限定アイコンが選ばれたときのコールバック */
+  onRequirePro: () => void;
   /** アイコン選択時のコールバック */
   onSelectIcon: (icon: SFSymbol) => void;
   /** カラー変更時のコールバック */
@@ -50,11 +57,25 @@ export function IconSelectBottomSheet({
   onIsPresentedChange,
   selectedIcon,
   selectedColor,
+  isPro,
+  onRequirePro,
   onSelectIcon,
   onSelectColor,
 }: Props) {
   const { t } = useTranslation();
   const rows = chunkArray(JOURNAL_ICONS, COLUMNS);
+
+  /** 無料プランでは先頭の FREE_ICON_COUNT 個だけ選べる */
+  const freeIcons = new Set<string>(JOURNAL_ICONS.slice(0, FREE_ICON_COUNT));
+
+  const handleSelect = (icon: SFSymbol) => {
+    if (!isPro && !freeIcons.has(icon)) {
+      onIsPresentedChange(false);
+      onRequirePro();
+      return;
+    }
+    onSelectIcon(icon);
+  };
 
   return (
     <BottomSheet isPresented={isPresented} onIsPresentedChange={onIsPresentedChange}>
@@ -83,35 +104,45 @@ export function IconSelectBottomSheet({
           <Grid modifiers={[padding({ horizontal: 16, vertical: 8 })]}>
             {rows.map((row, rowIndex) => (
               <Grid.Row key={rowIndex}>
-                {row.map((icon) => (
-                  <ZStack
-                    key={icon}
-                    modifiers={[
-                      frame({ width: 52, height: 52 }),
-                      onTapGesture(() => {
-                        onSelectIcon(icon);
-                        onIsPresentedChange(false);
-                      }),
-                    ]}
-                  >
-                    <RoundedRectangle
-                      cornerRadius={100}
+                {row.map((icon) => {
+                  const requiresPro = !isPro && !freeIcons.has(icon);
+
+                  return (
+                    <ZStack
+                      key={icon}
                       modifiers={[
-                        frame({ maxWidth: 9999, maxHeight: 9999 }),
-                        foregroundStyle(
-                          selectedIcon === icon
-                            ? selectedColor
-                            : PlatformColor("secondarySystemFill"),
-                        ),
+                        frame({ width: 52, height: 52 }),
+                        onTapGesture(() => handleSelect(icon)),
                       ]}
-                    />
-                    <Image
-                      systemName={icon}
-                      color={selectedIcon === icon ? "white" : PlatformColor("label")}
-                      size={24}
-                    />
-                  </ZStack>
-                ))}
+                    >
+                      <RoundedRectangle
+                        cornerRadius={100}
+                        modifiers={[
+                          frame({ maxWidth: 9999, maxHeight: 9999 }),
+                          foregroundStyle(
+                            selectedIcon === icon
+                              ? selectedColor
+                              : PlatformColor("secondarySystemFill"),
+                          ),
+                        ]}
+                      />
+                      <Image
+                        systemName={icon}
+                        color={selectedIcon === icon ? "white" : PlatformColor("label")}
+                        size={24}
+                        modifiers={requiresPro ? [opacity(0.3)] : []}
+                      />
+                      {requiresPro && (
+                        <Image
+                          systemName="lock.fill"
+                          color={PlatformColor("secondaryLabel")}
+                          size={16}
+                          modifiers={[offset({ x: 14, y: 14 })]}
+                        />
+                      )}
+                    </ZStack>
+                  );
+                })}
               </Grid.Row>
             ))}
           </Grid>
