@@ -27,6 +27,17 @@ export function Application() {
   const [generating, setGenerating] = useState(false);
   const generatingRef = useRef(false);
 
+  const handleAIReflectionChange = async (enabled: boolean) => {
+    await setAIReflectionEnabled(enabled);
+    if (!enabled) return;
+    try {
+      await downloadModel(AI_MODEL.gguf);
+      refresh();
+    } catch (e) {
+      console.warn("[model-download]", e);
+    }
+  };
+
   const handleGenerateReflection = async () => {
     if (generatingRef.current) return;
     generatingRef.current = true;
@@ -71,12 +82,7 @@ export function Application() {
       />
       <Toggle
         isOn={aiReflectionEnabled}
-        onIsOnChange={(enabled) => {
-          void setAIReflectionEnabled(enabled);
-          if (enabled) {
-            downloadModel(AI_MODEL.gguf).catch((e) => console.warn("[model-download]", e));
-          }
-        }}
+        onIsOnChange={handleAIReflectionChange}
         label={t("settings.aiReflection")}
         modifiers={[tint(PlatformColor("systemIndigo"))]}
       />

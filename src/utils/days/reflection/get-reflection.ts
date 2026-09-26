@@ -52,12 +52,13 @@ export const getReflection = async (entries: DailyEntryObj[]): Promise<Reflectio
   try {
     await model.prepare();
 
+    const lang = i18n.language === "ja" ? "ja" : "en";
     const entriesText = entriesToText(entries);
     const prompt = `Here are today's journal entries. Generate a reflection based on these records.\n\n<entries>\n${entriesText}\n</entries>`;
 
     const { text } = await generateText({
       model,
-      system: buildSystemPrompt(categoryList, i18n.language === "ja" ? "ja" : "en"),
+      system: buildSystemPrompt(categoryList, lang),
       prompt,
     });
     if (__DEV__) console.log("[reflection] raw:", text);
@@ -74,7 +75,6 @@ export const getReflection = async (entries: DailyEntryObj[]): Promise<Reflectio
       return null;
     }
 
-    const lang = i18n.language === "ja" ? "ja" : "en";
     const result = buildReflectionSchema(lang).safeParse(parsed);
     if (__DEV__ && !result.success) console.warn("[reflection] validation:", result.error.issues);
 
