@@ -7,6 +7,7 @@ import { Stack, useRouter } from "expo-router";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
 import { useJournalField } from "@/hooks/journal/use-journal-field";
+import { useSubscription } from "@/hooks/purchases/use-subscription";
 import { handleSaveError } from "@/utils/handle-save-error";
 import { setCreatedJournalId } from "@/utils/journal/created-journal";
 import { importJournal } from "@/utils/journal/import-journal";
@@ -17,6 +18,7 @@ import { importJournal } from "@/utils/journal/import-journal";
 export default function JournalCreateScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { isPro } = useSubscription();
 
   const {
     fields,
@@ -53,7 +55,14 @@ export default function JournalCreateScreen() {
 
     const { name, color, icon, oneEntry, locked, notificationTime, fields } = journal;
 
-    setMeta({ name, color, icon, oneEntry, locked, notificationTime });
+    setMeta({
+      name,
+      color,
+      icon,
+      oneEntry: isPro && oneEntry,
+      locked: isPro && locked,
+      notificationTime,
+    });
     setFields(fields.map(({ type, label }) => ({ id: Crypto.randomUUID(), type, label })));
     setImportKey((prev) => prev + 1);
   };
