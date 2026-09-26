@@ -69,3 +69,7 @@ Journals can be individually locked with Face ID / Touch ID via the `locked` col
 - `expo-local-authentication` requires a native rebuild (`pnpm prebuild && pnpm expo run:ios`) after first install
 - `authenticateAsync({ promptMessage })` requires a non-empty string — use `i18n.t()` for localization
 - On simulator, Face ID is unavailable; it falls back to passcode input. Use Simulator > Features > Face ID > Enrolled to test Face ID
+
+## Subscriptions (RevenueCat)
+
+Monthly / yearly subscriptions gated by the `nicky_pro` entitlement, with a hand-built SwiftUI paywall. See [purchases.md](purchases.md) for the data model, key handling, the external-store state design, and the recipe for gating a feature.

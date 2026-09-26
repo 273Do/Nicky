@@ -1,5 +1,6 @@
 import "@/i18n";
 import "@/polyfills";
+import "@/utils/purchases/configure";
 import React from "react";
 
 import * as SplashScreen from "expo-splash-screen";

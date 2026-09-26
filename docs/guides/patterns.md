@@ -53,6 +53,42 @@ export const useSomeSetting = () => {
 };
 ```
 
+## External Store Subscription Pattern
+
+For state that comes from an external event source (a native SDK listener, not the DB), use a module-level store read with `useSyncExternalStore` — **never** `useEffect` + `setState`. Example: `src/utils/purchases/subscription-store.ts` + `src/hooks/purchases/use-subscription.ts`.
+
+```ts
+let snapshot: Snapshot = initial;
+const listeners = new Set<() => void>();
+
+// Replace the object, never mutate it, and only when a value actually changed
+const setSnapshot = (next: Snapshot) => {
+  if (isEqual(next, snapshot)) return;
+  snapshot = next;
+  listeners.forEach((listener) => listener());
+};
+
+export const subscribe = (listener: () => void) => {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+};
+
+export const getSnapshot = () => snapshot;
+```
+
+```ts
+const value = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+```
+
+**Key rules:**
+
+- Mutating the snapshot in place breaks change detection — always assign a new object
+- Skip the notification when nothing changed, otherwise every listener re-renders on each event
+- Pass `getSnapshot` as the third argument too (`getServerSnapshot`) since `app.json` uses `web.output: "static"`
+- Register the underlying native listener once (a module-level `started` flag), not per subscriber
+
 ## Journal Meta Schema
 
 `JournalMetaObj` in `src/utils/journal/journal-field.ts` defines the editable journal properties: `name`, `color`, `icon`, `oneEntry`, `locked`, `notificationTime`. This schema is used by both create and edit flows via `useJournalField` hook.

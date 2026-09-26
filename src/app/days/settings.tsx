@@ -7,6 +7,7 @@ import { frame } from "@expo/ui/swift-ui/modifiers";
 
 import { Application } from "@/components/settings/application";
 import { EntrySettings } from "@/components/settings/entry";
+import { Subscription } from "@/components/settings/subscription";
 import { Support } from "@/components/settings/support";
 import { deleteAllData } from "@/db/queries/entries";
 
@@ -24,6 +25,7 @@ export default function SettingsScreen() {
     >
       <List modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 })]}>
         <Application />
+        <Subscription />
         <EntrySettings setShowDeleteAlert={setShowDeleteAlert} />
         <Support />
       </List>

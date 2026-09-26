@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useColorScheme } from "react-native";
 
 import { Alert, Button, Host, Text } from "@expo/ui/swift-ui";
 import { eq } from "drizzle-orm";
@@ -21,6 +22,11 @@ import { authenticate } from "@/utils/local-auth";
 export default function JournalScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const colorScheme = useColorScheme();
+  const appIcon =
+    colorScheme === "dark"
+      ? require("@/assets/images/nav-icon-dark.png")
+      : require("@/assets/images/nav-icon.png");
 
   const onboardingNavigated = useRef(false);
 
@@ -83,6 +89,14 @@ export default function JournalScreen() {
         options={{
           title: t("tabs.journal"),
           headerLargeTitleEnabled: true,
+          unstable_headerLeftItems: () => [
+            {
+              type: "button",
+              label: t("purchases.title"),
+              icon: { type: "image", source: appIcon, tinted: false },
+              onPress: () => router.push("/(journal)/paywall"),
+            },
+          ],
           unstable_headerRightItems: () => [
             {
               type: "button",
