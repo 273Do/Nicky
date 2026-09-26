@@ -84,7 +84,7 @@ const buildMarkdownStyle = (
     h4: c,
     h5: c,
     h6: c,
-    blockquote: { color: textColor, borderColor: textColor },
+    blockquote: { color: textColor, borderColor: textColor, backgroundColor: codeBg },
     list: c,
     codeBlock: { color: textColor, backgroundColor: codeBg },
     link: { color: linkColor },

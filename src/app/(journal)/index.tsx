@@ -102,6 +102,29 @@ export default function JournalScreen() {
                     menu: {
                       title: activeJournal.name,
                       items: [
+                        ...(activeJournal.locked
+                          ? [
+                              {
+                                type: "action" as const,
+                                icon: {
+                                  type: "sfSymbol" as const,
+                                  name: isLocked ? ("lock" as const) : ("lock.open" as const),
+                                },
+                                label: isLocked ? t("journal.unlock") : t("journal.lock"),
+                                onPress: async () => {
+                                  if (isLocked) {
+                                    await unlockJournal(activeJournal.id);
+                                  } else {
+                                    setUnlockedIds((prev) => {
+                                      const next = new Set(prev);
+                                      next.delete(activeJournal.id);
+                                      return next;
+                                    });
+                                  }
+                                },
+                              },
+                            ]
+                          : []),
                         {
                           type: "action" as const,
                           icon: {
@@ -109,6 +132,7 @@ export default function JournalScreen() {
                             name: bookmarkOnly ? ("bookmark" as const) : ("bookmark.fill" as const),
                           },
                           label: bookmarkOnly ? t("journal.showAll") : t("journal.bookmarkedOnly"),
+                          disabled: isLocked,
                           onPress: () => setBookmarkOnly((prev) => !prev),
                         },
                         {
@@ -118,6 +142,7 @@ export default function JournalScreen() {
                             name: "ellipsis.circle" as const,
                           },
                           label: t("common.edit"),
+                          disabled: isLocked,
                           onPress: () => {
                             router.push(`/(journal)/edit?journalId=${activeJournal.id}`);
                           },
@@ -130,6 +155,7 @@ export default function JournalScreen() {
                           },
                           label: t("entry.exportAllEntry"),
                           state: "off" as const,
+                          disabled: isLocked,
                           onPress: async () => {
                             await exportJournalEntries(activeJournal.id, activeJournal.name);
                           },

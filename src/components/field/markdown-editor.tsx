@@ -1,4 +1,5 @@
 import {
+  type LayoutChangeEvent,
   PlatformColor,
   StyleSheet,
   TextInput,
@@ -32,11 +33,17 @@ export function MarkdownEditor({
     onHeightChange?.(h);
   };
 
+  const handleLayout = (e: LayoutChangeEvent) => {
+    const h = Math.max(MIN_HEIGHT, Math.ceil(e.nativeEvent.layout.height));
+    onHeightChange?.(h);
+  };
+
   return (
     <TextInput
       defaultValue={defaultValue}
       onChangeText={onValueChange}
       onContentSizeChange={handleContentSizeChange}
+      onLayout={handleLayout}
       placeholder={placeholder}
       placeholderTextColor={PlatformColor("placeholderText")}
       selectionColor={PlatformColor("systemIndigo")}

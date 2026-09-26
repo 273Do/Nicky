@@ -34,9 +34,11 @@
     "notification": "通知",
     "notificationTime": "通知時刻",
     "requireAuth": "Face IDを必要にする",
-    "authPrompt": "このジャーナルを表示するには認証が必要です",
-    "lockedMessage": "このジャーナルはロックされています",
-    "unlockButton": "ジャーナルを表示"
+    "authPrompt": "このジャーナルを表示するには認証が必要です。",
+    "lockedMessage": "このジャーナルはロックされています。",
+    "unlockButton": "ジャーナルを表示",
+    "lock": "ロック",
+    "unlock": "ロックを解除"
   },
   "entry": {
     "newEntry": "新規エントリー",

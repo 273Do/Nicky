@@ -105,7 +105,7 @@ export function EntryLongText({ label, defaultValue = "", onValueChange, edit = 
         <VStack modifiers={[frame({ height: editorHeight, maxWidth: 9999 })]}>
           <MarkdownEditor
             placeholder={t("field.longText")}
-            defaultValue={defaultValue}
+            defaultValue={currentText}
             onValueChange={handleValueChange}
             onHeightChange={setEditorHeight}
           />

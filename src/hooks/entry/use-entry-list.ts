@@ -1,6 +1,7 @@
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { getEntriesQuery } from "@/db/queries/entries";
+import { startOfDay } from "@/utils/date";
 import { buildPreviewEntry } from "@/utils/entry/preview";
 
 type Params = {
@@ -18,10 +19,13 @@ export const useEntryList = ({ journalId, bookmarkOnly = false }: Params) => {
 
   const previewEntries = entries.map(buildPreviewEntry);
 
+  const todayStart = startOfDay();
+  const hasTodayEntry = previewEntries.some((e) => e.createdAt >= todayStart);
+
   const filtered = bookmarkOnly ? previewEntries.filter((e) => e.bookmark) : previewEntries;
 
   // デフォルトは新しい順
   const sorted = [...filtered].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
-  return { entries: sorted };
+  return { entries: sorted, hasTodayEntry };
 };

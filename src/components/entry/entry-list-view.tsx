@@ -22,7 +22,6 @@ import { JournalChipList } from "@/components/journal/journal-chip";
 import { deleteEntry } from "@/db/queries/entries";
 import { type JournalWithCountObj } from "@/db/queries/journals";
 import { useEntryList } from "@/hooks/entry/use-entry-list";
-import { startOfDay } from "@/utils/date";
 
 import { EntryRow } from "./entry-row";
 
@@ -60,7 +59,7 @@ export function EntryListView({
 
   const { id: activeJournalId, name: activeJournalName, oneEntry } = activeJournal;
 
-  const { entries } = useEntryList({
+  const { entries, hasTodayEntry } = useEntryList({
     journalId: activeJournalId,
     bookmarkOnly,
   });
@@ -81,8 +80,6 @@ export function EntryListView({
     }
   }, [fade]);
 
-  const todayStart = startOfDay();
-  const hasTodayEntry = entries.some((e) => e.createdAt >= todayStart);
   const disabled = oneEntry && hasTodayEntry;
 
   const chipList =
@@ -109,16 +106,16 @@ export function EntryListView({
             <Image systemName="lock.fill" color={PlatformColor("secondaryLabel")} size={42} />
             <Text
               modifiers={[
-                font({ size: 14, weight: "semibold" }),
+                font({ size: 18, weight: "semibold" }),
                 foregroundStyle(PlatformColor("label")),
-                padding({ top: 4, bottom: 8 }),
+                padding({ top: 4, bottom: 14 }),
               ]}
             >
               {t("journal.lockedMessage")}
             </Text>
             <Text
               modifiers={[
-                font({ size: 14 }),
+                font({ size: 16 }),
                 foregroundStyle(PlatformColor("systemIndigo")),
                 onTapGesture(onUnlock ?? (() => {})),
               ]}

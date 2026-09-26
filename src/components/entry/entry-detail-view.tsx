@@ -23,9 +23,12 @@ export function EntryDetailView({ entry }: Props) {
   const sorted = [...entry.values].sort((a, b) => a.field.sortOrder - b.field.sortOrder);
 
   return (
-    <View style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}>
-      <Host style={{ flex: 1 }} useViewportSizeMeasurement>
-        <List modifiers={[frame({ maxWidth: 9999 }), listStyle("plain")]}>
+    <View style={{ flex: 1 }}>
+      <Host
+        style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}
+        useViewportSizeMeasurement
+      >
+        <List modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 }), listStyle("plain")]}>
           <Section header={<Text>{formatDate(entry.createdAt)}</Text>}>
             {sorted.map((v) => {
               const value = deserializeValue(v.value, v.field.type);

@@ -41,15 +41,17 @@ export const exportEntry = async (entry: EntryDetailObj, journalName: string): P
     file.create();
     await file.write(content);
 
-    if (await Sharing.isAvailableAsync()) {
-      await Sharing.shareAsync(file.uri, {
-        mimeType: "text/plain",
-        dialogTitle: i18n.t("settings.exportEntryDialogTitle"),
-        UTI: "public.plain-text",
-      });
+    try {
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(file.uri, {
+          mimeType: "text/plain",
+          dialogTitle: i18n.t("settings.exportEntryDialogTitle"),
+          UTI: "public.plain-text",
+        });
+      }
+    } finally {
+      file.delete();
     }
-
-    file.delete();
   } catch (error) {
     Alert.alert(i18n.t("error.exportFailed"), i18n.t("error.exportFailedMessage"));
     console.error("Export Entry Failed:", error);
@@ -94,15 +96,17 @@ const exportEntriesAsZip = async (
     file.create();
     await file.write(uint8);
 
-    if (await Sharing.isAvailableAsync()) {
-      await Sharing.shareAsync(file.uri, {
-        mimeType: "application/zip",
-        dialogTitle,
-        UTI: "com.pkware.zip-archive",
-      });
+    try {
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(file.uri, {
+          mimeType: "application/zip",
+          dialogTitle,
+          UTI: "com.pkware.zip-archive",
+        });
+      }
+    } finally {
+      file.delete();
     }
-
-    file.delete();
   } catch (error) {
     Alert.alert(i18n.t("error.exportFailed"), i18n.t("error.exportFailedMessage"));
     console.error("Export Entries Failed:", error);

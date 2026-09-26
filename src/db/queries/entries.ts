@@ -49,6 +49,24 @@ export const getEntryDetailQuery = (entryId: string) =>
  */
 export const storeEntry = async (newEntry: EntryObj, newValues: EntryValueObj[]): Promise<void> => {
   await db.transaction(async (tx) => {
+    // oneEntry が有効なジャーナルは当日の既存エントリーを確認
+    const journal = await tx.query.journals.findFirst({
+      where: (j, { eq }) => eq(j.id, newEntry.journalId),
+    });
+    if (journal?.oneEntry) {
+      const todayStart = startOfDay();
+      const todayEnd = addDays(todayStart, 1);
+      const existing = await tx.query.entries.findFirst({
+        where: (e, { eq, and, gte, lt }) =>
+          and(
+            eq(e.journalId, newEntry.journalId),
+            gte(e.createdAt, todayStart.getTime()),
+            lt(e.createdAt, todayEnd.getTime()),
+          ),
+      });
+      if (existing) throw new Error("oneEntry: today's entry already exists");
+    }
+
     await tx.insert(entries).values(newEntry);
 
     if (newValues.length > 0) {
@@ -176,20 +194,47 @@ export type EntryDetailObj = Awaited<ReturnType<typeof getEntriesQuery>>[number]
 export type DailyEntryObj = Awaited<ReturnType<typeof getEntriesByDateQuery>>[number];
 
 /**
+ * oneEntry ジャーナルで今日のエントリーが既に存在するか判定する
+ */
+export const hasTodayEntryForOneEntry = (journalId: string): boolean => {
+  const journal = db
+    .select({ oneEntry: journals.oneEntry })
+    .from(journals)
+    .where(eq(journals.id, journalId))
+    .get();
+  if (!journal?.oneEntry) return false;
+
+  const todayStart = startOfDay();
+  const todayEnd = addDays(todayStart, 1);
+  return !!db
+    .select({ id: entries.id })
+    .from(entries)
+    .where(
+      and(
+        eq(entries.journalId, journalId),
+        gte(entries.createdAt, todayStart.getTime()),
+        lt(entries.createdAt, todayEnd.getTime()),
+      ),
+    )
+    .get();
+};
+
+/**
  * すべてのジャーナル・エントリー・振り返りを削除する
  */
 export const deleteAllData = async () => {
-  // メディアパスを収集
-  const mediaValues = await db
-    .select({ value: entryValues.value })
-    .from(entryValues)
-    .innerJoin(fields, eq(entryValues.fieldId, fields.id))
-    .where(eq(fields.type, "media"));
+  const mediaValues = await db.transaction(async (tx) => {
+    const media = await tx
+      .select({ value: entryValues.value })
+      .from(entryValues)
+      .innerJoin(fields, eq(entryValues.fieldId, fields.id))
+      .where(eq(fields.type, "media"));
 
-  await db.transaction(async (tx) => {
     await tx.delete(reflections);
     await tx.delete(entries);
     await tx.delete(journals);
+
+    return media;
   });
 
   for (const row of mediaValues) {

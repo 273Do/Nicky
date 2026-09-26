@@ -4,6 +4,7 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 
+import { hasTodayEntryForOneEntry } from "@/db/queries/entries";
 import { getJournalsQuery } from "@/db/queries/journals";
 import { useNotificationSettings } from "@/hooks/settings/use-notification-settings";
 import {
@@ -28,17 +29,27 @@ export const useJournalNotifications = () => {
 
   // 通知タップ時はエントリー作成画面に遷移
   useEffect(() => {
-    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+    const handleResponse = (response: Notifications.NotificationResponse) => {
       const { journalId, journalName } = response.notification.request.content.data as {
         journalId?: string;
         journalName?: string;
       };
-      if (journalId && journalName) {
-        router.push({
-          pathname: "/entry/create",
-          params: { journalId, journalName },
-        });
-      }
+
+      if (!journalId || !journalName) return;
+      if (hasTodayEntryForOneEntry(journalId)) return;
+
+      router.push({
+        pathname: "/entry/create",
+        params: { journalId, journalName },
+      });
+    };
+
+    // ライブリスナー
+    const subscription = Notifications.addNotificationResponseReceivedListener(handleResponse);
+
+    // コールドスタート: アプリ終了状態から通知タップで起動した場合
+    Notifications.getLastNotificationResponseAsync().then((response) => {
+      if (response) handleResponse(response);
     });
 
     return () => subscription.remove();

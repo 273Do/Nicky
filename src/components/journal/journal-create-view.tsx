@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlatformColor, View } from "react-native";
 
@@ -30,6 +30,7 @@ import {
   padding,
   tint,
 } from "@expo/ui/swift-ui/modifiers";
+import * as LocalAuthentication from "expo-local-authentication";
 
 import { FIELD_ICONS, FIELD_LABEL_KEYS, FieldType } from "@/constants/journal";
 import { JournalMetaObj, type FieldDraftObj } from "@/hooks/journal/use-journal-field";
@@ -59,8 +60,7 @@ function NumberTextField({
   const handleChange = async (v: string) => {
     const cleaned = cleanNumericInput(v, 1);
     if (cleaned !== v) await ref.current?.setText(cleaned);
-    const num = parseFloat(cleaned);
-    if (Number.isFinite(num)) onValueChange(num);
+    onValueChange(parseFloat(cleaned));
   };
 
   return <TextField ref={ref} text={text} placeholder={placeholder} onTextChange={handleChange} />;
@@ -131,6 +131,11 @@ export function JournalCreateView({
     icon: false,
   });
 
+  const [authAvailable, setAuthAvailable] = useState(true);
+  useEffect(() => {
+    LocalAuthentication.isEnrolledAsync().then(setAuthAvailable);
+  }, []);
+
   const notificationEnabled = meta.notificationTime !== null;
 
   return (
@@ -181,6 +186,14 @@ export function JournalCreateView({
               label={t("journal.oneEntryPerDay")}
               modifiers={[tint(PlatformColor("systemIndigo"))]}
             />
+            {authAvailable && (
+              <Toggle
+                isOn={meta.locked}
+                onIsOnChange={(v) => setMeta((prev) => ({ ...prev, locked: v }))}
+                label={t("journal.requireAuth")}
+                modifiers={[tint(PlatformColor("systemIndigo"))]}
+              />
+            )}
             <Toggle
               isOn={notificationEnabled}
               onIsOnChange={(enabled) => {
@@ -193,12 +206,6 @@ export function JournalCreateView({
                 }
               }}
               label={t("journal.notification")}
-              modifiers={[tint(PlatformColor("systemIndigo"))]}
-            />
-            <Toggle
-              isOn={meta.locked}
-              onIsOnChange={(v) => setMeta((prev) => ({ ...prev, locked: v }))}
-              label={t("journal.requireAuth")}
               modifiers={[tint(PlatformColor("systemIndigo"))]}
             />
             {notificationEnabled && (

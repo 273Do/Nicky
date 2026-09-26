@@ -15,7 +15,6 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BottomSheet, DatePicker, Host } from "@expo/ui/swift-ui";
 import { datePickerStyle, tint } from "@expo/ui/swift-ui/modifiers";
@@ -37,10 +36,6 @@ export default function DaysScreen() {
   const { t } = useTranslation();
   const { width: screenWidth } = useWindowDimensions();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
-
-  /** ナビゲーションバー高さ (44) + ステータスバー */
-  const headerHeight = insets.top + 44;
 
   const today = startOfDay();
 
@@ -215,7 +210,6 @@ export default function DaysScreen() {
               centerSlot={centerSlot}
               translateX={translateX}
               screenWidth={screenWidth}
-              topInset={headerHeight}
             >
               <DaysView date={date} entries={entriesByDate.get(date.getTime())} />
             </DaysPageSlot>

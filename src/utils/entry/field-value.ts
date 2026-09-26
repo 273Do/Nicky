@@ -30,17 +30,20 @@ export const locationDataSchema = z.object({
 /** 位置情報の JSON 構造 */
 export type LocationData = z.infer<typeof locationDataSchema>;
 
-/** レーティングのスキーマ */
-export const ratingLabelSchema = z
-  .object({
-    name: z.string(),
-    min: z.number(),
-    max: z.number(),
-  })
-  .refine((d) => d.min < d.max, { message: "min must be less than max" });
+/** レーティングの構造スキーマ */
+export const ratingLabelBaseSchema = z.object({
+  name: z.string(),
+  min: z.number(),
+  max: z.number(),
+});
+
+/** レーティングのバリデーションスキーマ */
+export const ratingLabelSchema = ratingLabelBaseSchema.refine((d) => d.min < d.max, {
+  message: "min must be less than max",
+});
 
 /** レーティング JSON 構造 */
-export type RatingLabel = z.infer<typeof ratingLabelSchema>;
+export type RatingLabel = z.infer<typeof ratingLabelBaseSchema>;
 
 /** JSON 文字列をパースして LocationData を返す */
 export const parseLocation = (value: string | undefined): LocationData | null => {
