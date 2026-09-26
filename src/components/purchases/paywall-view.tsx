@@ -32,7 +32,7 @@ import { Paths } from "expo-file-system";
 import { useRouter } from "expo-router";
 
 import { PRIVACY_URL, TERMS_URL } from "@/constants/legal";
-import { type PlanKey } from "@/constants/purchases";
+import { FREE_ENTRY_LIMIT, FREE_JOURNAL_LIMIT, type PlanKey } from "@/constants/purchases";
 import { useOfferings } from "@/hooks/purchases/use-offerings";
 import { purchasePackage, restorePurchases } from "@/utils/purchases/purchase";
 
@@ -117,19 +117,27 @@ export function PaywallView() {
 
         <VStack alignment="leading" modifiers={[padding({ horizontal: 32 })]}>
           <PaywallFeatureRow
-            systemName="books.vertical.fill"
-            title={t("purchases.featureJournalsTitle")}
-            description={t("purchases.featureJournalsDesc")}
+            systemName="infinity"
+            title={t("purchases.featureUnlimitedTitle")}
+            description={t("purchases.featureUnlimitedDesc", {
+              journals: FREE_JOURNAL_LIMIT,
+              entries: FREE_ENTRY_LIMIT,
+            })}
           />
           <PaywallFeatureRow
-            systemName="sparkles"
-            title={t("purchases.featureReflectionTitle")}
-            description={t("purchases.featureReflectionDesc")}
+            systemName="checklist"
+            title={t("purchases.featureFieldsTitle")}
+            description={t("purchases.featureFieldsDesc")}
           />
           <PaywallFeatureRow
-            systemName="square.and.arrow.up.on.square"
-            title={t("purchases.featureExportTitle")}
-            description={t("purchases.featureExportDesc")}
+            systemName="paintpalette.fill"
+            title={t("purchases.featureIconsTitle")}
+            description={t("purchases.featureIconsDesc")}
+          />
+          <PaywallFeatureRow
+            systemName="slider.horizontal.3"
+            title={t("purchases.featureOptionsTitle")}
+            description={t("purchases.featureOptionsDesc")}
           />
         </VStack>
 
