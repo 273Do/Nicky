@@ -2,7 +2,7 @@ import { and, count, eq, notInArray, sql } from "drizzle-orm";
 
 import { db } from "@/db/client";
 import { entries, entryValues, fields, JournalObj, journals } from "@/db/schemas";
-import { FieldWithSortObj, JournalMetaObj } from "@/hooks/journal/use-journal-field";
+import type { FieldWithSortObj, JournalMetaObj } from "@/hooks/journal/use-journal-field";
 import { deleteMediaImage } from "@/utils/entry/media-file";
 
 /**

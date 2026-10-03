@@ -1,3 +1,4 @@
+import { AppState } from "react-native";
 import Purchases, { type CustomerInfo } from "react-native-purchases";
 
 import { ENTITLEMENT_ID } from "@/constants/purchases";
@@ -31,6 +32,7 @@ let snapshot: SubscriptionSnapshot = actual;
 
 const listeners = new Set<() => void>();
 let started = false;
+let fetchFailed = false;
 
 // スナップショットは必ず新しいオブジェクトに差し替える
 // force: スナップショットが変わらなくても通知する（上書き状態の変更用）
@@ -46,14 +48,32 @@ const setSnapshot = (next: SubscriptionSnapshot) => {
   publish();
 };
 
-const apply = (info: CustomerInfo) =>
+const apply = (info: CustomerInfo) => {
+  fetchFailed = false;
   setSnapshot({ isPro: hasProEntitlement(info), loading: false });
+};
+
+/**
+ * CustomerInfo を取得して反映する
+ *
+ * 失敗時は無料扱いのまま確定させる（オフライン起動で Pro 機能を使えないようにするため）。
+ * 取得済みの isPro は失敗で上書きしない
+ */
+const fetchCustomerInfo = () =>
+  Purchases.getCustomerInfo()
+    .then(apply)
+    .catch((e) => {
+      console.warn("[purchases]", e);
+      fetchFailed = true;
+      setSnapshot({ isPro: actual.isPro, loading: false });
+    });
 
 /**
  * CustomerInfo の同期を開始する（SDK の初期化直後に 1 回だけ呼ぶ）
  *
  * - addCustomerInfoUpdateListener で購入・復元・更新・失効を反映する
  * - 初回値は getCustomerInfo() で取得する（キャッシュがあれば即時返る）
+ * - 取得に失敗した場合はフォアグラウンド復帰時に再取得する
  */
 export const startSubscriptionSync = () => {
   if (started) return;
@@ -62,12 +82,11 @@ export const startSubscriptionSync = () => {
   // リスナーはアプリの生存期間中そのまま保持する
   Purchases.addCustomerInfoUpdateListener(apply);
 
-  Purchases.getCustomerInfo()
-    .then(apply)
-    .catch((e) => {
-      console.warn("[purchases]", e);
-      setSnapshot({ isPro: false, loading: false });
-    });
+  void fetchCustomerInfo();
+
+  AppState.addEventListener("change", (state) => {
+    if (state === "active" && fetchFailed) void fetchCustomerInfo();
+  });
 };
 
 /**
