@@ -130,6 +130,7 @@ function JournalEditForm({ journal }: FormProps) {
         moveField={moveField}
         meta={meta}
         setMeta={setMeta}
+        baseMeta={initialMeta}
       />
 
       <Host matchContents>

@@ -107,6 +107,8 @@ type Props = {
   meta: JournalMetaObj;
   /** ジャーナルのメタ情報をセットする関数 */
   setMeta: Dispatch<SetStateAction<JournalMetaObj>>;
+  /** 保存済みのメタ情報。作成時点で有効だった Pro 設定は解約後も変更できる */
+  baseMeta?: JournalMetaObj;
 };
 
 /**
@@ -121,6 +123,7 @@ export function JournalCreateView({
   moveField,
   meta,
   setMeta,
+  baseMeta,
 }: Props) {
   const { t } = useTranslation();
   const journalName = useNativeState(meta.name);
@@ -186,7 +189,7 @@ export function JournalCreateView({
             <Toggle
               isOn={meta.oneEntry}
               onIsOnChange={(v) => {
-                if (!isPro) {
+                if (v && !isPro && !baseMeta?.oneEntry) {
                   openPaywall();
                   return;
                 }
@@ -199,7 +202,7 @@ export function JournalCreateView({
               <Toggle
                 isOn={meta.locked}
                 onIsOnChange={(v) => {
-                  if (!isPro) {
+                  if (v && !isPro && !baseMeta?.locked) {
                     openPaywall();
                     return;
                   }
@@ -318,6 +321,7 @@ export function JournalCreateView({
           selectedIcon={meta.icon}
           selectedColor={meta.color}
           isPro={isPro}
+          grantedIcon={baseMeta?.icon}
           onRequirePro={openPaywall}
           onSelectIcon={(icon) => setMeta((prev) => ({ ...prev, icon }))}
           onSelectColor={(color) => {

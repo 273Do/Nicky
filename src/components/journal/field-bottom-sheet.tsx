@@ -11,8 +11,8 @@ import {
 } from "@expo/ui/swift-ui/modifiers";
 
 import { FIELD_ICONS, FIELD_LABEL_KEYS, FieldType } from "@/constants/journal";
-import { PRO_FIELD_TYPES } from "@/constants/purchases";
 import { FIELD_TYPES } from "@/hooks/journal/use-journal-field";
+import { isProFieldType } from "@/utils/purchases/pro-gate";
 
 type Props = {
   /** ボトムシートの表示状態 */
@@ -42,7 +42,7 @@ export function FieldBottomSheet({
   const { t } = useTranslation();
 
   const handlePress = (type: FieldType) => {
-    if (!isPro && PRO_FIELD_TYPES.includes(type)) {
+    if (!isPro && isProFieldType(type)) {
       onIsPresentedChange(false);
       onRequirePro();
       return;
@@ -61,7 +61,7 @@ export function FieldBottomSheet({
       >
         <List modifiers={[scrollDisabled()]}>
           {FIELD_TYPES.map((type) => {
-            const requiresPro = !isPro && PRO_FIELD_TYPES.includes(type);
+            const requiresPro = !isPro && isProFieldType(type);
 
             return (
               <Button

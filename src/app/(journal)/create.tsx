@@ -6,11 +6,13 @@ import * as Crypto from "expo-crypto";
 import { Stack, useRouter } from "expo-router";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
+import { JOURNAL_ICONS } from "@/constants/journal";
 import { useJournalField } from "@/hooks/journal/use-journal-field";
 import { useSubscription } from "@/hooks/purchases/use-subscription";
 import { handleSaveError } from "@/utils/handle-save-error";
 import { setCreatedJournalId } from "@/utils/journal/created-journal";
 import { importJournal } from "@/utils/journal/import-journal";
+import { isFreeIcon, isProFieldType } from "@/utils/purchases/pro-gate";
 
 /**
  * ジャーナル作成
@@ -55,15 +57,20 @@ export default function JournalCreateScreen() {
 
     const { name, color, icon, oneEntry, locked, notificationTime, fields } = journal;
 
+    // 無料プランでは Pro 限定の設定を外す（アイコンはデフォルト、Pro 限定フィールドは削除）
     setMeta({
       name,
       color,
-      icon,
+      icon: isPro || isFreeIcon(icon) ? icon : JOURNAL_ICONS[0],
       oneEntry: isPro && oneEntry,
       locked: isPro && locked,
       notificationTime,
     });
-    setFields(fields.map(({ type, label }) => ({ id: Crypto.randomUUID(), type, label })));
+    setFields(
+      fields
+        .filter(({ type }) => isPro || !isProFieldType(type))
+        .map(({ type, label }) => ({ id: Crypto.randomUUID(), type, label })),
+    );
     setImportKey((prev) => prev + 1);
   };
 

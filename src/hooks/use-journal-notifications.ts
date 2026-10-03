@@ -13,13 +13,15 @@ import {
   scheduleJournalNotification,
   setupNotificationHandler,
 } from "@/utils/notification";
+import { isEntryLimitReached } from "@/utils/purchases/pro-gate";
+import { getSubscriptionSnapshot } from "@/utils/purchases/subscription-store";
 
 /**
  * ジャーナルの通知をスケジュール・同期するフック
  *
  * - グローバル通知設定が ON かつジャーナルに notificationTime が設定されている場合にスケジュール
  * - ジャーナルの変更やグローバル設定の変更に応じて自動的に再同期
- * - 通知タップ時にエントリー作成画面へ遷移
+ * - 通知タップ時にエントリー作成画面へ遷移（無料プランの上限到達時はペイウォールへ）
  */
 export const useJournalNotifications = () => {
   const { notificationEnabled } = useNotificationSettings();
@@ -37,6 +39,13 @@ export const useJournalNotifications = () => {
 
       if (!journalId || !journalName) return;
       if (hasTodayEntryForOneEntry(journalId)) return;
+
+      // 上限到達時はペイウォールへ
+      // 購読状態の取得中は作成画面へ進み、保存時に判定する
+      if (!getSubscriptionSnapshot().loading && isEntryLimitReached(journalId)) {
+        router.push("/(journal)/paywall");
+        return;
+      }
 
       router.push({
         pathname: "/entry/create",

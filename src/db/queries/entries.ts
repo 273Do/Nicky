@@ -1,4 +1,4 @@
-import { and, eq, gte, lt } from "drizzle-orm";
+import { and, count, eq, gte, lt } from "drizzle-orm";
 
 import { db } from "@/db/client";
 import { addDays, startOfDay } from "@/utils/date";
@@ -192,6 +192,14 @@ export type EntryDetailObj = Awaited<ReturnType<typeof getEntriesQuery>>[number]
 
 /** 日付ベースのエントリー詳細の型（journal を含む） */
 export type DailyEntryObj = Awaited<ReturnType<typeof getEntriesByDateQuery>>[number];
+
+/**
+ * ジャーナルに紐付いたエントリーの件数を取得する
+ * @param journalId ジャーナルID
+ */
+export const countEntries = (journalId: string): number =>
+  db.select({ value: count() }).from(entries).where(eq(entries.journalId, journalId)).get()
+    ?.value ?? 0;
 
 /**
  * oneEntry ジャーナルで今日のエントリーが既に存在するか判定する

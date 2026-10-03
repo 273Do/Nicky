@@ -24,8 +24,8 @@ import {
 import { SFSymbol } from "expo-symbols";
 
 import { JOURNAL_ICONS } from "@/constants/journal";
-import { FREE_ICON_COUNT } from "@/constants/purchases";
 import { chunkArray } from "@/utils/chunk-array";
+import { isFreeIcon } from "@/utils/purchases/pro-gate";
 
 type Props = {
   /** ボトムシートの表示状態 */
@@ -38,6 +38,8 @@ type Props = {
   selectedColor: string;
   /** Pro が有効かどうか */
   isPro: boolean;
+  /** 無料プランでも選べるアイコン */
+  grantedIcon?: SFSymbol;
   /** Pro 限定アイコンが選ばれたときのコールバック */
   onRequirePro: () => void;
   /** アイコン選択時のコールバック */
@@ -58,6 +60,7 @@ export function IconSelectBottomSheet({
   selectedIcon,
   selectedColor,
   isPro,
+  grantedIcon,
   onRequirePro,
   onSelectIcon,
   onSelectColor,
@@ -65,11 +68,11 @@ export function IconSelectBottomSheet({
   const { t } = useTranslation();
   const rows = chunkArray(JOURNAL_ICONS, COLUMNS);
 
-  /** 無料プランでは先頭の FREE_ICON_COUNT 個だけ選べる */
-  const freeIcons = new Set<string>(JOURNAL_ICONS.slice(0, FREE_ICON_COUNT));
+  /** 無料プランでは無料アイコンと保存済みアイコンだけ選べる */
+  const isLocked = (icon: SFSymbol) => !isPro && !isFreeIcon(icon) && icon !== grantedIcon;
 
   const handleSelect = (icon: SFSymbol) => {
-    if (!isPro && !freeIcons.has(icon)) {
+    if (isLocked(icon)) {
       onIsPresentedChange(false);
       onRequirePro();
       return;
@@ -105,7 +108,7 @@ export function IconSelectBottomSheet({
             {rows.map((row, rowIndex) => (
               <Grid.Row key={rowIndex}>
                 {row.map((icon) => {
-                  const requiresPro = !isPro && !freeIcons.has(icon);
+                  const requiresPro = isLocked(icon);
 
                   return (
                     <ZStack

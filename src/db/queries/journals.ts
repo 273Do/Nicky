@@ -1,4 +1,4 @@
-import { and, eq, notInArray, sql } from "drizzle-orm";
+import { and, count, eq, notInArray, sql } from "drizzle-orm";
 
 import { db } from "@/db/client";
 import { entries, entryValues, fields, JournalObj, journals } from "@/db/schemas";
@@ -16,6 +16,12 @@ export const getJournalsQuery = db.query.journals.findMany({
       ),
   },
 });
+
+/**
+ * ジャーナルの件数を取得する
+ */
+export const countJournals = (): number =>
+  db.select({ value: count() }).from(journals).get()?.value ?? 0;
 
 /**
  * ジャーナル詳細を取得するクエリ

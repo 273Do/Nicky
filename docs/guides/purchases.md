@@ -86,6 +86,15 @@ const { isPro, loading } = useSubscription();
 - Gate the **execution path** too, not just the UI (e.g. the conditions in `use-auto-reflection.ts`). Inside a handler, read the freshest value with `getSubscriptionSnapshot()`
 - Suppress the lock badge while `loading` so subscribers never see a flash of it
 
+### Free limits and the execution-path gate
+
+Limits and rules live in `src/utils/purchases/pro-gate.ts` (`isFreeIcon`, `isProFieldType`, `isJournalLimitReached`, `isEntryLimitReached`, `assertJournalFeatures`).
+
+- `createJournal` / `updateJournal` (`use-journal-field.ts`) and `createEntry` (`use-entry.ts`) throw `ProRequiredError`; `handleSaveError` turns it into a paywall navigation
+- Pro is judged **at creation time**: on edit, `assertJournalFeatures` receives the saved state as `base`, so Pro icons, fields, `oneEntry` and `locked` set while subscribed keep working (and can be toggled back on) after cancellation. Only _new_ Pro settings are blocked. The UI mirrors this via `baseMeta` on `JournalCreateView`
+- Notification taps go to the paywall instead of entry creation when the entry limit is reached
+- Journal import on the free plan drops Pro fields, resets a Pro icon to `JOURNAL_ICONS[0]`, and clears `oneEntry` / `locked`
+
 ## Anonymous App User IDs
 
 There is no login, so every install is a new anonymous customer (`$RCAnonymousID:…`). Purchases do **not** follow the user to another device or survive a reinstall — `restorePurchases()` is the only recovery path. If a login is ever added, call `Purchases.logIn()` to merge the anonymous ID.

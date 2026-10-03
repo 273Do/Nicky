@@ -52,7 +52,7 @@ export const FIELD_LABEL_KEYS: Record<FieldType, string> = {
 };
 
 /** ジャーナルで使用するSFシンボル一覧 */
-export const JOURNAL_ICONS = [
+export const JOURNAL_ICONS: SFSymbol[] = [
   // 読書・学習
   "book.fill",
   "pencil",

@@ -17,6 +17,7 @@ import {
   serializeValue,
   validateFieldValue,
 } from "@/utils/entry/field-value";
+import { isEntryLimitReached, ProRequiredError } from "@/utils/purchases/pro-gate";
 
 export type { FieldValue } from "@/utils/entry/field-value";
 export { deserializeValue } from "@/utils/entry/field-value";
@@ -71,6 +72,8 @@ export const useEntry = (fields: FieldObj[], initialValues?: Record<string, Fiel
    * @param journalId ジャーナル id
    */
   const createEntry = async (journalId: string): Promise<EntryObj> => {
+    if (isEntryLimitReached(journalId)) throw new ProRequiredError();
+
     const now = Date.now();
 
     const newEntry: EntryObj = {
