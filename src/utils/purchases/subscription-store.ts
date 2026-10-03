@@ -1,6 +1,8 @@
 import { AppState } from "react-native";
 import Purchases, { type CustomerInfo } from "react-native-purchases";
 
+import { Platform } from "expo";
+
 import { ENTITLEMENT_ID } from "@/constants/purchases";
 import { REVENUECAT_API_KEY } from "@/utils/purchases/api-key";
 
@@ -23,9 +25,10 @@ export const hasProEntitlement = (info: CustomerInfo): boolean =>
 export type DevProOverride = "none" | "free" | "pro";
 
 // API キー未設定・非 iOS では初回取得が走らないため、最初から確定状態にする
-let actual: SubscriptionSnapshot = REVENUECAT_API_KEY
-  ? { isPro: false, loading: true }
-  : { isPro: false, loading: false };
+let actual: SubscriptionSnapshot =
+  REVENUECAT_API_KEY && Platform.OS === "ios"
+    ? { isPro: false, loading: true }
+    : { isPro: false, loading: false };
 
 let devOverride: DevProOverride = "none";
 let snapshot: SubscriptionSnapshot = actual;

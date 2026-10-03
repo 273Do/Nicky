@@ -20,7 +20,7 @@ import { isFreeIcon, isProFieldType } from "@/utils/purchases/pro-gate";
 export default function JournalCreateScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { isPro } = useSubscription();
+  const { isPro, loading } = useSubscription();
 
   const {
     fields,
@@ -51,6 +51,9 @@ export default function JournalCreateScreen() {
   };
 
   const importJournalTemplate = async () => {
+    // 購読状態の確定前は Pro ユーザーの設定を誤って外してしまうため読み込まない
+    if (loading) return;
+
     const journal = await importJournal();
 
     if (!journal) return;
@@ -93,6 +96,7 @@ export default function JournalCreateScreen() {
               type: "button",
               label: t("journal.import"),
               icon: { type: "sfSymbol", name: "square.and.arrow.down" },
+              disabled: loading,
               onPress: importJournalTemplate,
             },
             {

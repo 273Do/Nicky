@@ -56,7 +56,7 @@ There is no `useEffect` + `setState` anywhere in this feature. Both stores are m
 `src/utils/purchases/purchase.ts`:
 
 - `purchasePackage(pkg)` → `true` when `nicky_pro` became active
-- `restorePurchases()` → `true` when `nicky_pro` became active
+- `restorePurchases()` → `"restored"` / `"none"` / `"failed"`. On `"failed"` the error alert is already shown, so callers return without showing the "nothing to restore" alert
 - `openManageSubscription()` → `Purchases.showManageSubscriptions()`, falling back to `itms-apps://apps.apple.com/account/subscriptions` (the native sheet does not work with Test Store)
 
 Cancellation is **not** an error: it is detected with `code === PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR` and returns `false` silently. `PurchasesError.userCancelled` is deprecated — do not use it. Other failures `console.warn("[purchases]", e)` and show an `Alert.alert` with `error.purchaseFailed*` / `error.restoreFailed*`.

@@ -5,8 +5,8 @@ const parsed = z
   .min(1)
   .safeParse(
     __DEV__
-      ? (process.env.EXPO_PUBLIC_REVENUECAT_IOS_TEST_KEY ??
-          process.env.EXPO_PUBLIC_REVENUECAT_IOS_KEY)
+      ? process.env.EXPO_PUBLIC_REVENUECAT_IOS_TEST_KEY ||
+          process.env.EXPO_PUBLIC_REVENUECAT_IOS_KEY
       : process.env.EXPO_PUBLIC_REVENUECAT_IOS_KEY,
   );
 

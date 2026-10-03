@@ -74,7 +74,11 @@ export function PaywallView() {
     processingRef.current = true;
     setProcessing(true);
     try {
-      const restored = await restorePurchases();
+      const result = await restorePurchases();
+      // 失敗時は restorePurchases がアラートを表示済み
+      if (result === "failed") return;
+
+      const restored = result === "restored";
       Alert.alert(
         restored ? t("purchases.restoredTitle") : t("purchases.restoredNoneTitle"),
         restored ? t("purchases.restoredMessage") : t("purchases.restoredNoneMessage"),

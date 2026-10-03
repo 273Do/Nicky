@@ -38,17 +38,23 @@ export const purchasePackage = async (pkg: PurchasesPackage): Promise<boolean> =
   }
 };
 
+/** 復元の結果 */
+export type RestoreResult = "restored" | "none" | "failed";
+
 /**
  * 過去の購入を復元する
- * @returns Pro が有効になった場合 true
+ * @returns
+ * - restored: Pro が有効になった
+ * - none: 復元できる購入がなかった
+ * - failed: 復元に失敗した（エラーのアラートは表示済み）
  */
-export const restorePurchases = async (): Promise<boolean> => {
+export const restorePurchases = async (): Promise<RestoreResult> => {
   try {
-    return hasProEntitlement(await Purchases.restorePurchases());
+    return hasProEntitlement(await Purchases.restorePurchases()) ? "restored" : "none";
   } catch (e) {
     console.warn("[purchases]", e);
     Alert.alert(i18n.t("error.restoreFailed"), i18n.t("error.restoreFailedMessage"));
-    return false;
+    return "failed";
   }
 };
 
