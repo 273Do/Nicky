@@ -83,7 +83,8 @@ const { isPro, loading } = useSubscription();
 - Do **not** use the `disabled()` modifier: a disabled SwiftUI control swallows taps, leaving a dead row with no explanation. Keep the row live, show `Image systemName="lock.fill"` in `secondaryLabel`, and `router.navigate("/days/paywall")` on press
 - A `Toggle` cannot intercept before its value flips — replace it with a `Button` + `HStack` row
 - For non-interactive content, render an upsell `VStack` (`purchases.unlockTitle` / `unlockMessage` / `unlock`) instead, following the List ↔ VStack rule in `swiftui-rules.md`
-- Gate the **execution path** too, not just the UI (e.g. the conditions in `use-auto-reflection.ts`). Inside a handler, read the freshest value with `getSubscriptionSnapshot()`
+- Gate the **execution path** too, not just the UI (e.g. `createJournal` / `createEntry`, see below). Inside a handler, read the freshest value with `getSubscriptionSnapshot()`
+- AI reflection (manual and automatic) is **free** by design — do not gate it
 - Suppress the lock badge while `loading` so subscribers never see a flash of it
 
 ### Free limits and the execution-path gate
