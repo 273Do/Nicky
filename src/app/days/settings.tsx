@@ -6,6 +6,7 @@ import { Alert, Button, Host, List, Text } from "@expo/ui/swift-ui";
 import { frame } from "@expo/ui/swift-ui/modifiers";
 
 import { Application } from "@/components/settings/application";
+import { DevSubscription } from "@/components/settings/dev-subscription";
 import { EntrySettings } from "@/components/settings/entry";
 import { Subscription } from "@/components/settings/subscription";
 import { Support } from "@/components/settings/support";
@@ -26,6 +27,7 @@ export default function SettingsScreen() {
       <List modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 })]}>
         <Application />
         <Subscription />
+        {__DEV__ ? <DevSubscription /> : null}
         <EntrySettings setShowDeleteAlert={setShowDeleteAlert} />
         <Support />
       </List>

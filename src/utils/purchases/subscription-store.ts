@@ -18,19 +18,32 @@ export type SubscriptionSnapshot = {
 export const hasProEntitlement = (info: CustomerInfo): boolean =>
   info.entitlements.active[ENTITLEMENT_ID] !== undefined;
 
+/** 開発用の購読状態の上書き（none: RevenueCat の実際の状態を使う） */
+export type DevProOverride = "none" | "free" | "pro";
+
 // API キー未設定・非 iOS では初回取得が走らないため、最初から確定状態にする
-let snapshot: SubscriptionSnapshot = REVENUECAT_API_KEY
+let actual: SubscriptionSnapshot = REVENUECAT_API_KEY
   ? { isPro: false, loading: true }
   : { isPro: false, loading: false };
+
+let devOverride: DevProOverride = "none";
+let snapshot: SubscriptionSnapshot = actual;
 
 const listeners = new Set<() => void>();
 let started = false;
 
 // スナップショットは必ず新しいオブジェクトに差し替える
+// force: スナップショットが変わらなくても通知する（上書き状態の変更用）
+const publish = (force = false) => {
+  const next = devOverride === "none" ? actual : { isPro: devOverride === "pro", loading: false };
+  const changed = next.isPro !== snapshot.isPro || next.loading !== snapshot.loading;
+  if (changed) snapshot = next;
+  if (changed || force) listeners.forEach((listener) => listener());
+};
+
 const setSnapshot = (next: SubscriptionSnapshot) => {
-  if (next.isPro === snapshot.isPro && next.loading === snapshot.loading) return;
-  snapshot = next;
-  listeners.forEach((listener) => listener());
+  actual = next;
+  publish();
 };
 
 const apply = (info: CustomerInfo) =>
@@ -83,3 +96,20 @@ export const refreshSubscription = async () => {
     console.warn("[purchases]", e);
   }
 };
+
+/**
+ * 購読状態を上書きする（開発ビルドのみ。解約後の挙動の検証用）
+ *
+ * アプリの再読み込みで none に戻る
+ * @param value 上書きする状態
+ */
+export const setDevProOverride = (value: DevProOverride) => {
+  if (!__DEV__) return;
+  devOverride = value;
+  publish(true);
+};
+
+/**
+ * 現在の購読状態の上書きを返す（useSyncExternalStore 用）
+ */
+export const getDevProOverride = (): DevProOverride => devOverride;
