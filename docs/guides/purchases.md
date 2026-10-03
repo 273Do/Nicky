@@ -92,6 +92,7 @@ Limits and rules live in `src/utils/purchases/pro-gate.ts` (`isFreeIcon`, `isPro
 
 - `createJournal` / `updateJournal` (`use-journal-field.ts`) and `createEntry` (`use-entry.ts`) throw `ProRequiredError`; `handleSaveError` turns it into a paywall navigation
 - Pro is judged **at creation time**: on edit, `assertJournalFeatures` receives the saved state as `base`, so Pro icons, fields, `oneEntry` and `locked` set while subscribed keep working (and can be toggled back on) after cancellation. Only _new_ Pro settings are blocked. The UI mirrors this via `baseMeta` on `JournalCreateView`
+- After cancellation, data over the free limits is never hidden or deleted: everything stays viewable and editable, only creating more is blocked. Limits compare the live count (`count >= limit`), so deleting journals/entries below the limit re-enables creation
 - Notification taps go to the paywall instead of entry creation when the entry limit is reached
 - Journal import on the free plan drops Pro fields, resets a Pro icon to `JOURNAL_ICONS[0]`, and clears `oneEntry` / `locked`
 
