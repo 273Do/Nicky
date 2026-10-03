@@ -112,6 +112,34 @@ type Props = {
 };
 
 /**
+ * Pro 限定の設定行
+ */
+function ProLockedRow({
+  label,
+  loading,
+  onPress,
+}: {
+  label: string;
+  loading: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <Button
+      onPress={loading ? () => {} : onPress}
+      modifiers={[foregroundStyle({ type: "color", color: PlatformColor("label") })]}
+    >
+      <HStack>
+        <Text>{label}</Text>
+        <Spacer />
+        {loading ? null : (
+          <Image systemName="lock.fill" color={PlatformColor("secondaryLabel")} size={15} />
+        )}
+      </HStack>
+    </Button>
+  );
+}
+
+/**
  * ジャーナル作成画面
  */
 export function JournalCreateView({
@@ -135,7 +163,11 @@ export function JournalCreateView({
     icon: false,
   });
 
-  const { isPro, openPaywall } = useProGate();
+  const { isPro, loading, openPaywall } = useProGate();
+
+  // 作成時点で有効だった Pro 設定は解約後も変更できる
+  const canEditOneEntry = isPro || !!baseMeta?.oneEntry;
+  const canEditLocked = isPro || !!baseMeta?.locked;
 
   const [authAvailable, setAuthAvailable] = useState(true);
   useEffect(() => {
@@ -186,32 +218,35 @@ export function JournalCreateView({
                 modifiers={[frame({ maxWidth: 9999 })]}
               />
             </HStack>
-            <Toggle
-              isOn={meta.oneEntry}
-              onIsOnChange={(v) => {
-                if (v && !isPro && !baseMeta?.oneEntry) {
-                  openPaywall();
-                  return;
-                }
-                setMeta((prev) => ({ ...prev, oneEntry: v }));
-              }}
-              label={t("journal.oneEntryPerDay")}
-              modifiers={[tint(PlatformColor("systemIndigo"))]}
-            />
-            {authAvailable && (
+            {canEditOneEntry ? (
               <Toggle
-                isOn={meta.locked}
-                onIsOnChange={(v) => {
-                  if (v && !isPro && !baseMeta?.locked) {
-                    openPaywall();
-                    return;
-                  }
-                  setMeta((prev) => ({ ...prev, locked: v }));
-                }}
-                label={t("journal.requireAuth")}
+                isOn={meta.oneEntry}
+                onIsOnChange={(v) => setMeta((prev) => ({ ...prev, oneEntry: v }))}
+                label={t("journal.oneEntryPerDay")}
                 modifiers={[tint(PlatformColor("systemIndigo"))]}
               />
+            ) : (
+              <ProLockedRow
+                label={t("journal.oneEntryPerDay")}
+                loading={loading}
+                onPress={openPaywall}
+              />
             )}
+            {authAvailable &&
+              (canEditLocked ? (
+                <Toggle
+                  isOn={meta.locked}
+                  onIsOnChange={(v) => setMeta((prev) => ({ ...prev, locked: v }))}
+                  label={t("journal.requireAuth")}
+                  modifiers={[tint(PlatformColor("systemIndigo"))]}
+                />
+              ) : (
+                <ProLockedRow
+                  label={t("journal.requireAuth")}
+                  loading={loading}
+                  onPress={openPaywall}
+                />
+              ))}
             <Toggle
               isOn={notificationEnabled}
               onIsOnChange={(enabled) => {

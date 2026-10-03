@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Keyboard, PlatformColor } from "react-native";
+import { Alert, Keyboard, PlatformColor } from "react-native";
 
 import * as Crypto from "expo-crypto";
 import { Stack, useRouter } from "expo-router";
@@ -58,20 +58,29 @@ export default function JournalCreateScreen() {
     const { name, color, icon, oneEntry, locked, notificationTime, fields } = journal;
 
     // 無料プランでは Pro 限定の設定を外す（アイコンはデフォルト、Pro 限定フィールドは削除）
+    const iconAllowed = isPro || isFreeIcon(icon);
+    const allowedFields = fields.filter(({ type }) => isPro || !isProFieldType(type));
+
     setMeta({
       name,
       color,
-      icon: isPro || isFreeIcon(icon) ? icon : JOURNAL_ICONS[0],
+      icon: iconAllowed ? icon : JOURNAL_ICONS[0],
       oneEntry: isPro && oneEntry,
       locked: isPro && locked,
       notificationTime,
     });
-    setFields(
-      fields
-        .filter(({ type }) => isPro || !isProFieldType(type))
-        .map(({ type, label }) => ({ id: Crypto.randomUUID(), type, label })),
-    );
+    setFields(allowedFields.map(({ type, label }) => ({ id: Crypto.randomUUID(), type, label })));
     setImportKey((prev) => prev + 1);
+
+    const removed =
+      !iconAllowed || allowedFields.length < fields.length || (!isPro && (oneEntry || locked));
+
+    if (removed) {
+      Alert.alert(t("purchases.importLimitedTitle"), t("purchases.importLimitedMessage"), [
+        { text: t("common.ok"), style: "cancel" },
+        { text: t("purchases.unlock"), onPress: () => router.navigate("/(journal)/paywall") },
+      ]);
+    }
   };
 
   return (

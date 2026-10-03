@@ -124,7 +124,9 @@
     "featureOptionsDesc": "一日一つのエントリーへの制限と、Face IDによるロックを設定できます。",
     "unlockTitle": "Nicky Pro の機能です",
     "unlockMessage": "この機能を使うには Nicky Pro を購読してください。",
-    "unlock": "Nicky Pro を見る"
+    "unlock": "Nicky Pro を見る",
+    "importLimitedTitle": "一部を読み込めませんでした",
+    "importLimitedMessage": "無料プランでは、Pro 限定のフィールド・アイコン・ジャーナルの詳細設定は読み込まれません。"
   },
   "error": {
     "validation": "入力エラー",

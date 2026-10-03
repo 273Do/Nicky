@@ -124,7 +124,9 @@
     "featureOptionsDesc": "Limit a journal to one entry per day and lock it with Face ID.",
     "unlockTitle": "A Nicky Pro Feature",
     "unlockMessage": "Subscribe to Nicky Pro to use this feature.",
-    "unlock": "See Nicky Pro"
+    "unlock": "See Nicky Pro",
+    "importLimitedTitle": "Some items weren't imported",
+    "importLimitedMessage": "On the free plan, Pro-only fields, icons and journal options are not imported."
   },
   "error": {
     "validation": "Invalid Input",
