@@ -27,8 +27,8 @@ export default function JournalScreen() {
   const colorScheme = useColorScheme();
   const appIcon =
     colorScheme === "dark"
-      ? require("@/assets/images/nav-icon-dark.png")
-      : require("@/assets/images/nav-icon.png");
+      ? require("@/assets/images/app-logo/nav-icon-dark.png")
+      : require("@/assets/images/app-logo/nav-icon.png");
 
   const onboardingNavigated = useRef(false);
 
