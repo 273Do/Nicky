@@ -45,6 +45,7 @@ There is no `useEffect` + `setState` anywhere in this feature. Both stores are m
 | `src/utils/purchases/subscription-store.ts` | `src/hooks/purchases/use-subscription.ts` | `{ isPro, loading }`                           |
 | `src/utils/purchases/offerings-store.ts`    | `src/hooks/purchases/use-offerings.ts`    | `{ monthly, annual, loading, failed, reload }` |
 
+- If `getCustomerInfo()` fails (no cache + offline, i.e. right after install), the user stays on the free plan (fail closed: Pro data created offline would otherwise be grandfathered forever) and it is re-fetched on the next `AppState` `active`. A failure never overwrites an `isPro` already fetched
 - `startSubscriptionSync()` registers `Purchases.addCustomerInfoUpdateListener` once (never torn down) and seeds the first value with `getCustomerInfo()`. Purchases, restores, renewals and expirations therefore reach the UI on their own — screens never write the state back
 - The snapshot object is **replaced, never mutated**, and only when a value actually changes. In-place mutation breaks `useSyncExternalStore`'s change detection
 - Offerings are fetched once, when the first subscriber mounts (i.e. when the paywall opens)
@@ -95,7 +96,8 @@ Limits and rules live in `src/utils/purchases/pro-gate.ts` (`isFreeIcon`, `isPro
 - Pro is judged **at creation time**: on edit, `assertJournalFeatures` receives the saved state as `base`, so Pro icons, fields, `oneEntry` and `locked` set while subscribed keep working (and can be toggled back on) after cancellation. Only _new_ Pro settings are blocked. The UI mirrors this via `baseMeta` on `JournalCreateView`
 - After cancellation, data over the free limits is never hidden or deleted: everything stays viewable and editable, only creating more is blocked. Limits compare the live count (`count >= limit`), so deleting journals/entries below the limit re-enables creation
 - Notification taps go to the paywall instead of entry creation when the entry limit is reached
-- Journal import on the free plan drops Pro fields, resets a Pro icon to `JOURNAL_ICONS[0]`, and clears `oneEntry` / `locked`
+- Journal import on the free plan drops Pro fields, resets a Pro icon to `JOURNAL_ICONS[0]`, and clears `oneEntry` / `locked`, then shows an alert (`purchases.importLimited*`) with a link to the paywall when anything was dropped
+- Gated `oneEntry` / `locked` toggles render as `ProLockedRow` (a `Button` with a lock) instead of a `Toggle`, per the rule above
 
 ## Anonymous App User IDs
 
