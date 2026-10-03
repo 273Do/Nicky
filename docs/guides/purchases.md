@@ -121,6 +121,7 @@ pnpm start --clear     # after editing .env.local
 - Test Store: works in the simulator, no App Store Connect needed
 - Real StoreKit: physical device + sandbox tester (iOS Settings → App Store → Sandbox Account). A `.storekit` file is not an option here — `ios/` is gitignored and `prebuild --clean` wipes Xcode scheme state
 - Sandbox renewals are accelerated (1 year → 1 hour; 24 h on TestFlight, then auto-cancel after 6 renewals). Odd expiry dates are expected
+- Cancellation test (dev builds only): Settings → **Developer: Pro State** overrides `isPro` in `subscription-store.ts` (`Actual` / `Free` / `Pro`). Create journals with Pro icons, fields, `oneEntry` and `locked` under `Pro`, then switch to `Free`. Every gate reads the store, so the UI, `ProRequiredError` and notification routing all follow. The override is in-memory and resets to `Actual` on reload; `setDevProOverride` is a no-op outside `__DEV__`
 - Restore test: delete the app (the anonymous ID is lost) → reinstall → Restore Purchases
 - Check RevenueCat → Customers for `nicky_pro` active, and Customer History for the transaction. A successful purchase with no transaction recorded means the In-App Purchase Key is missing
 
