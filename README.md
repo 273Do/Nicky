@@ -16,67 +16,60 @@
 - **Import / Export** — Import journal templates and export journals or entries
 - **Native iOS UI** — Built with SwiftUI components via `@expo/ui/swift-ui`
 
----
+## Nicky Pro
 
-# Welcome to your Expo app 👋
+Nicky is open source. The [official App Store version](#) is free to use, with an optional **Nicky Pro** subscription that supports ongoing development:
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+- Unlimited journals and entries (free plan: 2 journals, 7 entries each)
+- All field types (media, check, rating, location) and all journal icons
+- Journal options: one entry per day, Face ID lock
 
-## Get started
+AI reflection is free for everyone.
+
+You are free to build Nicky yourself. Without a RevenueCat API key, in-app purchases are disabled and the free-plan limits apply — under the GPL-3.0 you may modify the source to change that for your own build.
+
+## Building it yourself
+
+Requirements: macOS with Xcode and [Vite+](https://viteplus.dev/guide/) (`vp`), which manages Node.js and the package manager. Expo Go is not supported — Nicky uses native modules, so it runs as a development build.
 
 1. Install dependencies
 
    ```bash
-   pnpm install
+   vp install
    ```
 
-2. Start the app
+2. Create `.env.local` from the example and set `EXPO_PUBLIC_SIGNING_SECRET` to any random string (used to sign exported journals). The RevenueCat keys are optional.
 
    ```bash
-   pnpm expo start
+   cp .env.example .env.local
    ```
 
-3. Run on iOS simulator
+3. Build and run on the iOS simulator
 
    ```bash
-   pnpm expo run:ios
+   vp run ios
    ```
 
-In the output, you'll find options to open the app in a
+After editing `.env.local`, restart the dev server with `vp run start` (it clears the cache) — `EXPO_PUBLIC_*` values are inlined at bundle time.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Development
 
 ```bash
-npm run reset-project
+vp check           # Format, lint (Oxlint) and type check
+vp run lint        # ESLint (expo lint)
+vp run typecheck   # TypeScript
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Project guides for contributors live in [`docs/guides`](docs/guides).
 
-### Other setup steps
+## License
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Nicky is licensed under the [GNU General Public License v3.0](LICENSE).
 
-## Learn more
+Copyright (C) 2026 273*
 
-To learn more about developing your project with Expo, look at the following resources:
+You may use, modify and redistribute the source code under the terms of the GPL-3.0. Modified versions you distribute must also be released under the GPL-3.0 with their source code.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Name and icon
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+The GPL-3.0 covers the source code only. The **Nicky** name, app icon and logo are not licensed for use in redistributed or modified versions. If you distribute your own build, please use a different name and icon.
