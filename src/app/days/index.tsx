@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   PlatformColor,
@@ -39,17 +39,15 @@ export default function DaysScreen() {
 
   const today = startOfDay();
 
-  const [selectedDate, setSelectedDate] = useState(() => today);
-  const [slotDates, setSlotDates] = useState<[Date, Date, Date]>(() => [
-    addDays(today, -1),
-    today,
-    addDays(today, 1),
-  ]);
+  // 表示中の日付と 3 スロットの日付は常に一緒に更新する
+  const [{ selectedDate, slotDates }, setDays] = useState<{
+    selectedDate: Date;
+    slotDates: [Date, Date, Date];
+  }>(() => ({
+    selectedDate: today,
+    slotDates: [addDays(today, -1), today, addDays(today, 1)],
+  }));
   const [showCalendar, setShowCalendar] = useState(false);
-
-  // Refs for animation callbacks (closures)
-  const slotDatesRef = useRef(slotDates);
-  slotDatesRef.current = slotDates;
 
   // Shared values
   const centerSlot = useSharedValue(1);
@@ -82,41 +80,46 @@ export default function DaysScreen() {
 
   // After swipe: recycle the off-screen slot, update selectedDate
   const afterSwipe = (newCenter: number, direction: "left" | "right") => {
-    const dates = slotDatesRef.current;
-    const next = [...dates] as [Date, Date, Date];
+    // アニメーション完了時に呼ばれるため、最新の state から計算する
+    setDays((prev) => {
+      const dates = prev.slotDates;
+      const next = [...dates] as [Date, Date, Date];
 
-    if (direction === "left") {
-      const recycleSlot = (newCenter + 1) % 3;
-      next[recycleSlot] = addDays(dates[newCenter], 1);
-    } else {
-      const recycleSlot = (newCenter + 2) % 3;
-      next[recycleSlot] = addDays(dates[newCenter], -1);
-    }
+      if (direction === "left") {
+        const recycleSlot = (newCenter + 1) % 3;
+        next[recycleSlot] = addDays(dates[newCenter], 1);
+      } else {
+        const recycleSlot = (newCenter + 2) % 3;
+        next[recycleSlot] = addDays(dates[newCenter], -1);
+      }
 
-    slotDatesRef.current = next;
-    setSlotDates(next);
-    setSelectedDate(dates[newCenter]);
+      return { selectedDate: dates[newCenter], slotDates: next };
+    });
   };
 
   const handleSwipeEnd = (translationX: number) => {
-    if (translationX < -SWIPE_THRESHOLD && canGoNextSV.value) {
-      translateX.value = withTiming(-screenWidth, { duration: 200 }, (finished) => {
-        if (!finished) return;
-        const newCenter = (centerSlot.value + 1) % 3;
-        centerSlot.value = newCenter;
-        translateX.value = 0;
-        runOnJS(afterSwipe)(newCenter, "left");
-      });
+    if (translationX < -SWIPE_THRESHOLD && canGoNextSV.get()) {
+      translateX.set(
+        withTiming(-screenWidth, { duration: 200 }, (finished) => {
+          if (!finished) return;
+          const newCenter = (centerSlot.get() + 1) % 3;
+          centerSlot.set(newCenter);
+          translateX.set(0);
+          runOnJS(afterSwipe)(newCenter, "left");
+        }),
+      );
     } else if (translationX > SWIPE_THRESHOLD) {
-      translateX.value = withTiming(screenWidth, { duration: 200 }, (finished) => {
-        if (!finished) return;
-        const newCenter = (centerSlot.value + 2) % 3;
-        centerSlot.value = newCenter;
-        translateX.value = 0;
-        runOnJS(afterSwipe)(newCenter, "right");
-      });
+      translateX.set(
+        withTiming(screenWidth, { duration: 200 }, (finished) => {
+          if (!finished) return;
+          const newCenter = (centerSlot.get() + 2) % 3;
+          centerSlot.set(newCenter);
+          translateX.set(0);
+          runOnJS(afterSwipe)(newCenter, "right");
+        }),
+      );
     } else {
-      translateX.value = withTiming(0, { duration: 200 });
+      translateX.set(withTiming(0, { duration: 200 }));
     }
   };
 
@@ -124,7 +127,7 @@ export default function DaysScreen() {
     .activeOffsetX([-20, 20])
     .failOffsetY([-15, 15])
     .onUpdate((event) => {
-      translateX.value = event.translationX;
+      translateX.set(event.translationX);
     })
     .onEnd((event) => {
       runOnJS(handleSwipeEnd)(event.translationX);
@@ -134,11 +137,9 @@ export default function DaysScreen() {
   const handleCalendarDate = (date: Date) => {
     const d = startOfDay(date);
     const newDates: [Date, Date, Date] = [addDays(d, -1), d, addDays(d, 1)];
-    slotDatesRef.current = newDates;
-    setSlotDates(newDates);
-    setSelectedDate(d);
-    centerSlot.value = 1;
-    translateX.value = 0;
+    setDays({ selectedDate: d, slotDates: newDates });
+    centerSlot.set(1);
+    translateX.set(0);
   };
 
   return (

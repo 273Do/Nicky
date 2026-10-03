@@ -19,9 +19,11 @@ import { useRouter } from "expo-router";
 import { SymbolView } from "expo-symbols";
 
 import { JournalChipList } from "@/components/journal/journal-chip";
+import { FREE_ENTRY_LIMIT } from "@/constants/purchases";
 import { deleteEntry } from "@/db/queries/entries";
 import { type JournalWithCountObj } from "@/db/queries/journals";
 import { useEntryList } from "@/hooks/entry/use-entry-list";
+import { useProGate } from "@/hooks/purchases/use-pro-gate";
 
 import { EntryRow } from "./entry-row";
 
@@ -81,6 +83,10 @@ export function EntryListView({
   }, [fade]);
 
   const disabled = oneEntry && hasTodayEntry;
+
+  const { isPro, openPaywall } = useProGate();
+  // 無料プランのエントリー数上限
+  const entryLimitReached = !isPro && activeJournal.entryCount >= FREE_ENTRY_LIMIT;
 
   const chipList =
     journals && onSelectJournal ? (
@@ -145,9 +151,11 @@ export function EntryListView({
       {!disabled && !locked && (
         <Pressable
           onPress={() =>
-            router.push(
-              `/(journal)/entry/create?journalId=${activeJournalId}&journalName=${activeJournalName}`,
-            )
+            entryLimitReached
+              ? openPaywall()
+              : router.push(
+                  `/(journal)/entry/create?journalId=${activeJournalId}&journalName=${activeJournalName}`,
+                )
           }
           style={styles.fab}
         >
@@ -157,7 +165,7 @@ export function EntryListView({
             isInteractive
             style={styles.glassButton}
           >
-            <SymbolView name="plus" tintColor={PlatformColor("label")} />
+            <SymbolView name={"plus"} tintColor={PlatformColor("label")} />
           </GlassView>
         </Pressable>
       )}

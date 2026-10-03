@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useColorScheme } from "react-native";
 
 import { Alert, Button, Host, Text } from "@expo/ui/swift-ui";
 import { eq } from "drizzle-orm";
@@ -7,10 +8,12 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
 
 import { EntryListView } from "@/components/entry/entry-list-view";
+import { FREE_JOURNAL_LIMIT } from "@/constants/purchases";
 import { db } from "@/db/client";
 import { deleteAllEntries } from "@/db/queries/entries";
 import { getJournalsQuery, JournalWithCountObj } from "@/db/queries/journals";
 import { settings } from "@/db/schemas";
+import { useProGate } from "@/hooks/purchases/use-pro-gate";
 import { exportJournalEntries } from "@/utils/entry/export-entry";
 import { consumeCreatedJournalId } from "@/utils/journal/created-journal";
 import { authenticate } from "@/utils/local-auth";
@@ -21,6 +24,11 @@ import { authenticate } from "@/utils/local-auth";
 export default function JournalScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const colorScheme = useColorScheme();
+  const appIcon =
+    colorScheme === "dark"
+      ? require("@/assets/images/app-logo/nav-icon-dark.png")
+      : require("@/assets/images/app-logo/nav-icon.png");
 
   const onboardingNavigated = useRef(false);
 
@@ -35,6 +43,10 @@ export default function JournalScreen() {
 
   const { data: journals } = useLiveQuery(getJournalsQuery);
   const journalList: JournalWithCountObj[] = journals ?? [];
+
+  const { isPro, openPaywall } = useProGate();
+  // 無料プランのジャーナル数上限（既存データはそのまま、新規作成のみ制限する）
+  const journalLimitReached = !isPro && journalList.length >= FREE_JOURNAL_LIMIT;
 
   const [selectedJournalId, setSelectedJournalId] = useState<string | null>(null);
   const [chipScrollKey, setChipScrollKey] = useState(0);
@@ -83,12 +95,21 @@ export default function JournalScreen() {
         options={{
           title: t("tabs.journal"),
           headerLargeTitleEnabled: true,
+          unstable_headerLeftItems: () => [
+            {
+              type: "button",
+              label: t("purchases.title"),
+              icon: { type: "image", source: appIcon, tinted: false },
+              onPress: () => router.push("/(journal)/paywall"),
+            },
+          ],
           unstable_headerRightItems: () => [
             {
               type: "button",
               label: t("journal.newJournal"),
               icon: { type: "sfSymbol", name: "folder.badge.plus" },
-              onPress: () => router.push("/(journal)/create"),
+              onPress: () =>
+                journalLimitReached ? openPaywall() : router.push("/(journal)/create"),
             },
             ...(activeJournal
               ? [

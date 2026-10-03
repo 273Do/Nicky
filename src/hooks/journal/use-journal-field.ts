@@ -16,6 +16,11 @@ import {
   journalMetaSchema,
 } from "@/utils/journal/journal-field";
 import { decodeRatingLabel, encodeRatingLabel } from "@/utils/journal/rating-label";
+import {
+  assertJournalFeatures,
+  isJournalLimitReached,
+  ProRequiredError,
+} from "@/utils/purchases/pro-gate";
 
 export type {
   FieldDraftObj,
@@ -142,6 +147,9 @@ export const useJournalField = (initialData?: {
    * 新規ジャーナルをフィールドと共にDBに保存する
    */
   const createJournal = async (): Promise<JournalObj> => {
+    if (isJournalLimitReached()) throw new ProRequiredError();
+    assertJournalFeatures(meta, fields);
+
     journalMetaSchema.pick({ name: true, color: true, icon: true }).parse(meta);
     z.array(fieldDraftSchema).min(1).parse(fields);
     for (const f of fields) {
@@ -179,6 +187,8 @@ export const useJournalField = (initialData?: {
    * @param journalId ジャーナルID
    */
   const updateJournal = async (journalId: string): Promise<void> => {
+    assertJournalFeatures(meta, fields, initialData);
+
     journalMetaSchema.parse(meta);
     z.array(fieldDraftSchema).min(1).parse(fields);
     for (const f of fields) {

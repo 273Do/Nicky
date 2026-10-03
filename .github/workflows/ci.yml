@@ -5,8 +5,8 @@ on:
   pull_request:
 
 jobs:
-  check:
-    name: Check
+  commitlint:
+    name: Commitlint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,8 +36,31 @@ jobs:
         if: github.event_name == 'pull_request'
         run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
 
-      - name: Run checks
-        run: vp check
+  check:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Check (vp check)
+            run: vp check
+          - name: Lint (expo lint)
+            run: vp run lint
+          - name: Type check
+            run: vp run typecheck
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      - name: Type check
-        run: vp run typecheck
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@2dec1e33f4ab2c6d5bce1b0c4607961bb1a3f7a1 # v1.12.0
+        with:
+          node-version: "24"
+          cache: true
+
+      - name: Install dependencies
+        run: vp install
+
+      - name: ${{ matrix.name }}
+        run: ${{ matrix.run }}

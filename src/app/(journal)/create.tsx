@@ -1,15 +1,18 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Keyboard, PlatformColor } from "react-native";
+import { Alert, Keyboard, PlatformColor } from "react-native";
 
 import * as Crypto from "expo-crypto";
 import { Stack, useRouter } from "expo-router";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
+import { JOURNAL_ICONS } from "@/constants/journal";
 import { useJournalField } from "@/hooks/journal/use-journal-field";
+import { useSubscription } from "@/hooks/purchases/use-subscription";
 import { handleSaveError } from "@/utils/handle-save-error";
 import { setCreatedJournalId } from "@/utils/journal/created-journal";
 import { importJournal } from "@/utils/journal/import-journal";
+import { isFreeIcon, isProFieldType } from "@/utils/purchases/pro-gate";
 
 /**
  * ジャーナル作成
@@ -17,6 +20,7 @@ import { importJournal } from "@/utils/journal/import-journal";
 export default function JournalCreateScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { isPro, loading } = useSubscription();
 
   const {
     fields,
@@ -47,15 +51,39 @@ export default function JournalCreateScreen() {
   };
 
   const importJournalTemplate = async () => {
+    // 購読状態の確定前は Pro ユーザーの設定を誤って外してしまうため読み込まない
+    if (loading) return;
+
     const journal = await importJournal();
 
     if (!journal) return;
 
     const { name, color, icon, oneEntry, locked, notificationTime, fields } = journal;
 
-    setMeta({ name, color, icon, oneEntry, locked, notificationTime });
-    setFields(fields.map(({ type, label }) => ({ id: Crypto.randomUUID(), type, label })));
+    // 無料プランでは Pro 限定の設定を外す（アイコンはデフォルト、Pro 限定フィールドは削除）
+    const iconAllowed = isPro || isFreeIcon(icon);
+    const allowedFields = fields.filter(({ type }) => isPro || !isProFieldType(type));
+
+    setMeta({
+      name,
+      color,
+      icon: iconAllowed ? icon : JOURNAL_ICONS[0],
+      oneEntry: isPro && oneEntry,
+      locked: isPro && locked,
+      notificationTime,
+    });
+    setFields(allowedFields.map(({ type, label }) => ({ id: Crypto.randomUUID(), type, label })));
     setImportKey((prev) => prev + 1);
+
+    const removed =
+      !iconAllowed || allowedFields.length < fields.length || (!isPro && (oneEntry || locked));
+
+    if (removed) {
+      Alert.alert(t("purchases.importLimitedTitle"), t("purchases.importLimitedMessage"), [
+        { text: t("common.ok"), style: "cancel" },
+        { text: t("purchases.unlock"), onPress: () => router.navigate("/(journal)/paywall") },
+      ]);
+    }
   };
 
   return (
@@ -68,6 +96,7 @@ export default function JournalCreateScreen() {
               type: "button",
               label: t("journal.import"),
               icon: { type: "sfSymbol", name: "square.and.arrow.down" },
+              disabled: loading,
               onPress: importJournalTemplate,
             },
             {
