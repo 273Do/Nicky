@@ -39,5 +39,8 @@ jobs:
       - name: Run checks
         run: vp check
 
+      - name: Lint (ESLint / expo lint)
+        run: vp run lint
+
       - name: Type check
         run: vp run typecheck

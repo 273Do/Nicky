@@ -33,6 +33,7 @@ export default defineConfig({
   },
   staged: {
     "*": "vp check --fix",
+    "*.{js,jsx,ts,tsx}": "vp run lint",
   },
   lint: {
     plugins: ["oxc", "typescript", "unicorn", "react", "import"],
