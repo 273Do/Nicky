@@ -25,7 +25,7 @@ Identifiers live in `src/constants/purchases.ts` (`ENTITLEMENT_ID`, `OFFERING_ID
 
 The `test_` key is the **RevenueCat Test Store**: real-looking test purchases without any App Store Connect setup. The React Native SDK does not expose `forceAllowTestStoreInReleaseBuilds`, so Test Store only works in debug builds. Swap to the `appl_` key before shipping.
 
-`EXPO_PUBLIC_*` is inlined by Metro at bundle time → run `pnpm start --clear` after editing `.env.local`.
+`EXPO_PUBLIC_*` is inlined by Metro at bundle time → run `vp run start` (clears the cache) after editing `.env.local`.
 
 ## Initialization
 
@@ -115,9 +115,9 @@ There is no login, so every install is a new anonymous customer (`$RCAnonymousID
 ## Testing
 
 ```bash
-pnpm prebuild          # required after installing the SDK
-pnpm expo run:ios      # dev build; Expo Go cannot purchase
-pnpm start --clear     # after editing .env.local
+vp run prebuild          # required after installing the SDK
+vp run ios               # dev build; Expo Go cannot purchase
+vp run start             # after editing .env.local (clears the cache)
 ```
 
 - Test Store: works in the simulator, no App Store Connect needed

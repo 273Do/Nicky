@@ -5,12 +5,13 @@ Nicky is a React Native journaling app built with Expo and Expo Router. It featu
 ## Commands
 
 ```bash
-pnpm expo run:ios          # Build and run on iOS simulator
-pnpm expo start --clear    # Start Expo dev server (clear cache)
-pnpm lint                  # Run ESLint
-pnpm lint-fix              # Run ESLint with auto-fix
-pnpm typecheck             # TypeScript type check
-pnpm drizzle-kit generate  # Generate migration files from schema
+vp exec expo run:ios          # Build and run on iOS simulator
+vp run start                  # Start Expo dev server (clear cache)
+vp check                      # Format, lint (Oxlint) and type check
+vp run lint                   # Run ESLint (expo lint)
+vp run lint-fix               # Run ESLint with auto-fix
+vp run typecheck              # TypeScript type check
+vp exec drizzle-kit generate  # Generate migration files from schema
 ```
 
 ## Commit Convention

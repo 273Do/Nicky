@@ -66,7 +66,7 @@ Journals can be individually locked with Face ID / Touch ID via the `locked` col
 
 ### Notes
 
-- `expo-local-authentication` requires a native rebuild (`pnpm prebuild && pnpm expo run:ios`) after first install
+- `expo-local-authentication` requires a native rebuild (`vp run prebuild && vp run ios`) after first install
 - `authenticateAsync({ promptMessage })` requires a non-empty string — use `i18n.t()` for localization
 - On simulator, Face ID is unavailable; it falls back to passcode input. Use Simulator > Features > Face ID > Enrolled to test Face ID
 

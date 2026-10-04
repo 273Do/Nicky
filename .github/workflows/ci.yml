@@ -64,3 +64,14 @@ jobs:
 
       - name: ${{ matrix.name }}
         run: ${{ matrix.run }}
+
+  ci:
+    name: CI
+    needs: [commitlint, check]
+    # 依存ジョブが失敗しても実行し、失敗として報告
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify all checks passed
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
