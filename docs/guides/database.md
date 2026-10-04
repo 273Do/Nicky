@@ -75,7 +75,7 @@ erDiagram
 
 ## Adding a Schema Change
 
-Edit the relevant schema file → `pnpm drizzle-kit generate` → commit the generated files in `drizzle/`.
+Edit the relevant schema file → `vp exec drizzle-kit generate` → commit the generated files in `drizzle/`.
 
 ## Drizzle Config Notes
 

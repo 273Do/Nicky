@@ -62,6 +62,12 @@ vp run typecheck   # TypeScript
 
 Project guides for contributors live in [`docs/guides`](docs/guides).
 
+## Contributing
+
+Issues are welcome — bug reports, feature requests and ideas alike. Please open one on [GitHub Issues](https://github.com/273Do/Nicky/issues).
+
+Pull requests are not accepted at this time. Nicky is distributed on the App Store by its copyright holder, and keeping all code under a single copyright holder avoids licensing conflicts with that distribution.
+
 ## License
 
 Nicky is licensed under the [GNU General Public License v3.0](LICENSE).
