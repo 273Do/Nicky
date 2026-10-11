@@ -13,7 +13,7 @@ import { FieldObj } from "@/db/schemas";
 import { FieldDraftObj, useJournalField } from "@/hooks/journal/use-journal-field";
 import { useValidatedParams } from "@/hooks/use-validated-params";
 import { handleSaveError } from "@/utils/handle-save-error";
-import { exportJournal } from "@/utils/journal/export-journal";
+import { exportJournal, shareJournalLink } from "@/utils/journal/export-journal";
 
 type FormProps = {
   journal: JournalDetail;
@@ -84,14 +84,25 @@ function JournalEditForm({ journal }: FormProps) {
               menu: {
                 items: [
                   {
-                    type: "action",
-                    icon: {
-                      type: "sfSymbol",
-                      name: "square.and.arrow.up",
-                    },
-                    label: t("journal.share"),
-                    state: "off",
-                    onPress: async () => await exportJournal(journal),
+                    type: "submenu",
+                    label: "",
+                    inline: true,
+                    items: [
+                      {
+                        type: "action",
+                        icon: { type: "sfSymbol", name: "doc" },
+                        label: t("journal.shareFile"),
+                        state: "off",
+                        onPress: async () => await exportJournal(journal),
+                      },
+                      {
+                        type: "action",
+                        icon: { type: "sfSymbol", name: "link" },
+                        label: t("journal.shareLink"),
+                        state: "off",
+                        onPress: async () => await shareJournalLink(journal),
+                      },
+                    ],
                   },
                   {
                     type: "action",

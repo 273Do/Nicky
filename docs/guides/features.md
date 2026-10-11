@@ -33,7 +33,18 @@ On-device LLM generates daily reflections from journal entries:
 - `exportAllEntries` — all entries across all journals: zip with journal-name folders
 - Common helpers: `buildEntryText` generates text for one entry, `exportEntriesAsZip` handles zip creation/sharing
 
-**Journal template import** (`src/utils/journal/import-journal.ts`): validates JSON structure with Zod, verifies HMAC signature, returns `JournalDetail`.
+**Journal template import** (`src/utils/journal/import-journal.ts`): validates JSON structure with Zod, verifies HMAC signature, returns `JournalDetail`. The file import uses `verifySignedJournal`, which returns a failure reason so the caller words its own alert.
+
+**Journal template link** (single journal only; the file export stays available — the edit screen's options menu shows Share as File / Share as Link as an inline section, separated from Delete):
+
+- Payload: the link does **not** reuse the file's signed `{ data, signature }` (UUIDs, timestamps and a 64-char signature made links ~1,500 chars). `buildJournalLinkPayload` (`export-journal.ts`) emits a keyless array `[name, iconIndex, color, flags, notificationTime, [[typeIndex, label], ...]]` — IDs, timestamps and `sortOrder` are regenerated on import (fields are sorted by `sortOrder` before encoding), `flags` is bit0 = `oneEntry`, bit1 = `locked`. ~240 chars for 12 fields
+- Icons and field types are stored as indexes into `JOURNAL_ICONS` / `fieldTypeSchema.options`. **Only append to these lists, never reorder** — an old link would silently map to a different icon / type and still pass the signature check
+- Signature: SHA-256 of the payload string, truncated to `TEMPLATE_LINK_SIGNATURE_LENGTH` (16 hex chars) and prepended: `t = <signature><lz-string compressToEncodedURIComponent(payload)>`. The value is wrapped in `encodeURIComponent` because the lz-string alphabet contains `+`, which query parsers may read as a space; `importJournalFromLink` also maps spaces back to `+` defensively
+- The signature is checked against the decompressed payload, not the link text. lz-string ignores anything after its end marker and the last character is often zero padding, so appending characters or dropping the last one can still decode to the same payload and pass — any change to the actual content is rejected
+- Import: `nicky://create?t=...` resolves to `src/app/(journal)/create.tsx`. `importJournalFromLink` → `decodeJournalLink` splits the signature, decompresses, verifies it, validates the tuple with Zod (`linkPayloadSchema`, index ranges included) and returns a `JournalTemplate` (the subset of `JournalDetail` the form needs); any failure shows `error.linkInvalid*`. The screen applies it with the same `applyImportedJournal` as the file import (Pro items stripped on the free plan)
+- Signature verification is async, so the link is applied from a `useEffect` (via `useEffectEvent`) instead of as initial state — it waits for `loading === false` so a Pro user's items aren't stripped during the subscription fetch, runs once (`useRef`), and clears `t` with `router.setParams`
+- `(journal)/_layout.tsx` sets `unstable_settings.initialRouteName = "index"` so Back from a deep-linked screen returns to the journal list
+- Moving to universal links later: host `apple-app-site-association` on a domain, add `ios.associatedDomains` in `app.json`, and change `TEMPLATE_LINK_BASE` (`src/constants/journal.ts`) to `https://<domain>/create`. The route and the `t` format stay the same, so old `nicky://` links keep working
 
 **Key rules:**
 

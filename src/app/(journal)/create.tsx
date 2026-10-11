@@ -1,17 +1,20 @@
-import { useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, Keyboard, PlatformColor } from "react-native";
 
 import * as Crypto from "expo-crypto";
 import { Stack, useRouter } from "expo-router";
+import { z } from "zod";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
 import { JOURNAL_ICONS } from "@/constants/journal";
 import { useJournalField } from "@/hooks/journal/use-journal-field";
 import { useSubscription } from "@/hooks/purchases/use-subscription";
+import { useValidatedParams } from "@/hooks/use-validated-params";
 import { handleSaveError } from "@/utils/handle-save-error";
 import { setCreatedJournalId } from "@/utils/journal/created-journal";
-import { importJournal } from "@/utils/journal/import-journal";
+import { importJournal, importJournalFromLink } from "@/utils/journal/import-journal";
+import type { JournalTemplate } from "@/utils/journal/import-journal";
 import { isFreeIcon, isProFieldType } from "@/utils/purchases/pro-gate";
 
 /**
@@ -50,14 +53,11 @@ export default function JournalCreateScreen() {
     }
   };
 
-  const importJournalTemplate = async () => {
-    // 購読状態の確定前は Pro ユーザーの設定を誤って外してしまうため読み込まない
-    if (loading) return;
-
-    const journal = await importJournal();
-
-    if (!journal) return;
-
+  /**
+   * 読み込んだジャーナルをフォームに反映する（ファイル・リンク共通）
+   * @param journal 署名の検証済みのジャーナル
+   */
+  const applyImportedJournal = (journal: JournalTemplate) => {
     const { name, color, icon, oneEntry, locked, notificationTime, fields } = journal;
 
     // 無料プランでは Pro 限定の設定を外す（アイコンはデフォルト、Pro 限定フィールドは削除）
@@ -85,6 +85,36 @@ export default function JournalCreateScreen() {
       ]);
     }
   };
+
+  const importJournalTemplate = async () => {
+    // 購読状態の確定前は Pro ユーザーの設定を誤って外してしまうため読み込まない
+    if (loading) return;
+
+    const journal = await importJournal();
+
+    if (journal) applyImportedJournal(journal);
+  };
+
+  // 共有リンクから開かれた場合
+  const { t: linkData } = useValidatedParams(z.object({ t: z.string().optional() }));
+  const linkHandled = useRef(false);
+
+  const importFromLink = useEffectEvent(async (encoded: string) => {
+    // 再描画や戻ってきたときに再び読み込まないようパラメータを消す
+    router.setParams({ t: undefined });
+
+    const journal = await importJournalFromLink(encoded);
+
+    if (journal) applyImportedJournal(journal);
+  });
+
+  // 署名の検証が非同期のため、初期値としては渡せず、結果を受け取ってからフォームに反映する。
+  // 購読状態の確定前は Pro ユーザーの設定を誤って外してしまうため、確定を待つ
+  useEffect(() => {
+    if (!linkData || loading || linkHandled.current) return;
+    linkHandled.current = true;
+    void importFromLink(linkData);
+  }, [linkData, loading]);
 
   return (
     <>

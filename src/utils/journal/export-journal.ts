@@ -1,11 +1,18 @@
-import { Alert } from "react-native";
+import { Alert, Share } from "react-native";
 
 import * as Crypto from "expo-crypto";
 import { File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import JSZip from "jszip";
+import { compressToEncodedURIComponent } from "lz-string";
 import { z } from "zod";
 
+import {
+  fieldTypeSchema,
+  JOURNAL_ICONS,
+  TEMPLATE_LINK_BASE,
+  TEMPLATE_LINK_SIGNATURE_LENGTH,
+} from "@/constants/journal";
 import { db } from "@/db/client";
 import { JournalDetail } from "@/db/queries/journals";
 import i18n from "@/i18n";
@@ -71,6 +78,53 @@ export const exportJournal = async (journal: JournalDetail): Promise<void> => {
   } catch (error) {
     Alert.alert(i18n.t("error.exportFailed"), i18n.t("error.exportFailedMessage"));
     console.error("Export Failed:", error);
+  }
+};
+
+/**
+ * 共有リンク用のコンパクトなペイロードを生成する
+ *
+ * URL を短くするため、テンプレートに必要な値だけをキーなしの配列にする。
+ * ID・日時・表示順は読み込み時に再生成できるため含めない。
+ * アイコンとフィールド種別は一覧のインデックスで表す
+ *
+ * 形式: `[name, iconIndex, color, flags, notificationTime, [[typeIndex, label], ...]]`
+ * - flags: bit0 = oneEntry, bit1 = locked
+ */
+const buildJournalLinkPayload = (journal: JournalDetail): string => {
+  const { name, icon, color, oneEntry, locked, notificationTime, fields } = journal;
+
+  return JSON.stringify([
+    name,
+    JOURNAL_ICONS.indexOf(icon),
+    color,
+    (oneEntry ? 1 : 0) | (locked ? 2 : 0),
+    notificationTime,
+    [...fields]
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .map(({ type, label }) => [fieldTypeSchema.options.indexOf(type), label]),
+  ]);
+};
+
+/**
+ * 既存のジャーナルを署名付きで、リンクとして共有するための関数
+ *
+ * コンパクトなペイロードを lz-string で URL セーフな文字列に圧縮し、
+ * 先頭に短縮した署名を付けてクエリパラメータに載せる
+ * @param journal 共有するジャーナルの元データ
+ */
+export const shareJournalLink = async (journal: JournalDetail): Promise<void> => {
+  try {
+    const payload = buildJournalLinkPayload(journal);
+    const signature = (await generateSignature(payload)).slice(0, TEMPLATE_LINK_SIGNATURE_LENGTH);
+    console.log(payload, signature);
+    const encoded = signature + compressToEncodedURIComponent(payload);
+
+    // lz-string の出力に含まれる "+" はクエリでは空白と解釈されうるため、エスケープする
+    await Share.share({ message: `${TEMPLATE_LINK_BASE}?t=${encodeURIComponent(encoded)}` });
+  } catch (error) {
+    Alert.alert(i18n.t("error.exportFailed"), i18n.t("error.exportFailedMessage"));
+    console.error("Share Journal Link Failed:", error);
   }
 };
 
