@@ -4,6 +4,8 @@ import { z } from "zod";
 
 /**
  * ジャーナルフィールドの種別
+ *
+ * 共有リンクはインデックスで参照するため、追加は末尾に行い、並べ替えないこと
  */
 export const fieldTypeSchema = z.enum([
   "text",
@@ -51,7 +53,11 @@ export const FIELD_LABEL_KEYS: Record<FieldType, string> = {
   location: "field.location",
 };
 
-/** ジャーナルで使用するSFシンボル一覧 */
+/**
+ * ジャーナルで使用するSFシンボル一覧
+ *
+ * 共有リンクはインデックスで参照するため、追加は末尾に行い、並べ替えないこと
+ */
 export const JOURNAL_ICONS: SFSymbol[] = [
   // 読書・学習
   "book.fill",
@@ -141,3 +147,6 @@ export const journalIconSchema = z
  * ユニバーサルリンクに移行する場合は `https://<domain>/create` に差し替える
  */
 export const TEMPLATE_LINK_BASE = "nicky://create";
+
+/** 共有リンクに付ける署名の長さ（SHA-256 の16進数を先頭から切り詰める） */
+export const TEMPLATE_LINK_SIGNATURE_LENGTH = 16;

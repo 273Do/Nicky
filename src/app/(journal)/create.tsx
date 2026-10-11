@@ -8,13 +8,13 @@ import { z } from "zod";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
 import { JOURNAL_ICONS } from "@/constants/journal";
-import type { JournalDetail } from "@/db/queries/journals";
 import { useJournalField } from "@/hooks/journal/use-journal-field";
 import { useSubscription } from "@/hooks/purchases/use-subscription";
 import { useValidatedParams } from "@/hooks/use-validated-params";
 import { handleSaveError } from "@/utils/handle-save-error";
 import { setCreatedJournalId } from "@/utils/journal/created-journal";
 import { importJournal, importJournalFromLink } from "@/utils/journal/import-journal";
+import type { JournalTemplate } from "@/utils/journal/import-journal";
 import { isFreeIcon, isProFieldType } from "@/utils/purchases/pro-gate";
 
 /**
@@ -57,7 +57,7 @@ export default function JournalCreateScreen() {
    * 読み込んだジャーナルをフォームに反映する（ファイル・リンク共通）
    * @param journal 署名の検証済みのジャーナル
    */
-  const applyImportedJournal = (journal: JournalDetail) => {
+  const applyImportedJournal = (journal: JournalTemplate) => {
     const { name, color, icon, oneEntry, locked, notificationTime, fields } = journal;
 
     // 無料プランでは Pro 限定の設定を外す（アイコンはデフォルト、Pro 限定フィールドは削除）
