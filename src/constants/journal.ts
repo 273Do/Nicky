@@ -133,3 +133,11 @@ export const journalIconSchema = z
   .refine((v): v is SFSymbol => (JOURNAL_ICONS as string[]).includes(v), {
     message: "Invalid journal icon",
   }) as z.ZodType<SFSymbol>;
+
+/**
+ * ジャーナル共有リンクのベース URL（`?t=<署名付きデータ>` を付けて使う）
+ *
+ * expo-router により `src/app/(journal)/create.tsx` に解決される。
+ * ユニバーサルリンクに移行する場合は `https://<domain>/create` に差し替える
+ */
+export const TEMPLATE_LINK_BASE = "nicky://create";

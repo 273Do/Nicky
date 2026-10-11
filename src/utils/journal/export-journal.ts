@@ -1,11 +1,13 @@
-import { Alert } from "react-native";
+import { Alert, Share } from "react-native";
 
 import * as Crypto from "expo-crypto";
 import { File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import JSZip from "jszip";
+import { compressToEncodedURIComponent } from "lz-string";
 import { z } from "zod";
 
+import { TEMPLATE_LINK_BASE } from "@/constants/journal";
 import { db } from "@/db/client";
 import { JournalDetail } from "@/db/queries/journals";
 import i18n from "@/i18n";
@@ -71,6 +73,25 @@ export const exportJournal = async (journal: JournalDetail): Promise<void> => {
   } catch (error) {
     Alert.alert(i18n.t("error.exportFailed"), i18n.t("error.exportFailedMessage"));
     console.error("Export Failed:", error);
+  }
+};
+
+/**
+ * 既存のジャーナルを ID を変えて署名付きで、リンクとして共有するための関数
+ *
+ * ファイルと同じ署名付きデータを lz-string で URL セーフな文字列に圧縮し、クエリパラメータに載せる
+ * @param journal 共有するジャーナルの元データ
+ */
+export const shareJournalLink = async (journal: JournalDetail): Promise<void> => {
+  try {
+    const signedExport = await buildSignedJournal(journal);
+    const encoded = compressToEncodedURIComponent(JSON.stringify(signedExport));
+
+    // lz-string の出力に含まれる "+" はクエリでは空白と解釈されうるため、エスケープする
+    await Share.share({ message: `${TEMPLATE_LINK_BASE}?t=${encodeURIComponent(encoded)}` });
+  } catch (error) {
+    Alert.alert(i18n.t("error.exportFailed"), i18n.t("error.exportFailedMessage"));
+    console.error("Share Journal Link Failed:", error);
   }
 };
 
