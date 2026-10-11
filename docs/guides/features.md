@@ -33,7 +33,15 @@ On-device LLM generates daily reflections from journal entries:
 - `exportAllEntries` — all entries across all journals: zip with journal-name folders
 - Common helpers: `buildEntryText` generates text for one entry, `exportEntriesAsZip` handles zip creation/sharing
 
-**Journal template import** (`src/utils/journal/import-journal.ts`): validates JSON structure with Zod, verifies HMAC signature, returns `JournalDetail`.
+**Journal template import** (`src/utils/journal/import-journal.ts`): validates JSON structure with Zod, verifies HMAC signature, returns `JournalDetail`. Both entry points share `verifySignedJournal`, which returns a failure reason so each caller words its own alert.
+
+**Journal template link** (single journal only; the file export stays available — the edit screen's Share menu is a submenu: Share as File / Share as Link):
+
+- Export: `shareJournalLink` (`export-journal.ts`) takes the same signed payload as the file (`buildSignedJournal` → `{ data, signature }`), compresses it with `lz-string` `compressToEncodedURIComponent`, and shares `${TEMPLATE_LINK_BASE}?t=<encoded>` via React Native `Share`. The value is wrapped in `encodeURIComponent` because the lz-string alphabet contains `+`, which query parsers may read as a space; `importJournalFromLink` also maps spaces back to `+` defensively. Links run ~1,000 characters for a handful of fields (UUIDs + 64-char signature)
+- Import: `nicky://create?t=...` resolves to `src/app/(journal)/create.tsx`. `importJournalFromLink` decompresses and runs the same `verifySignedJournal`; any failure shows `error.linkInvalid*`. The screen applies it with the same `applyImportedJournal` as the file import (Pro items stripped on the free plan)
+- Signature verification is async, so the link is applied from a `useEffect` (via `useEffectEvent`) instead of as initial state — it waits for `loading === false` so a Pro user's items aren't stripped during the subscription fetch, runs once (`useRef`), and clears `t` with `router.setParams`
+- `(journal)/_layout.tsx` sets `unstable_settings.initialRouteName = "index"` so Back from a deep-linked screen returns to the journal list
+- Moving to universal links later: host `apple-app-site-association` on a domain, add `ios.associatedDomains` in `app.json`, and change `TEMPLATE_LINK_BASE` (`src/constants/journal.ts`) to `https://<domain>/create`. The route and the `t` format stay the same, so old `nicky://` links keep working
 
 **Key rules:**
 
