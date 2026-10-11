@@ -85,11 +85,8 @@ function JournalEditForm({ journal }: FormProps) {
                 items: [
                   {
                     type: "submenu",
-                    icon: {
-                      type: "sfSymbol",
-                      name: "square.and.arrow.up",
-                    },
-                    label: t("journal.share"),
+                    label: "",
+                    inline: true,
                     items: [
                       {
                         type: "action",
