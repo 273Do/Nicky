@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { DatePicker, Text } from "@expo/ui/swift-ui";
 
-import { FIELD_LABELS } from "@/core/constants";
 import { formatTime } from "@/utils/date";
 
 import { FieldWrapper } from "./field-wrapper";
@@ -27,18 +27,19 @@ export function EntryTime({
   onValueChange,
   edit = false,
 }: Props) {
+  const { t } = useTranslation();
   const [time, setTime] = useState<Date>(defaultValue);
 
   const handleChange = (value: Date) => {
     setTime(value);
-    onValueChange?.(value);
+    void onValueChange?.(value);
   };
 
   return (
     <FieldWrapper label={label}>
       {edit ? (
         <DatePicker
-          title={FIELD_LABELS.time}
+          title={t("field.time")}
           selection={time}
           displayedComponents={["hourAndMinute"]}
           onDateChange={handleChange}

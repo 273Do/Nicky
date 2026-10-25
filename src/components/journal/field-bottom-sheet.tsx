@@ -1,17 +1,18 @@
+import { useTranslation } from "react-i18next";
 import { PlatformColor } from "react-native";
 
-import { BottomSheet, Button, Group, HStack, Image, List, Text } from "@expo/ui/swift-ui";
+import { BottomSheet, Button, Group, HStack, Image, Label, List, Spacer } from "@expo/ui/swift-ui";
 import {
   foregroundStyle,
-  frame,
   padding,
   presentationDetents,
   presentationDragIndicator,
   scrollDisabled,
 } from "@expo/ui/swift-ui/modifiers";
 
-import { FIELD_ICONS, FIELD_LABELS, FieldType } from "@/core/constants";
-import { FIELD_TYPES } from "@/utils/journal/use-journal-field";
+import { FIELD_ICONS, FIELD_LABEL_KEYS, FieldType } from "@/constants/journal";
+import { FIELD_TYPES } from "@/hooks/journal/use-journal-field";
+import { isProFieldType } from "@/utils/purchases/pro-gate";
 
 type Props = {
   /** ボトムシートの表示状態 */
@@ -20,13 +21,32 @@ type Props = {
   onIsPresentedChange: (value: boolean) => void;
   /** フィールド追加時のコールバック */
   onAdd: (type: FieldType) => void;
+  /** Pro が有効かどうか */
+  isPro: boolean;
+  /** Pro 限定フィールドが選ばれたときのコールバック */
+  onRequirePro: () => void;
 };
 
 /**
  * フィールド追加ボトムシート
+ *
+ * Pro 限定のフィールドは鍵付きで表示し、タップでペイウォールへ誘導する。
  */
-export function FieldBottomSheet({ isPresented, onIsPresentedChange, onAdd }: Props) {
+export function FieldBottomSheet({
+  isPresented,
+  onIsPresentedChange,
+  onAdd,
+  isPro,
+  onRequirePro,
+}: Props) {
+  const { t } = useTranslation();
+
   const handlePress = (type: FieldType) => {
+    if (!isPro && isProFieldType(type)) {
+      onIsPresentedChange(false);
+      onRequirePro();
+      return;
+    }
     onAdd(type);
   };
 
@@ -40,23 +60,38 @@ export function FieldBottomSheet({ isPresented, onIsPresentedChange, onAdd }: Pr
         ]}
       >
         <List modifiers={[scrollDisabled()]}>
-          {FIELD_TYPES.map((type) => (
-            <Button
-              key={type}
-              modifiers={[foregroundStyle({ type: "hierarchical", style: "primary" })]}
-              onPress={() => handlePress(type)}
-            >
-              <HStack spacing={12}>
-                <Image
-                  systemName={FIELD_ICONS[type]}
-                  color={PlatformColor("systemIndigo")}
-                  size={20}
-                  modifiers={[frame({ width: 24 })]}
-                />
-                <Text>{FIELD_LABELS[type]}</Text>
-              </HStack>
-            </Button>
-          ))}
+          {FIELD_TYPES.map((type) => {
+            const requiresPro = !isPro && isProFieldType(type);
+
+            return (
+              <Button
+                key={type}
+                modifiers={[foregroundStyle({ type: "hierarchical", style: "primary" })]}
+                onPress={() => handlePress(type)}
+              >
+                <HStack>
+                  <Label
+                    title={t(FIELD_LABEL_KEYS[type])}
+                    icon={
+                      <Image
+                        systemName={FIELD_ICONS[type]}
+                        color={PlatformColor("systemIndigo")}
+                        size={17}
+                      />
+                    }
+                  />
+                  <Spacer />
+                  {requiresPro && (
+                    <Image
+                      systemName="lock.fill"
+                      color={PlatformColor("secondaryLabel")}
+                      size={15}
+                    />
+                  )}
+                </HStack>
+              </Button>
+            );
+          })}
         </List>
       </Group>
     </BottomSheet>

@@ -1,9 +1,21 @@
-import { Text, TextField } from "@expo/ui/swift-ui";
-import { frame, lineLimit } from "@expo/ui/swift-ui/modifiers";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { type LayoutChangeEvent, StyleSheet, useColorScheme, View } from "react-native";
+import { EnrichedMarkdownText } from "react-native-enriched-markdown";
 
-import { FIELD_LABELS } from "@/core/constants";
+import { Button, HStack, Spacer, Text, VStack } from "@expo/ui/swift-ui";
+import {
+  buttonStyle,
+  controlSize,
+  font,
+  foregroundStyle,
+  frame,
+} from "@expo/ui/swift-ui/modifiers";
+
+import { MarkdownStyles } from "@/constants/theme";
 
 import { FieldWrapper } from "./field-wrapper";
+import { MarkdownEditor } from "./markdown-editor";
 
 type Props = {
   /** フィールドラベル */
@@ -16,26 +28,96 @@ type Props = {
   edit?: boolean;
 };
 
+const MIN_HEIGHT = 120;
+
+const markdownContainerStyle = {
+  fontSize: 16,
+};
+
 /**
- * ロングテキストフィールド
+ * Markdown プレビュー
  */
-export function EntryLongText({ label, defaultValue = "", onValueChange, edit = false }: Props) {
+function MarkdownPreview({ text }: { text: string }) {
+  const colorScheme = useColorScheme();
+  const [contentHeight, setContentHeight] = useState<number>(MIN_HEIGHT);
+
+  const onLayout = (e: LayoutChangeEvent) => {
+    setContentHeight(Math.max(MIN_HEIGHT, e.nativeEvent.layout.height));
+  };
+
   return (
-    <FieldWrapper label={label}>
-      {edit ? (
-        <TextField
-          placeholder={FIELD_LABELS.longText}
-          defaultValue={defaultValue}
-          onValueChange={onValueChange}
-          axis="vertical"
-          modifiers={[
-            frame({ maxWidth: 9999, minHeight: 120, alignment: "topLeading" }),
-            lineLimit(),
-          ]}
+    <VStack modifiers={[frame({ height: contentHeight, maxWidth: 9999 })]}>
+      <View onLayout={onLayout} style={styles.previewContainer}>
+        <EnrichedMarkdownText
+          markdown={text}
+          markdownStyle={colorScheme === "dark" ? MarkdownStyles.dark : MarkdownStyles.light}
+          containerStyle={markdownContainerStyle}
         />
-      ) : (
-        <Text>{defaultValue}</Text>
-      )}
-    </FieldWrapper>
+      </View>
+    </VStack>
   );
 }
+
+/**
+ * ロングテキストフィールド（Markdown 対応）
+ */
+export function EntryLongText({ label, defaultValue = "", onValueChange, edit = false }: Props) {
+  const { t } = useTranslation();
+  const [preview, setPreview] = useState(false);
+  const [editorHeight, setEditorHeight] = useState(MIN_HEIGHT);
+  const [currentText, setCurrentText] = useState(defaultValue);
+
+  const handleValueChange = async (value: string) => {
+    setCurrentText(value);
+    await onValueChange?.(value);
+  };
+
+  if (!edit) {
+    return (
+      <FieldWrapper label={label}>
+        <MarkdownPreview text={defaultValue} />
+      </FieldWrapper>
+    );
+  }
+
+  return (
+    <VStack alignment="leading" spacing={4}>
+      <HStack>
+        <Text
+          modifiers={[
+            font({ size: 14, weight: "bold" }),
+            foregroundStyle({ type: "hierarchical", style: "secondary" }),
+          ]}
+        >
+          {label}
+        </Text>
+        <Spacer />
+        <Button
+          onPress={() => setPreview((p) => !p)}
+          modifiers={[buttonStyle("bordered"), controlSize("small")]}
+        >
+          <Text>{preview ? t("field.edit") : t("field.preview")}</Text>
+        </Button>
+      </HStack>
+      {preview ? (
+        <MarkdownPreview text={currentText} />
+      ) : (
+        <VStack modifiers={[frame({ height: editorHeight, maxWidth: 9999 })]}>
+          <MarkdownEditor
+            placeholder={t("field.longText")}
+            defaultValue={currentText}
+            onValueChange={handleValueChange}
+            onHeightChange={setEditorHeight}
+          />
+        </VStack>
+      )}
+    </VStack>
+  );
+}
+
+const styles = StyleSheet.create({
+  previewContainer: {
+    width: "100%",
+    paddingRight: 16,
+  },
+});

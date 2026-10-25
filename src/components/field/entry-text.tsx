@@ -1,7 +1,7 @@
-import { Text, TextField } from "@expo/ui/swift-ui";
-import { frame } from "@expo/ui/swift-ui/modifiers";
+import { useTranslation } from "react-i18next";
 
-import { FIELD_LABELS } from "@/core/constants";
+import { Text, TextField, useNativeState } from "@expo/ui/swift-ui";
+import { frame } from "@expo/ui/swift-ui/modifiers";
 
 import { FieldWrapper } from "./field-wrapper";
 
@@ -20,13 +20,16 @@ type Props = {
  * テキストフィールド
  */
 export function EntryText({ label, defaultValue = "", onValueChange, edit = false }: Props) {
+  const { t } = useTranslation();
+  const text = useNativeState(defaultValue);
+
   return (
     <FieldWrapper label={label}>
       {edit ? (
         <TextField
-          placeholder={FIELD_LABELS.text}
-          defaultValue={defaultValue}
-          onValueChange={onValueChange}
+          text={text}
+          placeholder={t("field.text")}
+          onTextChange={onValueChange}
           modifiers={[frame({ maxWidth: 9999 })]}
         />
       ) : (

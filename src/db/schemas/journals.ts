@@ -2,6 +2,8 @@ import type { SFSymbol } from "expo-symbols";
 
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
 
 import { entries } from "./entries";
 import { fields } from "./fields";
@@ -16,6 +18,12 @@ export const journals = sqliteTable("journals", {
   icon: text().notNull().$type<SFSymbol>(),
   /** HEXカラーコード */
   color: text().notNull(),
+  /** 1日1エントリー設定 */
+  oneEntry: integer({ mode: "boolean" }).notNull().default(false),
+  /** ローカル認証でロック */
+  locked: integer({ mode: "boolean" }).notNull().default(false),
+  /** 通知時刻 */
+  notificationTime: integer(),
   createdAt: integer()
     .notNull()
     .$defaultFn(() => Date.now()),
@@ -29,4 +37,7 @@ export const journalsRelations = relations(journals, ({ many }) => ({
   entries: many(entries),
 }));
 
-export type JournalObj = typeof journals.$inferSelect;
+const sfSymbolSchema = z.string() as z.ZodType<SFSymbol>;
+export const journalSelectSchema = createSelectSchema(journals, { icon: sfSymbolSchema });
+export const journalInsertSchema = createInsertSchema(journals, { icon: sfSymbolSchema });
+export type JournalObj = z.infer<typeof journalSelectSchema>;

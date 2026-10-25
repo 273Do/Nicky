@@ -31,7 +31,7 @@ export function EntryCheck({ label, defaultValue = false, onValueChange, edit = 
     if (!edit) return;
     const next = !check;
     setCheck(next);
-    onValueChange?.(next);
+    void onValueChange?.(next);
   };
 
   return (

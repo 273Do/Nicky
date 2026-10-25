@@ -1,8 +1,18 @@
-import { and, eq, gte, lt } from "drizzle-orm";
+import { and, count, eq, gte, lt } from "drizzle-orm";
 
 import { db } from "@/db/client";
+import { addDays, startOfDay } from "@/utils/date";
+import { deleteMediaImage } from "@/utils/entry/media-file";
 
-import { entries, EntryObj, EntryValueObj, entryValues } from "../schemas";
+import {
+  entries,
+  EntryObj,
+  EntryValueObj,
+  entryValues,
+  fields,
+  journals,
+  reflections,
+} from "../schemas";
 
 /**
  * ジャーナルに紐付いたエントリー一覧をフィールドとともに取得するクエリ
@@ -39,6 +49,24 @@ export const getEntryDetailQuery = (entryId: string) =>
  */
 export const storeEntry = async (newEntry: EntryObj, newValues: EntryValueObj[]): Promise<void> => {
   await db.transaction(async (tx) => {
+    // oneEntry が有効なジャーナルは当日の既存エントリーを確認
+    const journal = await tx.query.journals.findFirst({
+      where: (j, { eq }) => eq(j.id, newEntry.journalId),
+    });
+    if (journal?.oneEntry) {
+      const todayStart = startOfDay();
+      const todayEnd = addDays(todayStart, 1);
+      const existing = await tx.query.entries.findFirst({
+        where: (e, { eq, and, gte, lt }) =>
+          and(
+            eq(e.journalId, newEntry.journalId),
+            gte(e.createdAt, todayStart.getTime()),
+            lt(e.createdAt, todayEnd.getTime()),
+          ),
+      });
+      if (existing) throw new Error("oneEntry: today's entry already exists");
+    }
+
     await tx.insert(entries).values(newEntry);
 
     if (newValues.length > 0) {
@@ -81,7 +109,19 @@ export const bookmarkEntry = async (entryId: string, bookmark: boolean) => {
  * @param entryId エントリーID
  */
 export const deleteEntry = async (entryId: string) => {
+  // エントリーに紐づくメディアパスを収集
+  const mediaValues = await db
+    .select({ value: entryValues.value })
+    .from(entryValues)
+    .innerJoin(fields, eq(entryValues.fieldId, fields.id))
+    .where(and(eq(entryValues.entryId, entryId), eq(fields.type, "media")));
+
   await db.delete(entries).where(eq(entries.id, entryId));
+
+  // DB 削除成功後にメディア画像を削除
+  for (const row of mediaValues) {
+    if (row.value) deleteMediaImage(row.value);
+  }
 };
 
 /**
@@ -89,10 +129,26 @@ export const deleteEntry = async (entryId: string) => {
  * @param journalId ジャーナルID
  */
 export const deleteAllEntries = async (journalId?: string) => {
+  // 削除対象エントリーに紐づくメディアパスを収集
+  const baseQuery = db
+    .select({ value: entryValues.value })
+    .from(entryValues)
+    .innerJoin(fields, eq(entryValues.fieldId, fields.id))
+    .innerJoin(entries, eq(entryValues.entryId, entries.id));
+
+  const mediaValues = journalId
+    ? await baseQuery.where(and(eq(fields.type, "media"), eq(entries.journalId, journalId)))
+    : await baseQuery.where(eq(fields.type, "media"));
+
   if (journalId) {
     await db.delete(entries).where(eq(entries.journalId, journalId));
   } else {
     await db.delete(entries);
+  }
+
+  // DB 削除成功後にメディア画像を削除
+  for (const row of mediaValues) {
+    if (row.value) deleteMediaImage(row.value);
   }
 };
 
@@ -101,11 +157,8 @@ export const deleteAllEntries = async (journalId?: string) => {
  * @param date 対象日（時刻は無視される）
  */
 export const getEntriesByDateQuery = (date: Date) => {
-  const start = new Date(date);
-  start.setHours(0, 0, 0, 0);
-
-  const end = new Date(start);
-  end.setDate(end.getDate() + 1);
+  const start = startOfDay(date);
+  const end = addDays(start, 1);
 
   return db.query.entries.findMany({
     where: and(gte(entries.createdAt, start.getTime()), lt(entries.createdAt, end.getTime())),
@@ -118,5 +171,81 @@ export const getEntriesByDateQuery = (date: Date) => {
   });
 };
 
+/**
+ * 日付範囲のエントリー一覧をフィールドとともに取得するクエリ
+ * @param start 開始日（0:00:00）
+ * @param end 終了日の翌日（0:00:00、この日は含まない）
+ */
+export const getEntriesByRangeQuery = (start: Date, end: Date) =>
+  db.query.entries.findMany({
+    where: and(gte(entries.createdAt, start.getTime()), lt(entries.createdAt, end.getTime())),
+    with: {
+      journal: true,
+      values: {
+        with: { field: true },
+      },
+    },
+  });
+
 /** エントリー詳細の型 */
 export type EntryDetailObj = Awaited<ReturnType<typeof getEntriesQuery>>[number];
+
+/** 日付ベースのエントリー詳細の型（journal を含む） */
+export type DailyEntryObj = Awaited<ReturnType<typeof getEntriesByDateQuery>>[number];
+
+/**
+ * ジャーナルに紐付いたエントリーの件数を取得する
+ * @param journalId ジャーナルID
+ */
+export const countEntries = (journalId: string): number =>
+  db.select({ value: count() }).from(entries).where(eq(entries.journalId, journalId)).get()
+    ?.value ?? 0;
+
+/**
+ * oneEntry ジャーナルで今日のエントリーが既に存在するか判定する
+ */
+export const hasTodayEntryForOneEntry = (journalId: string): boolean => {
+  const journal = db
+    .select({ oneEntry: journals.oneEntry })
+    .from(journals)
+    .where(eq(journals.id, journalId))
+    .get();
+  if (!journal?.oneEntry) return false;
+
+  const todayStart = startOfDay();
+  const todayEnd = addDays(todayStart, 1);
+  return !!db
+    .select({ id: entries.id })
+    .from(entries)
+    .where(
+      and(
+        eq(entries.journalId, journalId),
+        gte(entries.createdAt, todayStart.getTime()),
+        lt(entries.createdAt, todayEnd.getTime()),
+      ),
+    )
+    .get();
+};
+
+/**
+ * すべてのジャーナル・エントリー・振り返りを削除する
+ */
+export const deleteAllData = async () => {
+  const mediaValues = await db.transaction(async (tx) => {
+    const media = await tx
+      .select({ value: entryValues.value })
+      .from(entryValues)
+      .innerJoin(fields, eq(entryValues.fieldId, fields.id))
+      .where(eq(fields.type, "media"));
+
+    await tx.delete(reflections);
+    await tx.delete(entries);
+    await tx.delete(journals);
+
+    return media;
+  });
+
+  for (const row of mediaValues) {
+    if (row.value) deleteMediaImage(row.value);
+  }
+};

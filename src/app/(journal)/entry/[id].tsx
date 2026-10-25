@@ -1,111 +1,109 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { PlatformColor } from "react-native";
 
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
+import { Stack, useRouter } from "expo-router";
+import { z } from "zod";
 
-import { EntryCreateView } from "@/components/entry/entry-create-view";
-import { EntryDetailView } from "@/components/entry/entry-detail";
-import { useEntryDetail } from "@/utils/entry/use-entry-detail";
+import { EntryDetailView } from "@/components/entry/entry-detail-view";
+import { EntryEditView } from "@/components/entry/entry-edit-view";
+import { bookmarkEntry, deleteEntry, getEntryDetailQuery } from "@/db/queries/entries";
+import { useValidatedParams } from "@/hooks/use-validated-params";
+import { exportEntry } from "@/utils/entry/export-entry";
 
 /**
  * エントリー詳細
  */
 export default function EntryDetailScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
 
-  const {
-    id: entryId,
-    journalName,
-    edit,
-  } = useLocalSearchParams<{
-    id: string;
-    journalName: string;
-    edit: string;
-  }>();
+  const shema = z.object({
+    id: z.string(),
+    journalName: z.string(),
+    edit: z
+      .string()
+      .optional()
+      .transform((v) => v === "true"),
+  });
+  const { id: entryId, journalName, edit } = useValidatedParams(shema);
 
-  const [editMode, setEditMode] = useState<boolean>(Boolean(edit));
-
-  const { entry, valuesRef, setValue, save, bookmark, remove } = useEntryDetail(entryId);
-
-  const handleSave = async () => {
-    await save();
-    setEditMode(false);
-  };
+  const [editMode, setEditMode] = useState(edit);
+  const { data: entry } = useLiveQuery(getEntryDetailQuery(entryId), [entryId]);
 
   const handleDelete = async () => {
-    await remove();
+    await deleteEntry(entryId);
     router.back();
+  };
+
+  const handleBookmark = async () => {
+    if (entry) await bookmarkEntry(entry.id, !entry.bookmark);
   };
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: journalName,
-          headerLargeTitleEnabled: true,
-          unstable_headerRightItems: () =>
-            editMode
-              ? [
-                  {
-                    type: "button",
-                    label: "Cancel",
-                    onPress: () => setEditMode(false),
+      {entry && editMode ? (
+        <EntryEditView
+          entry={entry}
+          onSave={() => setEditMode(false)}
+          onCancel={() => setEditMode(false)}
+        />
+      ) : (
+        <>
+          <Stack.Screen
+            options={{
+              title: journalName,
+              headerLargeTitleEnabled: true,
+              unstable_headerRightItems: () => [
+                {
+                  type: "button",
+                  icon: {
+                    type: "sfSymbol",
+                    name: entry?.bookmark ? "bookmark.fill" : "bookmark",
                   },
-                  {
-                    type: "button",
-                    label: "Save",
-                    icon: { type: "sfSymbol", name: "checkmark" },
-                    tintColor: PlatformColor("systemIndigo"),
-                    variant: "prominent",
-                    onPress: handleSave,
-                  },
-                ]
-              : [
-                  {
-                    type: "menu",
-                    label: "Options",
-                    icon: { type: "sfSymbol", name: "ellipsis" },
-                    menu: {
-                      items: [
-                        {
-                          type: "action",
-                          icon: {
-                            type: "sfSymbol",
-                            name: entry?.bookmark ? "bookmark.slash" : "bookmark",
-                          },
-                          label: entry?.bookmark ? "Unbookmark" : "Bookmark",
-                          onPress: bookmark,
+                  label: entry?.bookmark ? t("entry.unbookmark") : t("entry.bookmark"),
+                  tintColor: entry?.bookmark ? PlatformColor("systemIndigo") : undefined,
+                  onPress: handleBookmark,
+                },
+                {
+                  type: "menu",
+                  label: t("common.options"),
+                  icon: { type: "sfSymbol", name: "ellipsis" },
+                  menu: {
+                    items: [
+                      {
+                        type: "action",
+                        icon: {
+                          type: "sfSymbol",
+                          name: "square.and.arrow.up",
                         },
-                        {
-                          type: "action",
-                          label: "Delete Entry",
-                          icon: { type: "sfSymbol", name: "trash" },
-                          destructive: true,
-                          onPress: handleDelete,
+                        label: t("entry.export"),
+                        onPress: async () => {
+                          if (entry) await exportEntry(entry, journalName);
                         },
-                      ],
-                    },
+                      },
+                      {
+                        type: "action",
+                        label: t("entry.deleteEntry"),
+                        icon: { type: "sfSymbol", name: "trash" },
+                        destructive: true,
+                        onPress: handleDelete,
+                      },
+                    ],
                   },
-                  {
-                    type: "button",
-                    label: "Edit",
-                    onPress: () => setEditMode(true),
-                  },
-                ],
-        }}
-      />
-
-      {entry &&
-        (editMode ? (
-          <EntryCreateView
-            id={entry.journalId}
-            values={valuesRef.current}
-            setValue={setValue}
-            createdAt={entry.createdAt}
+                },
+                {
+                  type: "button",
+                  label: t("common.edit"),
+                  onPress: () => setEditMode(true),
+                },
+              ],
+            }}
           />
-        ) : (
-          <EntryDetailView entry={entry} />
-        ))}
+          {entry && <EntryDetailView entry={entry} />}
+        </>
+      )}
     </>
   );
 }

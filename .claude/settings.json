@@ -1,4 +1,8 @@
 {
+  "enabledPlugins": {
+    "expo@expo-plugins": true,
+    "expo@claude-plugins-official": true
+  },
   "extraKnownMarketplaces": {
     "expo-plugins": {
       "source": {
@@ -7,7 +11,9 @@
       }
     }
   },
-  "enabledPlugins": {
-    "expo@expo-plugins": true
+  "pluginConfigs": {
+    "agents-md@builtin": {
+      "options": { "instructionFiles": "claude-md-and-agents-md" }
+    }
   }
 }

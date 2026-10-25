@@ -1,8 +1,9 @@
-import { and, eq, notInArray, sql } from "drizzle-orm";
+import { and, count, eq, notInArray, sql } from "drizzle-orm";
 
 import { db } from "@/db/client";
-import { entries, fields, JournalObj, journals } from "@/db/schemas";
-import { FieldWithSortObj, JournalMetaObj } from "@/utils/journal/use-journal-field";
+import { entries, entryValues, fields, JournalObj, journals } from "@/db/schemas";
+import type { FieldWithSortObj, JournalMetaObj } from "@/hooks/journal/use-journal-field";
+import { deleteMediaImage } from "@/utils/entry/media-file";
 
 /**
  * ジャーナル一覧を取得するクエリ
@@ -15,6 +16,12 @@ export const getJournalsQuery = db.query.journals.findMany({
       ),
   },
 });
+
+/**
+ * ジャーナルの件数を取得する
+ */
+export const countJournals = (): number =>
+  db.select({ value: count() }).from(journals).get()?.value ?? 0;
 
 /**
  * ジャーナル詳細を取得するクエリ
@@ -62,7 +69,7 @@ export const updateJournal = async (
   meta: JournalMetaObj,
   fieldUpdates: FieldWithSortObj[],
 ): Promise<void> => {
-  const { name, icon, color } = meta;
+  const { name, icon, color, oneEntry, locked, notificationTime } = meta;
 
   await db.transaction(async (tx) => {
     await tx
@@ -71,6 +78,9 @@ export const updateJournal = async (
         name,
         icon,
         color,
+        oneEntry,
+        locked,
+        notificationTime,
         updatedAt: Date.now(),
       })
       .where(eq(journals.id, journalId));
@@ -110,7 +120,24 @@ export const updateJournal = async (
  * @param journalId ジャーナルID
  */
 export const deleteJournal = async (journalId: string) => {
-  await db.delete(journals).where(eq(journals.id, journalId));
+  // メディアパスを収集
+  const mediaValues = await db
+    .select({ value: entryValues.value })
+    .from(entryValues)
+    .innerJoin(fields, eq(entryValues.fieldId, fields.id))
+    .innerJoin(entries, eq(entryValues.entryId, entries.id))
+    .where(and(eq(fields.type, "media"), eq(entries.journalId, journalId)));
+
+  // エントリーとジャーナルを同一トランザクションで削除
+  await db.transaction(async (tx) => {
+    await tx.delete(entries).where(eq(entries.journalId, journalId));
+    await tx.delete(journals).where(eq(journals.id, journalId));
+  });
+
+  // コミット後にメディア画像を削除
+  for (const row of mediaValues) {
+    if (row.value) deleteMediaImage(row.value);
+  }
 };
 
 /** ジャーナル一覧の型 */

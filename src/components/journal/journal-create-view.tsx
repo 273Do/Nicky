@@ -1,8 +1,10 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { PlatformColor, View } from "react-native";
 
 import {
   Button,
+  DatePicker,
   Host,
   HStack,
   Image,
@@ -10,24 +12,83 @@ import {
   RoundedRectangle,
   Section,
   Spacer,
+  Text,
   TextField,
+  type TextFieldRef,
+  Toggle,
+  useNativeState,
   ZStack,
 } from "@expo/ui/swift-ui";
 import {
+  animation,
+  Animation,
   environment,
   foregroundStyle,
   frame,
   listRowInsets,
   onTapGesture,
   padding,
+  tint,
 } from "@expo/ui/swift-ui/modifiers";
+import * as LocalAuthentication from "expo-local-authentication";
 
-import { FIELD_ICONS, FIELD_LABELS, FieldType } from "@/core/constants";
-import { isValidColor } from "@/utils/journal/color";
-import { JournalMetaObj, type FieldDraftObj } from "@/utils/journal/use-journal-field";
+import { FIELD_ICONS, FIELD_LABEL_KEYS, FieldType } from "@/constants/journal";
+import { JournalMetaObj, type FieldDraftObj } from "@/hooks/journal/use-journal-field";
+import { useProGate } from "@/hooks/purchases/use-pro-gate";
+import { cleanNumericInput } from "@/utils/entry/field-value";
+import { hexColorSchema } from "@/utils/journal/color";
+import { decodeRatingLabel } from "@/utils/journal/rating-label";
 
+import { secondary } from "../entry/entry-row";
 import { FieldBottomSheet } from "./field-bottom-sheet";
 import { IconSelectBottomSheet } from "./icon-select-bottom-sheet";
+
+/**
+ * 数値のみ入力可能な TextField
+ */
+function NumberTextField({
+  defaultValue,
+  placeholder,
+  onValueChange,
+}: {
+  defaultValue: string;
+  placeholder: string;
+  onValueChange: (num: number) => void;
+}) {
+  const ref = useRef<TextFieldRef>(null);
+  const text = useNativeState(defaultValue);
+
+  const handleChange = async (v: string) => {
+    const cleaned = cleanNumericInput(v, 1);
+    if (cleaned !== v) await ref.current?.setText(cleaned);
+    onValueChange(parseFloat(cleaned));
+  };
+
+  return <TextField ref={ref} text={text} placeholder={placeholder} onTextChange={handleChange} />;
+}
+
+/**
+ * フィールドラベル入力用 TextField（useNativeState をループ外で呼ぶため分離）
+ */
+function FieldLabelTextField({
+  defaultValue,
+  placeholder,
+  onTextChange,
+}: {
+  defaultValue: string;
+  placeholder: string;
+  onTextChange: (value: string) => void;
+}) {
+  const text = useNativeState(defaultValue);
+  return (
+    <TextField
+      text={text}
+      placeholder={placeholder}
+      onTextChange={onTextChange}
+      modifiers={[frame({ maxWidth: 9999 })]}
+    />
+  );
+}
 
 type Props = {
   /** フィールド一覧 */
@@ -36,6 +97,8 @@ type Props = {
   addField: (type: FieldType) => void;
   /** フィールドのラベルを更新する関数 */
   renameField: (id: string, newLabel: string) => void;
+  /** rating フィールドの min/max を更新する関数 */
+  updateRatingRange: (id: string, min: number, max: number) => void;
   /** フィールドを削除する関数 */
   deleteField: (indices: number[]) => void;
   /** フィールドを並び替える関数 */
@@ -44,7 +107,37 @@ type Props = {
   meta: JournalMetaObj;
   /** ジャーナルのメタ情報をセットする関数 */
   setMeta: Dispatch<SetStateAction<JournalMetaObj>>;
+  /** 保存済みのメタ情報。作成時点で有効だった Pro 設定は解約後も変更できる */
+  baseMeta?: JournalMetaObj;
 };
+
+/**
+ * Pro 限定の設定行
+ */
+function ProLockedRow({
+  label,
+  loading,
+  onPress,
+}: {
+  label: string;
+  loading: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <Button
+      onPress={loading ? () => {} : onPress}
+      modifiers={[foregroundStyle({ type: "color", color: PlatformColor("label") })]}
+    >
+      <HStack>
+        <Text>{label}</Text>
+        <Spacer />
+        {loading ? null : (
+          <Image systemName="lock.fill" color={PlatformColor("secondaryLabel")} size={15} />
+        )}
+      </HStack>
+    </Button>
+  );
+}
 
 /**
  * ジャーナル作成画面
@@ -53,11 +146,15 @@ export function JournalCreateView({
   fields,
   addField,
   renameField,
+  updateRatingRange,
   deleteField,
   moveField,
   meta,
   setMeta,
+  baseMeta,
 }: Props) {
+  const { t } = useTranslation();
+  const journalName = useNativeState(meta.name);
   const [showSheet, setShowSheet] = useState<{
     field: boolean;
     icon: boolean;
@@ -65,6 +162,19 @@ export function JournalCreateView({
     field: false,
     icon: false,
   });
+
+  const { isPro, loading, openPaywall } = useProGate();
+
+  // 作成時点で有効だった Pro 設定は解約後も変更できる
+  const canEditOneEntry = isPro || !!baseMeta?.oneEntry;
+  const canEditLocked = isPro || !!baseMeta?.locked;
+
+  const [authAvailable, setAuthAvailable] = useState(true);
+  useEffect(() => {
+    LocalAuthentication.isEnrolledAsync().then(setAuthAvailable);
+  }, []);
+
+  const notificationEnabled = meta.notificationTime !== null;
 
   return (
     <View style={{ flex: 1 }}>
@@ -76,6 +186,8 @@ export function JournalCreateView({
           modifiers={[
             frame({ maxWidth: 9999, maxHeight: 9999 }),
             environment("editMode", "inactive"),
+            animation(Animation.easeInOut({ duration: 0.25 }), fields.length),
+            animation(Animation.easeInOut({ duration: 0.25 }), notificationEnabled),
           ]}
         >
           {/* ジャーナル名・アイコン・カラー */}
@@ -100,47 +212,128 @@ export function JournalCreateView({
 
               {/* ジャーナル名 */}
               <TextField
-                key={meta.name}
-                placeholder="Journal Name"
-                defaultValue={meta.name}
-                onValueChange={(value) =>
-                  setMeta((prev) => ({ ...prev, name: value.slice(0, 20) }))
-                }
+                text={journalName}
+                placeholder={t("journal.namePlaceholder")}
+                onTextChange={(value) => setMeta((prev) => ({ ...prev, name: value }))}
                 modifiers={[frame({ maxWidth: 9999 })]}
               />
             </HStack>
+            {canEditOneEntry ? (
+              <Toggle
+                isOn={meta.oneEntry}
+                onIsOnChange={(v) => setMeta((prev) => ({ ...prev, oneEntry: v }))}
+                label={t("journal.oneEntryPerDay")}
+                modifiers={[tint(PlatformColor("systemIndigo"))]}
+              />
+            ) : (
+              <ProLockedRow
+                label={t("journal.oneEntryPerDay")}
+                loading={loading}
+                onPress={openPaywall}
+              />
+            )}
+            {authAvailable &&
+              (canEditLocked ? (
+                <Toggle
+                  isOn={meta.locked}
+                  onIsOnChange={(v) => setMeta((prev) => ({ ...prev, locked: v }))}
+                  label={t("journal.requireAuth")}
+                  modifiers={[tint(PlatformColor("systemIndigo"))]}
+                />
+              ) : (
+                <ProLockedRow
+                  label={t("journal.requireAuth")}
+                  loading={loading}
+                  onPress={openPaywall}
+                />
+              ))}
+            <Toggle
+              isOn={notificationEnabled}
+              onIsOnChange={(enabled) => {
+                if (enabled) {
+                  const d = new Date();
+                  d.setHours(0, 0, 0, 0);
+                  setMeta((prev) => ({ ...prev, notificationTime: d.getTime() }));
+                } else {
+                  setMeta((prev) => ({ ...prev, notificationTime: null }));
+                }
+              }}
+              label={t("journal.notification")}
+              modifiers={[tint(PlatformColor("systemIndigo"))]}
+            />
+            {notificationEnabled && (
+              <DatePicker
+                title={t("journal.notificationTime")}
+                displayedComponents={["hourAndMinute"]}
+                selection={new Date(meta.notificationTime!)}
+                onDateChange={(v) =>
+                  setMeta((prev) => ({ ...prev, notificationTime: v.getTime() }))
+                }
+              />
+            )}
           </Section>
 
           {/* フィールド */}
-          <Section title="Fields">
+          <Section title={t("journal.fields")}>
             <List.ForEach onMove={moveField} onDelete={deleteField}>
-              {fields.map((field) => (
-                <HStack key={field.id} spacing={16} modifiers={[listRowInsets({ leading: 16 })]}>
-                  <Image
-                    systemName={FIELD_ICONS[field.type]}
-                    color={PlatformColor("systemIndigo")}
-                    size={22}
-                    modifiers={[frame({ width: 24 })]}
-                  />
-                  <TextField
-                    placeholder={`${FIELD_LABELS[field.type]} Field Name`}
-                    defaultValue={field.label}
-                    onValueChange={(value) => renameField(field.id, value)}
-                    modifiers={[frame({ maxWidth: 9999 })]}
-                  />
-                  <Spacer />
-                  <Image
-                    systemName="line.3.horizontal"
-                    color={PlatformColor("tertiaryLabel")}
-                    size={22}
-                    modifiers={[frame({ width: 28 }), padding({ trailing: 14 })]}
-                  />
-                </HStack>
-              ))}
+              {fields.map((field) => {
+                const isRating = field.type === "rating";
+                const ratingLabel = isRating ? decodeRatingLabel(field.label) : null;
+
+                return (
+                  <HStack
+                    key={field.id}
+                    spacing={isRating ? 8 : 16}
+                    modifiers={[listRowInsets({ leading: 16 })]}
+                  >
+                    <Image
+                      systemName={FIELD_ICONS[field.type]}
+                      color={PlatformColor("systemIndigo")}
+                      size={22}
+                      modifiers={[frame({ width: 24 })]}
+                    />
+                    {isRating && (
+                      <HStack modifiers={[frame({ width: 100 })]}>
+                        <Spacer />
+                        <NumberTextField
+                          defaultValue={String(ratingLabel!.min)}
+                          placeholder={t("field.min")}
+                          onValueChange={(num) =>
+                            updateRatingRange(field.id, num, ratingLabel!.max)
+                          }
+                        />
+                        <Text modifiers={[secondary]}>~</Text>
+                        <Spacer />
+                        <NumberTextField
+                          defaultValue={String(ratingLabel!.max)}
+                          placeholder={t("field.max")}
+                          onValueChange={(num) =>
+                            updateRatingRange(field.id, ratingLabel!.min, num)
+                          }
+                        />
+                      </HStack>
+                    )}
+                    <FieldLabelTextField
+                      placeholder={t("journal.fieldPlaceholder", {
+                        type: t(FIELD_LABEL_KEYS[field.type]),
+                      })}
+                      defaultValue={isRating ? ratingLabel!.name : field.label}
+                      onTextChange={(value) => renameField(field.id, value)}
+                    />
+                    <Spacer />
+                    <Image
+                      systemName="line.3.horizontal"
+                      color={PlatformColor("tertiaryLabel")}
+                      size={22}
+                      modifiers={[frame({ width: 28 }), padding({ trailing: 14 })]}
+                    />
+                  </HStack>
+                );
+              })}
             </List.ForEach>
 
             <Button
-              label="Add Field"
+              label={t("journal.addField")}
               systemImage="plus"
               onPress={() => setShowSheet((prev) => ({ ...prev, field: true }))}
             />
@@ -152,6 +345,8 @@ export function JournalCreateView({
           isPresented={showSheet.field}
           onIsPresentedChange={(v) => setShowSheet((prev) => ({ ...prev, field: v }))}
           onAdd={addField}
+          isPro={isPro}
+          onRequirePro={openPaywall}
         />
 
         {/* アイコン選択ボトムシート */}
@@ -160,9 +355,12 @@ export function JournalCreateView({
           onIsPresentedChange={(v) => setShowSheet((prev) => ({ ...prev, icon: v }))}
           selectedIcon={meta.icon}
           selectedColor={meta.color}
+          isPro={isPro}
+          grantedIcon={baseMeta?.icon}
+          onRequirePro={openPaywall}
           onSelectIcon={(icon) => setMeta((prev) => ({ ...prev, icon }))}
           onSelectColor={(color) => {
-            if (isValidColor(color)) setMeta((prev) => ({ ...prev, color }));
+            if (hexColorSchema.safeParse(color).success) setMeta((prev) => ({ ...prev, color }));
           }}
         />
       </Host>

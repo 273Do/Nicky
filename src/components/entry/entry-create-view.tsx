@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { PlatformColor, View } from "react-native";
 
 import { Host, List, Section } from "@expo/ui/swift-ui";
@@ -5,8 +6,8 @@ import { frame, listStyle } from "@expo/ui/swift-ui/modifiers";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { getFieldsQuery } from "@/db/queries/fields";
+import { FieldValue } from "@/hooks/entry/use-entry";
 import { formatDate } from "@/utils/date";
-import { FieldValue } from "@/utils/entry/use-entry";
 
 import { EntryFieldItem } from "./entry-field-item";
 
@@ -25,7 +26,7 @@ type Props = {
  * エントリー作成画面
  */
 export function EntryCreateView({ id, values, setValue, createdAt }: Props) {
-  const now = Date.now();
+  const [now] = useState(Date.now);
 
   const { data: fields } = useLiveQuery(getFieldsQuery(id), [id]);
 

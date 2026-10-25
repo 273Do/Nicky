@@ -1,31 +1,47 @@
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { PlatformColor, Pressable, StyleSheet, View } from "react-native";
 
-import { Host, List, Section } from "@expo/ui/swift-ui";
-import { frame, listStyle } from "@expo/ui/swift-ui/modifiers";
+import { Host, Image, List, Section, Spacer, Text, VStack } from "@expo/ui/swift-ui";
+import {
+  animation,
+  Animation,
+  font,
+  foregroundStyle,
+  frame,
+  listStyle,
+  onTapGesture,
+  opacity,
+  padding,
+} from "@expo/ui/swift-ui/modifiers";
 import { GlassView } from "expo-glass-effect";
 import { useRouter } from "expo-router";
 import { SymbolView } from "expo-symbols";
 
 import { JournalChipList } from "@/components/journal/journal-chip";
+import { FREE_ENTRY_LIMIT } from "@/constants/purchases";
 import { deleteEntry } from "@/db/queries/entries";
 import { type JournalWithCountObj } from "@/db/queries/journals";
-import { useEntryList } from "@/utils/entry/use-entry-list";
+import { useEntryList } from "@/hooks/entry/use-entry-list";
+import { useProGate } from "@/hooks/purchases/use-pro-gate";
 
 import { EntryRow } from "./entry-row";
 
 type Props = {
   /** ジャーナル一覧（チップリスト表示時に必要） */
   journals?: JournalWithCountObj[];
-  /** 選択中のジャーナル id */
-  activeJournalId: string;
+  /** 選択中のジャーナル */
+  activeJournal: JournalWithCountObj;
   /** ジャーナル切り替え（チップリスト表示時に必要） */
   onSelectJournal?: (id: string) => void;
-  /** ジャーナル名 */
-  journalName: string;
   /** ブックマークのみ表示 */
   bookmarkOnly?: boolean;
   /** チップリストの再マウント用キー（作成後にスクロール位置をリセット） */
   chipScrollKey?: number;
+  /** ローカル認証未通過でロック中 */
+  locked?: boolean;
+  /** ロック解除コールバック */
+  onUnlock?: () => void;
 };
 
 /**
@@ -33,18 +49,55 @@ type Props = {
  */
 export function EntryListView({
   journals,
-  activeJournalId,
+  activeJournal,
   onSelectJournal,
-  journalName,
   bookmarkOnly = false,
   chipScrollKey = 0,
+  locked = false,
+  onUnlock,
 }: Props) {
+  const { t } = useTranslation();
   const router = useRouter();
 
-  const { entries } = useEntryList({
+  const { id: activeJournalId, name: activeJournalName, oneEntry } = activeJournal;
+
+  const { entries, hasTodayEntry } = useEntryList({
     journalId: activeJournalId,
     bookmarkOnly,
   });
+
+  const fadeKey = `${activeJournalId}:${String(bookmarkOnly)}`;
+  const [prevFadeKey, setPrevFadeKey] = useState(fadeKey);
+  const [fade, setFade] = useState(1);
+
+  if (fadeKey !== prevFadeKey) {
+    setPrevFadeKey(fadeKey);
+    setFade(0.25);
+  }
+
+  useEffect(() => {
+    if (fade < 1) {
+      const id = requestAnimationFrame(() => setFade(1));
+      return () => cancelAnimationFrame(id);
+    }
+  }, [fade]);
+
+  const disabled = oneEntry && hasTodayEntry;
+
+  const { isPro, openPaywall } = useProGate();
+  // 無料プランのエントリー数上限
+  const entryLimitReached = !isPro && activeJournal.entryCount >= FREE_ENTRY_LIMIT;
+
+  const chipList =
+    journals && onSelectJournal ? (
+      <JournalChipList
+        key={chipScrollKey}
+        journals={journals}
+        activeJournalId={activeJournalId}
+        onSelect={onSelectJournal}
+        scrollToEnd={chipScrollKey > 0}
+      />
+    ) : undefined;
 
   return (
     <View style={{ flex: 1 }}>
@@ -52,48 +105,70 @@ export function EntryListView({
         style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}
         useViewportSizeMeasurement
       >
-        <List modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 }), listStyle("plain")]}>
-          <Section
-            header={
-              journals && onSelectJournal ? (
-                <JournalChipList
-                  key={chipScrollKey}
-                  journals={journals}
-                  activeJournalId={activeJournalId}
-                  onSelect={onSelectJournal}
-                  scrollToEnd={chipScrollKey > 0}
-                />
-              ) : undefined
-            }
-          >
-            <List.ForEach
-              onDelete={(indices) => indices.forEach(async (i) => await deleteEntry(entries[i].id))}
+        {locked ? (
+          <VStack modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 })]}>
+            {chipList}
+            <Spacer />
+            <Image systemName="lock.fill" color={PlatformColor("secondaryLabel")} size={42} />
+            <Text
+              modifiers={[
+                font({ size: 18, weight: "semibold" }),
+                foregroundStyle(PlatformColor("label")),
+                padding({ top: 4, bottom: 14 }),
+              ]}
             >
-              {entries.map((entry) => (
-                <EntryRow key={entry.id} journalName={journalName} entry={entry} />
-              ))}
-            </List.ForEach>
-          </Section>
-        </List>
+              {t("journal.lockedMessage")}
+            </Text>
+            <Text
+              modifiers={[
+                font({ size: 16 }),
+                foregroundStyle(PlatformColor("systemIndigo")),
+                onTapGesture(onUnlock ?? (() => {})),
+              ]}
+            >
+              {t("journal.unlockButton")}
+            </Text>
+            <Spacer />
+          </VStack>
+        ) : (
+          <List modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 }), listStyle("plain")]}>
+            <Section header={chipList}>
+              <List.ForEach
+                onDelete={(indices) =>
+                  indices.forEach(async (i) => await deleteEntry(entries[i].id))
+                }
+                modifiers={[opacity(fade), animation(Animation.easeInOut({ duration: 0.1 }), fade)]}
+              >
+                {entries.map((entry) => (
+                  <EntryRow key={entry.id} journalName={activeJournalName} entry={entry} />
+                ))}
+              </List.ForEach>
+            </Section>
+          </List>
+        )}
       </Host>
 
-      <Pressable
-        onPress={() =>
-          router.push(
-            `/(journal)/entry/create?journalId=${activeJournalId}&journalName=${journalName}`,
-          )
-        }
-        style={styles.fab}
-      >
-        <GlassView
-          glassEffectStyle="regular"
-          tintColor={PlatformColor("systemGray3").toString()}
-          isInteractive
-          style={styles.glassButton}
+      {!disabled && !locked && (
+        <Pressable
+          onPress={() =>
+            entryLimitReached
+              ? openPaywall()
+              : router.push(
+                  `/(journal)/entry/create?journalId=${activeJournalId}&journalName=${activeJournalName}`,
+                )
+          }
+          style={styles.fab}
         >
-          <SymbolView name="plus" tintColor={PlatformColor("label")} />
-        </GlassView>
-      </Pressable>
+          <GlassView
+            glassEffectStyle="regular"
+            tintColor={PlatformColor("systemGray3").toString()}
+            isInteractive
+            style={styles.glassButton}
+          >
+            <SymbolView name={"plus"} tintColor={PlatformColor("label")} />
+          </GlassView>
+        </Pressable>
+      )}
     </View>
   );
 }
@@ -103,6 +178,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 102,
     right: 22,
+  },
+  fabDisabled: {
+    opacity: 0.3,
   },
   glassButton: {
     width: 62,

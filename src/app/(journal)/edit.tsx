@@ -1,15 +1,19 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Keyboard, PlatformColor } from "react-native";
 
 import { Alert, Button, Host, Text } from "@expo/ui/swift-ui";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import { z } from "zod";
 
 import { JournalCreateView } from "@/components/journal/journal-create-view";
 import { deleteJournal, getJournalDetailQuery, JournalDetail } from "@/db/queries/journals";
 import { FieldObj } from "@/db/schemas";
-import { exportJournal } from "@/utils/days/export-journal";
-import { FieldDraftObj, useJournalField } from "@/utils/journal/use-journal-field";
+import { FieldDraftObj, useJournalField } from "@/hooks/journal/use-journal-field";
+import { useValidatedParams } from "@/hooks/use-validated-params";
+import { handleSaveError } from "@/utils/handle-save-error";
+import { exportJournal, shareJournalLink } from "@/utils/journal/export-journal";
 
 type FormProps = {
   journal: JournalDetail;
@@ -19,12 +23,13 @@ type FormProps = {
  * ジャーナル編集フォーム（journal ロード後にマウントして初期値を確定させる）
  */
 function JournalEditForm({ journal }: FormProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const [showDeleteAllAlert, setShowDeleteAllAlert] = useState(false);
 
-  const { name, icon, color } = journal;
+  const { name, icon, color, oneEntry, locked, notificationTime } = journal;
 
-  const initialMeta = { name, icon, color };
+  const initialMeta = { name, icon, color, oneEntry, locked, notificationTime };
 
   const initialFields: FieldDraftObj[] = [...journal.fields]
     .sort((a: FieldObj, b: FieldObj) => a.sortOrder - b.sortOrder)
@@ -34,6 +39,7 @@ function JournalEditForm({ journal }: FormProps) {
     fields,
     addField,
     renameField,
+    updateRatingRange,
     deleteField,
     moveField,
     meta,
@@ -47,8 +53,13 @@ function JournalEditForm({ journal }: FormProps) {
 
   const handleSave = async () => {
     Keyboard.dismiss();
-    await updateJournal(journal.id);
-    router.back();
+
+    try {
+      await updateJournal(journal.id);
+      router.back();
+    } catch (error) {
+      handleSaveError(error);
+    }
   };
 
   const handleDelete = async () => {
@@ -65,7 +76,7 @@ function JournalEditForm({ journal }: FormProps) {
           unstable_headerRightItems: () => [
             {
               type: "menu",
-              label: "Options",
+              label: t("common.options"),
               icon: {
                 type: "sfSymbol",
                 name: "ellipsis",
@@ -73,18 +84,29 @@ function JournalEditForm({ journal }: FormProps) {
               menu: {
                 items: [
                   {
-                    type: "action",
-                    icon: {
-                      type: "sfSymbol",
-                      name: "square.and.arrow.up",
-                    },
-                    label: "Share",
-                    state: "off",
-                    onPress: async () => await exportJournal(journal),
+                    type: "submenu",
+                    label: "",
+                    inline: true,
+                    items: [
+                      {
+                        type: "action",
+                        icon: { type: "sfSymbol", name: "doc" },
+                        label: t("journal.shareFile"),
+                        state: "off",
+                        onPress: async () => await exportJournal(journal),
+                      },
+                      {
+                        type: "action",
+                        icon: { type: "sfSymbol", name: "link" },
+                        label: t("journal.shareLink"),
+                        state: "off",
+                        onPress: async () => await shareJournalLink(journal),
+                      },
+                    ],
                   },
                   {
                     type: "action",
-                    label: "Delete Journal",
+                    label: t("journal.deleteJournal"),
                     icon: {
                       type: "sfSymbol",
                       name: "trash",
@@ -98,7 +120,7 @@ function JournalEditForm({ journal }: FormProps) {
             },
             {
               type: "button",
-              label: "Save",
+              label: t("common.save"),
               icon: { type: "sfSymbol", name: "checkmark" },
               tintColor: formDisabled
                 ? PlatformColor("tertiaryLabel")
@@ -114,15 +136,17 @@ function JournalEditForm({ journal }: FormProps) {
         fields={fields}
         addField={addField}
         renameField={renameField}
+        updateRatingRange={updateRatingRange}
         deleteField={deleteField}
         moveField={moveField}
         meta={meta}
         setMeta={setMeta}
+        baseMeta={initialMeta}
       />
 
       <Host matchContents>
         <Alert
-          title={`Delete "${journal.name}" Journal`}
+          title={t("journal.deleteJournalTitle", { name: journal.name })}
           isPresented={showDeleteAllAlert}
           onIsPresentedChange={setShowDeleteAllAlert}
         >
@@ -130,11 +154,11 @@ function JournalEditForm({ journal }: FormProps) {
             <Text>{""}</Text>
           </Alert.Trigger>
           <Alert.Message>
-            <Text>All entries in this journal will be permanently deleted.</Text>
+            <Text>{t("journal.deleteConfirm")}</Text>
           </Alert.Message>
           <Alert.Actions>
-            <Button label="Cancel" role="cancel" />
-            <Button label="Delete" role="destructive" onPress={handleDelete} />
+            <Button label={t("common.cancel")} role="cancel" />
+            <Button label={t("common.delete")} role="destructive" onPress={handleDelete} />
           </Alert.Actions>
         </Alert>
       </Host>
@@ -146,7 +170,9 @@ function JournalEditForm({ journal }: FormProps) {
  * ジャーナル編集
  */
 export default function JournalEditScreen() {
-  const { journalId } = useLocalSearchParams<{ journalId: string }>();
+  const schema = z.object({ journalId: z.string() });
+  const { journalId } = useValidatedParams(schema);
+
   const { data: journal } = useLiveQuery(getJournalDetailQuery(journalId), [journalId]);
 
   return <>{journal && <JournalEditForm journal={journal} />}</>;

@@ -1,25 +1,57 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useColorScheme } from "react-native";
 
 import { Alert, Button, Host, Text } from "@expo/ui/swift-ui";
+import { eq } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
 
 import { EntryListView } from "@/components/entry/entry-list-view";
+import { FREE_JOURNAL_LIMIT } from "@/constants/purchases";
+import { db } from "@/db/client";
 import { deleteAllEntries } from "@/db/queries/entries";
 import { getJournalsQuery, JournalWithCountObj } from "@/db/queries/journals";
+import { settings } from "@/db/schemas";
+import { useProGate } from "@/hooks/purchases/use-pro-gate";
+import { exportJournalEntries } from "@/utils/entry/export-entry";
 import { consumeCreatedJournalId } from "@/utils/journal/created-journal";
+import { authenticate } from "@/utils/local-auth";
 
 /**
  * ジャーナル画面（チップ切り替え + エントリー一覧）
  */
 export default function JournalScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
+  const colorScheme = useColorScheme();
+  const appIcon =
+    colorScheme === "dark"
+      ? require("@/assets/images/app-logo/nav-icon-dark.png")
+      : require("@/assets/images/app-logo/nav-icon.png");
+
+  const onboardingNavigated = useRef(false);
+
+  useEffect(() => {
+    if (onboardingNavigated.current) return;
+    const rows = db.select().from(settings).where(eq(settings.key, "onboarding_completed")).get();
+    if (!rows || rows.value !== "true") {
+      onboardingNavigated.current = true;
+      router.push("/(journal)/onboarding");
+    }
+  }, [router]);
 
   const { data: journals } = useLiveQuery(getJournalsQuery);
   const journalList: JournalWithCountObj[] = journals ?? [];
 
+  const { isPro, openPaywall } = useProGate();
+  // 無料プランのジャーナル数上限（既存データはそのまま、新規作成のみ制限する）
+  const journalLimitReached = !isPro && journalList.length >= FREE_JOURNAL_LIMIT;
+
   const [selectedJournalId, setSelectedJournalId] = useState<string | null>(null);
   const [chipScrollKey, setChipScrollKey] = useState(0);
+  // ロック中ジャーナルの認証状態（認証済み ID を保持）
+  const [unlockedIds, setUnlockedIds] = useState<Set<string>>(new Set());
 
   // 作成直後のフォーカス復帰時に ID を受け取る（useRef で二重消費を防ぐ）
   const consumed = useRef(false);
@@ -38,6 +70,21 @@ export default function JournalScreen() {
 
   // 選択中のジャーナル（未選択 or 存在しない場合は先頭）
   const activeJournal = journalList.find((j) => j.id === selectedJournalId) ?? journalList[0];
+  const isLocked = activeJournal?.locked && !unlockedIds.has(activeJournal.id);
+
+  const unlockJournal = async (id: string): Promise<boolean> => {
+    const success = await authenticate();
+    if (success) setUnlockedIds((prev) => new Set(prev).add(id));
+    return success;
+  };
+
+  const handleSelectJournal = async (id: string) => {
+    const journal = journalList.find((j) => j.id === id);
+    if (journal?.locked && !unlockedIds.has(id)) {
+      if (!(await unlockJournal(id))) return;
+    }
+    setSelectedJournalId(id);
+  };
 
   const [bookmarkOnly, setBookmarkOnly] = useState(false);
   const [showDeleteAllAlert, setShowDeleteAllAlert] = useState(false);
@@ -46,27 +93,67 @@ export default function JournalScreen() {
     <>
       <Stack.Screen
         options={{
-          title: "Journal",
+          title: t("tabs.journal"),
           headerLargeTitleEnabled: true,
+          unstable_headerLeftItems: () => [
+            {
+              type: "button",
+              label: t("purchases.title"),
+              icon: { type: "image", source: appIcon, tinted: false },
+              onPress: () => router.push("/(journal)/paywall"),
+            },
+          ],
           unstable_headerRightItems: () => [
+            {
+              type: "button",
+              label: t("journal.newJournal"),
+              icon: { type: "sfSymbol", name: "folder.badge.plus" },
+              onPress: () =>
+                journalLimitReached ? openPaywall() : router.push("/(journal)/create"),
+            },
             ...(activeJournal
               ? [
                   {
                     type: "menu" as const,
-                    label: "Options",
+                    label: t("common.options"),
                     icon: {
                       type: "sfSymbol" as const,
                       name: "ellipsis" as const,
                     },
                     menu: {
+                      title: activeJournal.name,
                       items: [
+                        ...(activeJournal.locked
+                          ? [
+                              {
+                                type: "action" as const,
+                                icon: {
+                                  type: "sfSymbol" as const,
+                                  name: isLocked ? ("lock" as const) : ("lock.open" as const),
+                                },
+                                label: isLocked ? t("journal.unlock") : t("journal.lock"),
+                                onPress: async () => {
+                                  if (isLocked) {
+                                    await unlockJournal(activeJournal.id);
+                                  } else {
+                                    setUnlockedIds((prev) => {
+                                      const next = new Set(prev);
+                                      next.delete(activeJournal.id);
+                                      return next;
+                                    });
+                                  }
+                                },
+                              },
+                            ]
+                          : []),
                         {
                           type: "action" as const,
                           icon: {
                             type: "sfSymbol" as const,
-                            name: bookmarkOnly ? ("bookmark.fill" as const) : ("bookmark" as const),
+                            name: bookmarkOnly ? ("bookmark" as const) : ("bookmark.fill" as const),
                           },
-                          label: bookmarkOnly ? "Show All" : "Bookmarked Only",
+                          label: bookmarkOnly ? t("journal.showAll") : t("journal.bookmarkedOnly"),
+                          disabled: isLocked,
                           onPress: () => setBookmarkOnly((prev) => !prev),
                         },
                         {
@@ -75,7 +162,8 @@ export default function JournalScreen() {
                             type: "sfSymbol" as const,
                             name: "ellipsis.circle" as const,
                           },
-                          label: "Edit",
+                          label: t("common.edit"),
+                          disabled: isLocked,
                           onPress: () => {
                             router.push(`/(journal)/edit?journalId=${activeJournal.id}`);
                           },
@@ -86,15 +174,16 @@ export default function JournalScreen() {
                             type: "sfSymbol" as const,
                             name: "square.and.arrow.up.on.square" as const,
                           },
-                          label: "Export",
+                          label: t("entry.exportAllEntry"),
                           state: "off" as const,
-                          onPress: () => {
-                            console.log("Export", activeJournal?.name);
+                          disabled: isLocked,
+                          onPress: async () => {
+                            await exportJournalEntries(activeJournal.id, activeJournal.name);
                           },
                         },
                         {
                           type: "action" as const,
-                          label: "Delete All Entries",
+                          label: t("journal.deleteAllEntries"),
                           icon: {
                             type: "sfSymbol" as const,
                             name: "trash" as const,
@@ -108,29 +197,24 @@ export default function JournalScreen() {
                   },
                 ]
               : []),
-            {
-              type: "button",
-              label: "Create New Journal",
-              icon: { type: "sfSymbol", name: "folder.badge.plus" },
-              onPress: () => router.push("/(journal)/create"),
-            },
           ],
         }}
       />
       {activeJournal ? (
         <EntryListView
           journals={journalList}
-          activeJournalId={activeJournal.id}
-          onSelectJournal={setSelectedJournalId}
-          journalName={activeJournal.name}
+          activeJournal={activeJournal}
+          onSelectJournal={handleSelectJournal}
           bookmarkOnly={bookmarkOnly}
           chipScrollKey={chipScrollKey}
+          locked={isLocked}
+          onUnlock={() => unlockJournal(activeJournal.id)}
         />
       ) : null}
 
       <Host matchContents>
         <Alert
-          title={`Delete All "${activeJournal?.name}" Entries`}
+          title={t("journal.deleteAllEntriesTitle", { name: activeJournal?.name })}
           isPresented={showDeleteAllAlert}
           onIsPresentedChange={setShowDeleteAllAlert}
         >
@@ -138,12 +222,12 @@ export default function JournalScreen() {
             <Text>{""}</Text>
           </Alert.Trigger>
           <Alert.Message>
-            <Text>All entries in this journal will be permanently deleted.</Text>
+            <Text>{t("journal.deleteConfirm")}</Text>
           </Alert.Message>
           <Alert.Actions>
-            <Button label="Cancel" role="cancel" />
+            <Button label={t("common.cancel")} role="cancel" />
             <Button
-              label="Delete All"
+              label={t("journal.deleteAll")}
               role="destructive"
               onPress={() => {
                 if (activeJournal) deleteAllEntries(activeJournal.id).catch(console.error);

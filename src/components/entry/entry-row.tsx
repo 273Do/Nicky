@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { PlatformColor } from "react-native";
 
 import { Button, ContextMenu, HStack, Image, Spacer, Text, VStack } from "@expo/ui/swift-ui";
@@ -8,7 +9,7 @@ import { bookmarkEntry, deleteEntry } from "@/db/queries/entries";
 import { formatDate } from "@/utils/date";
 import { PreviewEntryObj } from "@/utils/entry/preview";
 
-const secondary = foregroundStyle({ type: "hierarchical", style: "secondary" });
+export const secondary = foregroundStyle({ type: "hierarchical", style: "secondary" });
 
 type Props = {
   /** ジャーナル */
@@ -21,6 +22,7 @@ type Props = {
  * エントリー行
  */
 export function EntryRow({ journalName, entry }: Props) {
+  const { t } = useTranslation();
   const router = useRouter();
 
   return (
@@ -47,19 +49,19 @@ export function EntryRow({ journalName, entry }: Props) {
       </ContextMenu.Trigger>
       <ContextMenu.Items>
         <Button
-          label="Edit"
+          label={entry.bookmark ? t("entry.unbookmark") : t("entry.bookmark")}
+          systemImage={entry.bookmark ? "bookmark" : "bookmark.fill"}
+          onPress={async () => await bookmarkEntry(entry.id, !entry.bookmark)}
+        />
+        <Button
+          label={t("common.edit")}
           systemImage="ellipsis.circle"
           onPress={() =>
             router.push(`/(journal)/entry/${entry.id}?journalName=${journalName}&edit=true`)
           }
         />
         <Button
-          label={entry.bookmark ? "Unbookmark" : "Bookmark"}
-          systemImage={entry.bookmark ? "bookmark.slash" : "bookmark"}
-          onPress={async () => await bookmarkEntry(entry.id, !entry.bookmark)}
-        />
-        <Button
-          label="Delete"
+          label={t("common.delete")}
           systemImage="trash"
           role="destructive"
           onPress={async () => await deleteEntry(entry.id)}

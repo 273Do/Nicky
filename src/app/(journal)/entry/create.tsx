@@ -1,30 +1,38 @@
+import { useTranslation } from "react-i18next";
 import { Keyboard, PlatformColor } from "react-native";
 
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import { z } from "zod";
 
 import { EntryCreateView } from "@/components/entry/entry-create-view";
 import { getFieldsQuery } from "@/db/queries/fields";
-import { useEntry } from "@/utils/entry/use-entry";
+import { useEntry } from "@/hooks/entry/use-entry";
+import { useValidatedParams } from "@/hooks/use-validated-params";
+import { handleSaveError } from "@/utils/handle-save-error";
 
 /**
  * エントリー作成
  */
 export default function EntryCreateScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
 
-  const { journalId, journalName } = useLocalSearchParams<{
-    journalId: string;
-    journalName: string;
-  }>();
+  const schema = z.object({ journalId: z.string(), journalName: z.string() });
+  const { journalId, journalName } = useValidatedParams(schema);
 
   const { data: fields } = useLiveQuery(getFieldsQuery(journalId), [journalId]);
-  const { valuesRef, setValue, createEntry } = useEntry(fields);
+  const { values, setValue, createEntry } = useEntry(fields);
 
   const handleEntryCreate = async () => {
     Keyboard.dismiss();
-    const { id: newEntryId } = await createEntry(journalId);
-    router.replace(`/(journal)/entry/${newEntryId}?journalName=${journalName}`);
+
+    try {
+      const { id: newEntryId } = await createEntry(journalId);
+      router.replace(`/(journal)/entry/${newEntryId}?journalName=${journalName}`);
+    } catch (error) {
+      handleSaveError(error);
+    }
   };
 
   return (
@@ -37,7 +45,7 @@ export default function EntryCreateScreen() {
           unstable_headerRightItems: () => [
             {
               type: "button",
-              label: "Create New Entry",
+              label: t("entry.newEntry"),
               icon: { type: "sfSymbol", name: "checkmark" },
               tintColor: PlatformColor("systemIndigo"),
               variant: "prominent",
@@ -46,7 +54,7 @@ export default function EntryCreateScreen() {
           ],
         }}
       />
-      <EntryCreateView id={journalId} values={valuesRef.current} setValue={setValue} />
+      <EntryCreateView id={journalId} values={values} setValue={setValue} />
     </>
   );
 }

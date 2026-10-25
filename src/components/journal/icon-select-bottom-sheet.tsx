@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { PlatformColor } from "react-native";
 
 import {
@@ -13,15 +14,18 @@ import {
 import {
   foregroundStyle,
   frame,
+  offset,
   onTapGesture,
+  opacity,
   padding,
   presentationDetents,
   presentationDragIndicator,
 } from "@expo/ui/swift-ui/modifiers";
 import { SFSymbol } from "expo-symbols";
 
-import { JOURNAL_ICONS } from "@/core/constants";
+import { JOURNAL_ICONS } from "@/constants/journal";
 import { chunkArray } from "@/utils/chunk-array";
+import { isFreeIcon } from "@/utils/purchases/pro-gate";
 
 type Props = {
   /** ボトムシートの表示状態 */
@@ -32,6 +36,12 @@ type Props = {
   selectedIcon: SFSymbol;
   /** 選択中のカラー */
   selectedColor: string;
+  /** Pro が有効かどうか */
+  isPro: boolean;
+  /** 無料プランでも選べるアイコン */
+  grantedIcon?: SFSymbol;
+  /** Pro 限定アイコンが選ばれたときのコールバック */
+  onRequirePro: () => void;
   /** アイコン選択時のコールバック */
   onSelectIcon: (icon: SFSymbol) => void;
   /** カラー変更時のコールバック */
@@ -49,10 +59,26 @@ export function IconSelectBottomSheet({
   onIsPresentedChange,
   selectedIcon,
   selectedColor,
+  isPro,
+  grantedIcon,
+  onRequirePro,
   onSelectIcon,
   onSelectColor,
 }: Props) {
+  const { t } = useTranslation();
   const rows = chunkArray(JOURNAL_ICONS, COLUMNS);
+
+  /** 無料プランでは無料アイコンと保存済みアイコンだけ選べる */
+  const isLocked = (icon: SFSymbol) => !isPro && !isFreeIcon(icon) && icon !== grantedIcon;
+
+  const handleSelect = (icon: SFSymbol) => {
+    if (isLocked(icon)) {
+      onIsPresentedChange(false);
+      onRequirePro();
+      return;
+    }
+    onSelectIcon(icon);
+  };
 
   return (
     <BottomSheet isPresented={isPresented} onIsPresentedChange={onIsPresentedChange}>
@@ -69,7 +95,7 @@ export function IconSelectBottomSheet({
               ]}
             />
             <ColorPicker
-              label="Select folder color"
+              label={t("journal.selectColor")}
               selection={selectedColor}
               onSelectionChange={onSelectColor}
               supportsOpacity={false}
@@ -81,35 +107,45 @@ export function IconSelectBottomSheet({
           <Grid modifiers={[padding({ horizontal: 16, vertical: 8 })]}>
             {rows.map((row, rowIndex) => (
               <Grid.Row key={rowIndex}>
-                {row.map((icon) => (
-                  <ZStack
-                    key={icon}
-                    modifiers={[
-                      frame({ width: 52, height: 52 }),
-                      onTapGesture(() => {
-                        onSelectIcon(icon);
-                        onIsPresentedChange(false);
-                      }),
-                    ]}
-                  >
-                    <RoundedRectangle
-                      cornerRadius={100}
+                {row.map((icon) => {
+                  const requiresPro = isLocked(icon);
+
+                  return (
+                    <ZStack
+                      key={icon}
                       modifiers={[
-                        frame({ maxWidth: 9999, maxHeight: 9999 }),
-                        foregroundStyle(
-                          selectedIcon === icon
-                            ? selectedColor
-                            : PlatformColor("secondarySystemFill"),
-                        ),
+                        frame({ width: 52, height: 52 }),
+                        onTapGesture(() => handleSelect(icon)),
                       ]}
-                    />
-                    <Image
-                      systemName={icon}
-                      color={selectedIcon === icon ? "white" : PlatformColor("label")}
-                      size={24}
-                    />
-                  </ZStack>
-                ))}
+                    >
+                      <RoundedRectangle
+                        cornerRadius={100}
+                        modifiers={[
+                          frame({ maxWidth: 9999, maxHeight: 9999 }),
+                          foregroundStyle(
+                            selectedIcon === icon
+                              ? selectedColor
+                              : PlatformColor("secondarySystemFill"),
+                          ),
+                        ]}
+                      />
+                      <Image
+                        systemName={icon}
+                        color={selectedIcon === icon ? "white" : PlatformColor("label")}
+                        size={24}
+                        modifiers={requiresPro ? [opacity(0.3)] : []}
+                      />
+                      {requiresPro && (
+                        <Image
+                          systemName="lock.fill"
+                          color={PlatformColor("secondaryLabel")}
+                          size={16}
+                          modifiers={[offset({ x: 14, y: 14 })]}
+                        />
+                      )}
+                    </ZStack>
+                  );
+                })}
               </Grid.Row>
             ))}
           </Grid>
