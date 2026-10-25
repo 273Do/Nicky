@@ -117,7 +117,6 @@ export const shareJournalLink = async (journal: JournalDetail): Promise<void> =>
   try {
     const payload = buildJournalLinkPayload(journal);
     const signature = (await generateSignature(payload)).slice(0, TEMPLATE_LINK_SIGNATURE_LENGTH);
-    console.log(payload, signature);
     const encoded = signature + compressToEncodedURIComponent(payload);
 
     // lz-string の出力に含まれる "+" はクエリでは空白と解釈されうるため、エスケープする

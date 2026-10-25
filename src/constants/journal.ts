@@ -150,3 +150,9 @@ export const TEMPLATE_LINK_BASE = "nicky://create";
 
 /** 共有リンクに付ける署名の長さ（SHA-256 の16進数を先頭から切り詰める） */
 export const TEMPLATE_LINK_SIGNATURE_LENGTH = 16;
+
+/** 共有リンクの圧縮部分として受け付ける最大文字数 */
+export const TEMPLATE_LINK_MAX_ENCODED_LENGTH = 8_000;
+
+/** 共有リンクを展開したペイロードの最大文字数（細工したリンクで巨大な文字列を作らせないため） */
+export const TEMPLATE_LINK_MAX_PAYLOAD_LENGTH = 50_000;

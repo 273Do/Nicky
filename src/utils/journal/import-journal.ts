@@ -2,18 +2,20 @@ import { Alert } from "react-native";
 
 import * as DocumentPicker from "expo-document-picker";
 import { File } from "expo-file-system";
-import { decompressFromEncodedURIComponent } from "lz-string";
 import { z } from "zod";
 
 import {
   fieldTypeSchema,
   JOURNAL_ICONS,
   journalIconSchema,
+  TEMPLATE_LINK_MAX_ENCODED_LENGTH,
+  TEMPLATE_LINK_MAX_PAYLOAD_LENGTH,
   TEMPLATE_LINK_SIGNATURE_LENGTH,
 } from "@/constants/journal";
 import type { JournalDetail } from "@/db/queries/journals";
 import { fieldSelectSchema, journalSelectSchema } from "@/db/schemas";
 import i18n from "@/i18n";
+import { decompressLinkPayload } from "@/utils/journal/decompress-link";
 import { generateSignature } from "@/utils/journal/export-journal";
 
 const journalDetailSchema = journalSelectSchema.extend({
@@ -121,8 +123,12 @@ export const importJournal = async (): Promise<JournalDetail | null> => {
  */
 const decodeJournalLink = async (encoded: string): Promise<JournalTemplate | null> => {
   const signature = encoded.slice(0, TEMPLATE_LINK_SIGNATURE_LENGTH);
-  // 展開できない文字列は空文字か null になる
-  const payload = decompressFromEncodedURIComponent(encoded.slice(TEMPLATE_LINK_SIGNATURE_LENGTH));
+  // 展開できない文字列や上限を超える文字列は null になる
+  const payload = decompressLinkPayload(
+    encoded.slice(TEMPLATE_LINK_SIGNATURE_LENGTH),
+    TEMPLATE_LINK_MAX_ENCODED_LENGTH,
+    TEMPLATE_LINK_MAX_PAYLOAD_LENGTH,
+  );
 
   if (!payload) return null;
 

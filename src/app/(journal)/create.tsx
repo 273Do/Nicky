@@ -111,7 +111,7 @@ export default function JournalCreateScreen() {
   // 署名の検証が非同期のため、初期値としては渡せず、結果を受け取ってからフォームに反映する。
   // 購読状態の確定前は Pro ユーザーの設定を誤って外してしまうため、確定を待つ
   useEffect(() => {
-    if (!linkData || loading || linkHandled.current) return;
+    if (linkData === undefined || loading || linkHandled.current) return;
     linkHandled.current = true;
     void importFromLink(linkData);
   }, [linkData, loading]);
