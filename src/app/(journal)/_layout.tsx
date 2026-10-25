@@ -3,6 +3,11 @@ import { useColorScheme } from "react-native";
 
 import { Stack, useRouter } from "expo-router";
 
+// 共有リンクなどで子画面が直接開かれても、戻るとジャーナル一覧に戻れるようにする
+export const unstable_settings = {
+  anchor: "index",
+};
+
 export default function JournalLayout() {
   const { t } = useTranslation();
   const router = useRouter();

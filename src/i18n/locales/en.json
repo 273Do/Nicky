@@ -17,6 +17,8 @@
     "newJournal": "New Journal",
     "import": "Import",
     "share": "Share",
+    "shareFile": "Share as File",
+    "shareLink": "Share as Link",
     "showAll": "All",
     "bookmarkedOnly": "Bookmarked",
     "deleteJournal": "Delete Journal",
@@ -141,7 +143,9 @@
     "importFailed": "Unable to Import",
     "importInvalidFormat": "This file format is not supported.",
     "importCannotImport": "This file could not be imported.",
-    "importFailedMessage": "An error occurred while importing. Please try again."
+    "importFailedMessage": "An error occurred while importing. Please try again.",
+    "linkInvalidTitle": "Unable to Open Link",
+    "linkInvalidMessage": "The link is broken or in an unsupported format."
   },
   "search": {
     "title": "Search",
