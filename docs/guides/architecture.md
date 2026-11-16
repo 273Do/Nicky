@@ -22,7 +22,6 @@ src/app/
     edit.tsx                   # Edit journal  /template/edit?journalId=...
     settings.tsx               # App settings (gear button in the header), renders SettingsView
     paywall.tsx                # Nicky Pro paywall (modal)
-  +native-intent.tsx           # Rewrites legacy share links nicky://create → /template/create
   search/
     _layout.tsx                # Stack — scoped to search tab
     index.tsx                  # Journal entry search
