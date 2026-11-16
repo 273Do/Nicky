@@ -8,7 +8,7 @@ import { useRouter } from "expo-router";
 /**
  * ジャーナル表示・Days 表示で共通のヘッダー左側アイテム（ペイウォール・設定）
  */
-export const useMainHeaderLeftItems = (): NativeStackHeaderItem[] => {
+export const useMainHeaderLeftItems = (tab: "journal" | "template"): NativeStackHeaderItem[] => {
   const { t } = useTranslation();
   const router = useRouter();
   const colorScheme = useColorScheme();
@@ -17,18 +17,14 @@ export const useMainHeaderLeftItems = (): NativeStackHeaderItem[] => {
       ? require("@/assets/images/app-logo/nav-icon-dark.png")
       : require("@/assets/images/app-logo/nav-icon.png");
 
+  const href = tab === "journal" ? "(journal)" : "template";
+
   return [
     {
       type: "button",
       label: t("purchases.title"),
       icon: { type: "image", source: appIcon, tinted: false },
-      onPress: () => router.push("/(journal)/paywall"),
-    },
-    {
-      type: "button",
-      label: t("settings.title"),
-      icon: { type: "sfSymbol", name: "gearshape" },
-      onPress: () => router.push("/(journal)/settings"),
+      onPress: () => router.push(`/${href}/paywall`),
     },
   ];
 };

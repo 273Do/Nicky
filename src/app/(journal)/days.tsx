@@ -38,7 +38,7 @@ export default function DaysScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { width: screenWidth } = useWindowDimensions();
-  const headerLeftItems = useMainHeaderLeftItems();
+  const headerLeftItems = useMainHeaderLeftItems("journal");
 
   const today = startOfDay();
 

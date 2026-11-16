@@ -7,13 +7,11 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
 
 import { EntryListView } from "@/components/entry/entry-list-view";
-import { FREE_JOURNAL_LIMIT } from "@/constants/purchases";
 import { db } from "@/db/client";
 import { deleteAllEntries } from "@/db/queries/entries";
 import { getJournalsQuery, JournalWithCountObj } from "@/db/queries/journals";
 import { settings } from "@/db/schemas";
 import { useMainHeaderLeftItems } from "@/hooks/navigation/use-main-header-left-items";
-import { useProGate } from "@/hooks/purchases/use-pro-gate";
 import { exportJournalEntries } from "@/utils/entry/export-entry";
 import { consumeCreatedJournalId } from "@/utils/journal/created-journal";
 import { authenticate } from "@/utils/local-auth";
@@ -24,7 +22,7 @@ import { authenticate } from "@/utils/local-auth";
 export default function JournalScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const headerLeftItems = useMainHeaderLeftItems();
+  const headerLeftItems = useMainHeaderLeftItems("journal");
 
   const onboardingNavigated = useRef(false);
 
@@ -39,10 +37,6 @@ export default function JournalScreen() {
 
   const { data: journals } = useLiveQuery(getJournalsQuery);
   const journalList: JournalWithCountObj[] = journals ?? [];
-
-  const { isPro, openPaywall } = useProGate();
-  // 無料プランのジャーナル数上限（既存データはそのまま、新規作成のみ制限する）
-  const journalLimitReached = !isPro && journalList.length >= FREE_JOURNAL_LIMIT;
 
   const [selectedJournalId, setSelectedJournalId] = useState<string | null>(null);
   const [chipScrollKey, setChipScrollKey] = useState(0);
@@ -98,13 +92,6 @@ export default function JournalScreen() {
               label: t("tabs.days"),
               icon: { type: "sfSymbol", name: "calendar.day.timeline.leading" },
               onPress: () => router.push("/(journal)/days"),
-            },
-            {
-              type: "button",
-              label: t("journal.newJournal"),
-              icon: { type: "sfSymbol", name: "folder.badge.plus" },
-              onPress: () =>
-                journalLimitReached ? openPaywall() : router.push("/(journal)/create"),
             },
             ...(activeJournal
               ? [

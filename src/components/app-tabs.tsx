@@ -17,6 +17,10 @@ export default function AppTabs() {
           <NativeTabs.Trigger.Label>{t("tabs.journal")}</NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon sf="books.vertical.fill" />
         </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="template">
+          <NativeTabs.Trigger.Label>{t("tabs.template")}</NativeTabs.Trigger.Label>
+          <NativeTabs.Trigger.Icon sf="folder.fill" />
+        </NativeTabs.Trigger>
 
         <NativeTabs.Trigger name="search" role="search">
           <NativeTabs.Trigger.Label>{t("tabs.search")}</NativeTabs.Trigger.Label>

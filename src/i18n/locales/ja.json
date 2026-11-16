@@ -2,7 +2,11 @@
   "tabs": {
     "journal": "ジャーナル",
     "days": "デイリー",
-    "search": "検索"
+    "search": "検索",
+    "template": "テンプレート"
+  },
+  "template": {
+    "title": "テンプレート"
   },
   "common": {
     "save": "保存",

@@ -2,7 +2,11 @@
   "tabs": {
     "journal": "Journal",
     "days": "Days",
-    "search": "Search"
+    "search": "Search",
+    "template": "Templates"
+  },
+  "template": {
+    "title": "Templates"
   },
   "common": {
     "save": "Save",
