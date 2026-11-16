@@ -85,7 +85,6 @@ const { isPro, loading } = useSubscription();
 - A `Toggle` cannot intercept before its value flips — replace it with a `Button` + `HStack` row
 - For non-interactive content, render an upsell `VStack` (`purchases.unlockTitle` / `unlockMessage` / `unlock`) instead, following the List ↔ VStack rule in `swiftui-rules.md`
 - Gate the **execution path** too, not just the UI (e.g. `createJournal` / `createEntry`, see below). Inside a handler, read the freshest value with `getSubscriptionSnapshot()`
-- AI reflection (manual and automatic) is **free** by design — do not gate it
 - Suppress the lock badge while `loading` so subscribers never see a flash of it
 
 ### Free limits and the execution-path gate

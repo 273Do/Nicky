@@ -4,15 +4,7 @@ import { db } from "@/db/client";
 import { addDays, startOfDay } from "@/utils/date";
 import { deleteMediaImage } from "@/utils/entry/media-file";
 
-import {
-  entries,
-  EntryObj,
-  EntryValueObj,
-  entryValues,
-  fields,
-  journals,
-  reflections,
-} from "../schemas";
+import { entries, EntryObj, EntryValueObj, entryValues, fields, journals } from "../schemas";
 
 /**
  * ジャーナルに紐付いたエントリー一覧をフィールドとともに取得するクエリ
@@ -228,7 +220,7 @@ export const hasTodayEntryForOneEntry = (journalId: string): boolean => {
 };
 
 /**
- * すべてのジャーナル・エントリー・振り返りを削除する
+ * すべてのジャーナル・エントリーを削除する
  */
 export const deleteAllData = async () => {
   const mediaValues = await db.transaction(async (tx) => {
@@ -238,7 +230,6 @@ export const deleteAllData = async () => {
       .innerJoin(fields, eq(entryValues.fieldId, fields.id))
       .where(eq(fields.type, "media"));
 
-    await tx.delete(reflections);
     await tx.delete(entries);
     await tx.delete(journals);
 

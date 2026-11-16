@@ -12,7 +12,6 @@
 
 - **Custom Journals** — Create journals with flexible field types (text, number, date, time, location, media, check)
 - **Daily Entries** — Record entries with bookmarking and full-text search
-- **AI Reflection** — On-device LLM generates daily reflections from journal entries at a configurable time
 - **Import / Export** — Import journal templates and export journals or entries
 - **Native iOS UI** — Built with SwiftUI components via `@expo/ui/swift-ui`
 
@@ -23,8 +22,6 @@ Nicky is open source. The [official App Store version](#) is free to use, with a
 - Unlimited journals and entries (free plan: 2 journals, 7 entries each)
 - All field types (media, check, rating, location) and all journal icons
 - Journal options: one entry per day, Face ID lock
-
-AI reflection is free for everyone.
 
 You are free to build Nicky yourself. Without a RevenueCat API key, in-app purchases are disabled and the free-plan limits apply — under the GPL-3.0 you may modify the source to change that for your own build.
 

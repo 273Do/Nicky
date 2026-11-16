@@ -1,24 +1,11 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlatformColor, useColorScheme } from "react-native";
 
-import {
-  Button,
-  HStack,
-  Host,
-  Image,
-  ProgressView,
-  ScrollView,
-  Spacer,
-  Text,
-  Toggle,
-  VStack,
-} from "@expo/ui/swift-ui";
+import { Button, HStack, Host, Image, ScrollView, Text, VStack } from "@expo/ui/swift-ui";
 import {
   buttonStyle,
   clipShape,
   controlSize,
-  disabled,
   font,
   foregroundStyle,
   frame,
@@ -26,13 +13,10 @@ import {
   resizable,
   tint,
 } from "@expo/ui/swift-ui/modifiers";
-import { downloadModel } from "@react-native-ai/llama";
 import { Paths } from "expo-file-system";
 import { useRouter } from "expo-router";
 
-import { AI_MODEL } from "@/constants/ai-models";
 import { setSetting } from "@/db/queries/settings";
-import { useAIReflectionSettings } from "@/hooks/settings/use-ai-reflection-settings";
 
 export default function OnboardingScreen() {
   const { t } = useTranslation();
@@ -41,20 +25,9 @@ export default function OnboardingScreen() {
   const isDark = colorScheme === "dark";
   const iconFile = isDark ? "Nicky-app-icon-dark.png" : "Nicky-app-icon.png";
   const appIconUri = `${Paths.bundle.uri}${iconFile}`;
-  const { aiReflectionEnabled, setAIReflectionEnabled } = useAIReflectionSettings();
-
-  const [downloading, setDownloading] = useState(false);
-  const [progress, setProgress] = useState(0);
 
   const handleGetStarted = async () => {
     await setSetting("onboarding_completed", "true");
-    setDownloading(true);
-    try {
-      await downloadModel(AI_MODEL.gguf, (p) => setProgress(p.percentage));
-    } catch (e) {
-      console.warn("[model-download]", e);
-    }
-    setDownloading(false);
     router.back();
   };
 
@@ -138,30 +111,6 @@ export default function OnboardingScreen() {
 
           <HStack alignment="top" modifiers={[padding({ bottom: 24 })]}>
             <Image
-              systemName="sparkles"
-              modifiers={[
-                foregroundStyle({ type: "color", color: PlatformColor("systemIndigo") }),
-                font({ size: 28 }),
-                frame({ width: 40, height: 40 }),
-              ]}
-            />
-            <VStack alignment="leading" modifiers={[padding({ leading: 12 })]}>
-              <Text modifiers={[font({ size: 17, weight: "semibold" }), padding({ bottom: 2 })]}>
-                {t("onboarding.reflectionTitle")}
-              </Text>
-              <Text
-                modifiers={[
-                  foregroundStyle({ type: "color", color: PlatformColor("secondaryLabel") }),
-                  font({ size: 15 }),
-                ]}
-              >
-                {t("onboarding.reflectionDesc")}
-              </Text>
-            </VStack>
-          </HStack>
-
-          <HStack alignment="top" modifiers={[padding({ bottom: 24 })]}>
-            <Image
               systemName="square.and.arrow.up.on.square"
               modifiers={[
                 foregroundStyle({ type: "color", color: PlatformColor("systemIndigo") }),
@@ -185,33 +134,6 @@ export default function OnboardingScreen() {
           </HStack>
         </VStack>
 
-        <VStack modifiers={[padding({ horizontal: 32 })]}>
-          <Toggle
-            isOn={aiReflectionEnabled}
-            onIsOnChange={setAIReflectionEnabled}
-            label={t("onboarding.enableReflection")}
-            modifiers={[tint(PlatformColor("systemIndigo"))]}
-          />
-          {downloading ? (
-            <VStack modifiers={[padding({ top: 8 })]}>
-              <Spacer />
-              <ProgressView
-                value={progress / 100}
-                modifiers={[tint(PlatformColor("systemIndigo"))]}
-              />
-              <Text
-                modifiers={[
-                  foregroundStyle({ type: "color", color: PlatformColor("secondaryLabel") }),
-                  font({ size: 13 }),
-                  padding({ top: 4 }),
-                ]}
-              >
-                {`${t("onboarding.downloadingModel")} ${Math.round(progress)}%`}
-              </Text>
-            </VStack>
-          ) : null}
-        </VStack>
-
         <VStack modifiers={[padding({ horizontal: 32, top: 24, bottom: 48 })]}>
           <Button
             label={t("onboarding.getStarted")}
@@ -221,7 +143,6 @@ export default function OnboardingScreen() {
               controlSize("large"),
               tint(PlatformColor("systemIndigo")),
               frame({ maxWidth: 9999 }),
-              disabled(downloading),
             ]}
           />
         </VStack>

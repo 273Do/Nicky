@@ -1,23 +1,5 @@
 # Features
 
-## AI Reflection Pipeline
-
-On-device LLM generates daily reflections from journal entries:
-
-1. **Entry collection** — `src/db/queries/entries.ts` fetches all entries for a given day (`DailyEntryObj[]`)
-2. **Text conversion** — `src/utils/days/reflection/get-reflection.ts` formats entries into structured text (journal name + field labels/values)
-3. **LLM inference** — `@react-native-ai/llama` downloads a GGUF model, Vercel `ai` package's `generateText()` runs inference with a system prompt
-4. **Parsing** — JSON output is extracted via regex and validated with `reflectionSchema` (Zod)
-5. **Storage** — Result saved to `reflections` table (one per day, keyed by midnight timestamp)
-
-**Supported models** (defined in `src/constants/ai-models.ts`): Gemma 3 4B, Qwen 3 4B, Phi-4 Mini — all Q4_K_M quantization from HuggingFace.
-
-**Settings** are stored in the `settings` KVS table, managed by `src/hooks/settings/use-ai-reflection-settings.ts`:
-
-- `aiReflectionEnabled` — on/off toggle
-- `aiReflectionModelId` — selected GGUF model
-- `aiReflectionTime` — time of day to auto-generate (via `use-auto-reflection.ts`)
-
 ## Export / Import Pipeline
 
 **Journal template export** (`src/utils/journal/export-journal.ts`):

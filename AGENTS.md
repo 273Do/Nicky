@@ -29,15 +29,15 @@ chore: tooling / config changes
 
 Read the relevant guide before working in that area:
 
-| When                                     | Read                                                         |
-| ---------------------------------------- | ------------------------------------------------------------ |
-| Routing, navigation, tech stack          | [docs/guides/architecture.md](docs/guides/architecture.md)   |
-| Schema, migrations, Drizzle, LiveQuery   | [docs/guides/database.md](docs/guides/database.md)           |
-| SwiftUI components, Host, List, layout   | [docs/guides/swiftui-rules.md](docs/guides/swiftui-rules.md) |
-| Form patterns, serialization, settings   | [docs/guides/patterns.md](docs/guides/patterns.md)           |
-| AI reflection, export/import, local auth | [docs/guides/features.md](docs/guides/features.md)           |
-| Subscriptions, RevenueCat, paywall       | [docs/guides/purchases.md](docs/guides/purchases.md)         |
-| Imports, TypeScript, formatting, i18n    | [docs/guides/code-style.md](docs/guides/code-style.md)       |
+| When                                   | Read                                                         |
+| -------------------------------------- | ------------------------------------------------------------ |
+| Routing, navigation, tech stack        | [docs/guides/architecture.md](docs/guides/architecture.md)   |
+| Schema, migrations, Drizzle, LiveQuery | [docs/guides/database.md](docs/guides/database.md)           |
+| SwiftUI components, Host, List, layout | [docs/guides/swiftui-rules.md](docs/guides/swiftui-rules.md) |
+| Form patterns, serialization, settings | [docs/guides/patterns.md](docs/guides/patterns.md)           |
+| Export/import, local auth              | [docs/guides/features.md](docs/guides/features.md)           |
+| Subscriptions, RevenueCat, paywall     | [docs/guides/purchases.md](docs/guides/purchases.md)         |
+| Imports, TypeScript, formatting, i18n  | [docs/guides/code-style.md](docs/guides/code-style.md)       |
 
 <!--VITE PLUS START-->
 

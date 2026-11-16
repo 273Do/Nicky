@@ -5,6 +5,7 @@ import m0001 from "./0001_loud_sally_floyd.sql";
 import m0002 from "./0002_tiresome_brother_voodoo.sql";
 import m0003 from "./0003_foamy_frank_castle.sql";
 import m0004 from "./0004_groovy_blob.sql";
+import m0005 from "./0005_flashy_medusa.sql";
 import journal from "./meta/_journal.json";
 
 export default {
@@ -15,5 +16,6 @@ export default {
     m0002,
     m0003,
     m0004,
+    m0005,
   },
 };

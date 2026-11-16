@@ -48,13 +48,6 @@ export const startOfDay = (date: Date = new Date()): Date => {
   return d;
 };
 
-/**
- * 日付を 00:00:00.000 に正規化したタイムスタンプを返す
- * @param date 基準日付
- * @returns 正規化したタイムスタンプ
- */
-export const startOfDayTimestamp = (date: Date): number => startOfDay(date).getTime();
-
 /** 日付を n 日ずらす
  * @param date 基準日付
  * @param days 日数
@@ -64,16 +57,4 @@ export const addDays = (date: Date, days: number) => {
   const d = new Date(date);
   d.setDate(d.getDate() + days);
   return startOfDay(d);
-};
-
-/**
- * 現在時刻が指定時刻を過ぎているか（時・分のみ比較）
- * @param time 比較対象の時刻
- */
-export const isPastTime = (time: Date): boolean => {
-  const now = new Date();
-  return (
-    now.getHours() > time.getHours() ||
-    (now.getHours() === time.getHours() && now.getMinutes() >= time.getMinutes())
-  );
 };

@@ -16,8 +16,8 @@ src/app/
       [id].tsx                 # Entry detail  /entry/[id]?journalName=...
   days/
     _layout.tsx                # Stack — scoped to days tab
-    index.tsx                  # Daily reflection list
-    settings.tsx               # App settings (AI reflection, export, data management)
+    index.tsx                  # Daily entry list
+    settings.tsx               # App settings (notifications, export, data management)
   search/
     _layout.tsx                # Stack — scoped to search tab
     index.tsx                  # Journal entry search
@@ -46,8 +46,6 @@ src/app/
 | `expo-sqlite` + `drizzle-orm`              | Local SQLite persistence                                                                                                                                                                                |
 | `expo-crypto`                              | `Crypto.randomUUID()` for ID generation at the app layer                                                                                                                                                |
 | `PlatformColor`                            | Adaptive system colors: `"label"`, `"systemBackground"`, `"systemIndigo"`                                                                                                                               |
-| `@react-native-ai/llama`                   | On-device GGUF model download + inference via `downloadModel()` and `llama.languageModel()`                                                                                                             |
-| `ai` (Vercel AI SDK)                       | `generateText()` with structured prompts — used with llama model provider                                                                                                                               |
 | `@expensify/react-native-live-markdown`    | Live Markdown editor — import from `src/MarkdownTextInput` to avoid `parseExpensiMark` auto-loading `html-entities`. Custom `parser` must be a worklet.                                                 |
 | `@ronradtke/react-native-markdown-display` | Full Markdown rendering (headers, lists, code blocks) for longText view mode                                                                                                                            |
 | `expo-maps`                                | Apple Maps via `AppleMaps.View` — used for location field display                                                                                                                                       |
