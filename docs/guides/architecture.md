@@ -8,16 +8,15 @@ src/app/
   (journal)/
     _layout.tsx                # Stack — scoped to journal tab
     index.tsx                  # Journal screen (chip selector + entry list)
+    days.tsx                   # Days screen (swipeable per-day timeline), toggled from the journal header
+    settings.tsx               # App settings (notifications, export, data management)
+    paywall.tsx                # Nicky Pro paywall (modal)
     create.tsx                 # Create journal  /create
     edit.tsx                   # Edit journal  /edit?journalId=...
     onboarding.tsx             # Onboarding flow
     entry/
       create.tsx               # Create entry  /entry/create?journalId=...&journalName=...
       [id].tsx                 # Entry detail  /entry/[id]?journalName=...
-  days/
-    _layout.tsx                # Stack — scoped to days tab
-    index.tsx                  # Daily entry list
-    settings.tsx               # App settings (notifications, export, data management)
   search/
     _layout.tsx                # Stack — scoped to search tab
     index.tsx                  # Journal entry search
@@ -25,7 +24,9 @@ src/app/
 
 **Navigation flow:** Journal screen (chip select) → tap entry → `entry/[id]` (entry detail)
 
-**Key rule:** `NativeTabs` is the root navigator; `Stack` lives inside each tab group (`(journal)`, `days`, `search`). This keeps the tab bar visible when pushing screens.
+**View toggle:** The journal screen's header button pushes `days` with `animation: "none"`, hidden back button and swipe-back disabled, so it reads as a view switch; the Days screen's header button calls `router.back()`. There is no separate Days tab. Both screens share the header-left items (paywall, settings) via `useMainHeaderLeftItems`. Days stays a separate route (not a conditional render inside `index.tsx`) so its pan gesture mounts on its own screen
+
+**Key rule:** `NativeTabs` is the root navigator; `Stack` lives inside each tab group (`(journal)`, `search`). This keeps the tab bar visible when pushing screens.
 
 ## Naming Conventions
 

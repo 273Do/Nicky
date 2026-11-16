@@ -58,7 +58,7 @@ export function DaysCard({ journalEntries }: Props) {
               foregroundStyle({ type: "hierarchical", style: "primary" }),
               listRowSeparator("hidden"),
             ]}
-            onPress={() => router.push(`/days/entry/${entry.id}?journalName=${journal.name}`)}
+            onPress={() => router.push(`/(journal)/entry/${entry.id}?journalName=${journal.name}`)}
           >
             <HStack spacing={15} modifiers={[padding({ vertical: -5, leading: 10 })]}>
               {/* 縦線 */}

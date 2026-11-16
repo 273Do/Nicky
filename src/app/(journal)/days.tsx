@@ -25,17 +25,20 @@ import { DaysHeaderSlot } from "@/components/days/days-header-slot";
 import { DaysPageSlot } from "@/components/days/days-page-slot";
 import { DaysView } from "@/components/days/days-view";
 import { useDaysEntries } from "@/hooks/days/use-days-entries";
+import { useMainHeaderLeftItems } from "@/hooks/navigation/use-main-header-left-items";
 import { addDays, formatDateDays, startOfDay } from "@/utils/date";
 
 const SWIPE_THRESHOLD = 50;
 
 /**
- * Days 画面
+ * Days 画面 — 日付ごとのエントリーをスワイプで切り替える
+ * ジャーナル画面のヘッダーボタンからアニメーションなしで push され、戻るとジャーナル画面に戻る
  */
 export default function DaysScreen() {
   const { t } = useTranslation();
-  const { width: screenWidth } = useWindowDimensions();
   const router = useRouter();
+  const { width: screenWidth } = useWindowDimensions();
+  const headerLeftItems = useMainHeaderLeftItems();
 
   const today = startOfDay();
 
@@ -146,7 +149,6 @@ export default function DaysScreen() {
     <>
       <Stack.Screen
         options={{
-          headerLargeTitleEnabled: false,
           headerTitle: () => (
             <Pressable onPress={() => setShowCalendar(true)}>
               {/* 幅計測用（不可視・GlassView外） */}
@@ -191,12 +193,13 @@ export default function DaysScreen() {
               </GlassView>
             </Pressable>
           ),
+          unstable_headerLeftItems: () => headerLeftItems,
           unstable_headerRightItems: () => [
             {
               type: "button",
-              label: t("settings.title"),
-              icon: { type: "sfSymbol", name: "gearshape" },
-              onPress: () => router.navigate("/days/settings"),
+              label: t("tabs.journal"),
+              icon: { type: "sfSymbol", name: "books.vertical" },
+              onPress: () => router.back(),
             },
           ],
         }}

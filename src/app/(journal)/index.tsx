@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useColorScheme } from "react-native";
 
 import { Alert, Button, Host, Text } from "@expo/ui/swift-ui";
 import { eq } from "drizzle-orm";
@@ -13,6 +12,7 @@ import { db } from "@/db/client";
 import { deleteAllEntries } from "@/db/queries/entries";
 import { getJournalsQuery, JournalWithCountObj } from "@/db/queries/journals";
 import { settings } from "@/db/schemas";
+import { useMainHeaderLeftItems } from "@/hooks/navigation/use-main-header-left-items";
 import { useProGate } from "@/hooks/purchases/use-pro-gate";
 import { exportJournalEntries } from "@/utils/entry/export-entry";
 import { consumeCreatedJournalId } from "@/utils/journal/created-journal";
@@ -24,11 +24,7 @@ import { authenticate } from "@/utils/local-auth";
 export default function JournalScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const appIcon =
-    colorScheme === "dark"
-      ? require("@/assets/images/app-logo/nav-icon-dark.png")
-      : require("@/assets/images/app-logo/nav-icon.png");
+  const headerLeftItems = useMainHeaderLeftItems();
 
   const onboardingNavigated = useRef(false);
 
@@ -95,15 +91,14 @@ export default function JournalScreen() {
         options={{
           title: t("tabs.journal"),
           headerLargeTitleEnabled: true,
-          unstable_headerLeftItems: () => [
+          unstable_headerLeftItems: () => headerLeftItems,
+          unstable_headerRightItems: () => [
             {
               type: "button",
-              label: t("purchases.title"),
-              icon: { type: "image", source: appIcon, tinted: false },
-              onPress: () => router.push("/(journal)/paywall"),
+              label: t("tabs.days"),
+              icon: { type: "sfSymbol", name: "calendar.day.timeline.leading" },
+              onPress: () => router.push("/(journal)/days"),
             },
-          ],
-          unstable_headerRightItems: () => [
             {
               type: "button",
               label: t("journal.newJournal"),

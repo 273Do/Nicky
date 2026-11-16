@@ -63,15 +63,15 @@ Cancellation is **not** an error: it is detected with `code === PURCHASES_ERROR_
 
 ## UI
 
-| File                                               | Role                                                                         |
-| -------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `src/app/days/paywall.tsx`                         | Route, registered in `src/app/days/_layout.tsx` as `presentation: "modal"`   |
-| `src/components/purchases/paywall-view.tsx`        | The paywall itself (`Host` → `ScrollView`, segmented `Picker`, CTA, restore) |
-| `src/components/purchases/paywall-feature-row.tsx` | One benefit row (SF Symbol + title + description)                            |
-| `src/components/settings/subscription.tsx`         | Settings section: status, manage, restore                                    |
+| File                                               | Role                                                                            |
+| -------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `src/app/(journal)/paywall.tsx`                    | Route, registered in `src/app/(journal)/_layout.tsx` as `presentation: "modal"` |
+| `src/components/purchases/paywall-view.tsx`        | The paywall itself (`Host` → `ScrollView`, segmented `Picker`, CTA, restore)    |
+| `src/components/purchases/paywall-feature-row.tsx` | One benefit row (SF Symbol + title + description)                               |
+| `src/components/settings/subscription.tsx`         | Settings section: status, manage, restore                                       |
 
 - Prices always come from `pkg.product.priceString` / `pricePerMonthString`. Never format currency by hand
-- The route lives in the `days` stack because there is no root Stack (`NativeTabs` is the root). To open the paywall from another tab, add `src/app/(journal)/paywall.tsx` rendering the same `<PaywallView />` and register it in that stack
+- The route lives in the `(journal)` stack because there is no root Stack (`NativeTabs` is the root). To open the paywall from another tab, add a `paywall.tsx` rendering the same `<PaywallView />` to that tab's stack and register it there
 - Terms and privacy links are required on the paywall by App Store review. URLs are in `src/constants/legal.ts` — **currently placeholders**
 - "Restore Purchases" stays visible to non-subscribers (Apple requirement) and is in both the paywall and Settings
 
@@ -81,7 +81,7 @@ Cancellation is **not** an error: it is detected with `code === PURCHASES_ERROR_
 const { isPro, loading } = useSubscription();
 ```
 
-- Do **not** use the `disabled()` modifier: a disabled SwiftUI control swallows taps, leaving a dead row with no explanation. Keep the row live, show `Image systemName="lock.fill"` in `secondaryLabel`, and `router.navigate("/days/paywall")` on press
+- Do **not** use the `disabled()` modifier: a disabled SwiftUI control swallows taps, leaving a dead row with no explanation. Keep the row live, show `Image systemName="lock.fill"` in `secondaryLabel`, and `router.navigate("/(journal)/paywall")` on press
 - A `Toggle` cannot intercept before its value flips — replace it with a `Button` + `HStack` row
 - For non-interactive content, render an upsell `VStack` (`purchases.unlockTitle` / `unlockMessage` / `unlock`) instead, following the List ↔ VStack rule in `swiftui-rules.md`
 - Gate the **execution path** too, not just the UI (e.g. `createJournal` / `createEntry`, see below). Inside a handler, read the freshest value with `getSubscriptionSnapshot()`

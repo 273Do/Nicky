@@ -47,7 +47,7 @@ export function Subscription() {
             void openManageSubscription();
             return;
           }
-          router.navigate("/days/paywall");
+          router.navigate("/(journal)/paywall");
         }}
         modifiers={[foregroundStyle({ type: "color", color: PlatformColor("label") })]}
       >
