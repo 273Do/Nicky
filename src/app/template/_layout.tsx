@@ -20,6 +20,13 @@ export default function TemplateLayout() {
       }}
     >
       <Stack.Screen
+        name="settings"
+        options={{
+          title: t("settings.title"),
+          headerBackButtonMenuEnabled: true,
+        }}
+      />
+      <Stack.Screen
         name="paywall"
         options={{
           presentation: "modal",

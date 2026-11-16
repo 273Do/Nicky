@@ -142,18 +142,6 @@ export default function JournalScreen() {
                           type: "action" as const,
                           icon: {
                             type: "sfSymbol" as const,
-                            name: "ellipsis.circle" as const,
-                          },
-                          label: t("common.edit"),
-                          disabled: isLocked,
-                          onPress: () => {
-                            router.push(`/(journal)/edit?journalId=${activeJournal.id}`);
-                          },
-                        },
-                        {
-                          type: "action" as const,
-                          icon: {
-                            type: "sfSymbol" as const,
                             name: "square.and.arrow.up.on.square" as const,
                           },
                           label: t("entry.exportAllEntry"),

@@ -49,7 +49,7 @@ export default function JournalCreateScreen() {
       setCreatedJournalId(id);
       router.back();
     } catch (error) {
-      handleSaveError(error);
+      handleSaveError(error, "template");
     }
   };
 
@@ -81,7 +81,7 @@ export default function JournalCreateScreen() {
     if (removed) {
       Alert.alert(t("purchases.importLimitedTitle"), t("purchases.importLimitedMessage"), [
         { text: t("common.ok"), style: "cancel" },
-        { text: t("purchases.unlock"), onPress: () => router.navigate("/(journal)/paywall") },
+        { text: t("purchases.unlock"), onPress: () => router.navigate("/template/paywall") },
       ]);
     }
   };

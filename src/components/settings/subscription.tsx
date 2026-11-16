@@ -4,9 +4,8 @@ import { Alert, PlatformColor } from "react-native";
 
 import { Button, HStack, Section, Spacer, Text } from "@expo/ui/swift-ui";
 import { foregroundStyle } from "@expo/ui/swift-ui/modifiers";
-import { useRouter } from "expo-router";
 
-import { useSubscription } from "@/hooks/purchases/use-subscription";
+import { useProGate } from "@/hooks/purchases/use-pro-gate";
 import { openManageSubscription, restorePurchases } from "@/utils/purchases/purchase";
 
 /**
@@ -14,8 +13,8 @@ import { openManageSubscription, restorePurchases } from "@/utils/purchases/purc
  */
 export function Subscription() {
   const { t } = useTranslation();
-  const router = useRouter();
-  const { isPro, loading } = useSubscription();
+
+  const { isPro, loading, openPaywall } = useProGate();
   const [restoring, setRestoring] = useState(false);
   const restoringRef = useRef(false);
 
@@ -47,7 +46,7 @@ export function Subscription() {
             void openManageSubscription();
             return;
           }
-          router.navigate("/(journal)/paywall");
+          openPaywall();
         }}
         modifiers={[foregroundStyle({ type: "color", color: PlatformColor("label") })]}
       >

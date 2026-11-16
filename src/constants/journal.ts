@@ -143,10 +143,10 @@ export const journalIconSchema = z
 /**
  * ジャーナル共有リンクのベース URL（`?t=<署名付きデータ>` を付けて使う）
  *
- * expo-router により `src/app/(journal)/create.tsx` に解決される。
- * ユニバーサルリンクに移行する場合は `https://<domain>/create` に差し替える
+ * expo-router により `src/app/template/create.tsx` に解決される。
+ * ユニバーサルリンクに移行する場合は `https://<domain>/template/create` に差し替える
  */
-export const TEMPLATE_LINK_BASE = "nicky://create";
+export const TEMPLATE_LINK_BASE = "nicky://template/create";
 
 /** 共有リンクに付ける署名の長さ（SHA-256 の16進数を先頭から切り詰める） */
 export const TEMPLATE_LINK_SIGNATURE_LENGTH = 16;

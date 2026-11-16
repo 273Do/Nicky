@@ -5,10 +5,12 @@ import { useColorScheme } from "react-native";
 
 import { useRouter } from "expo-router";
 
+import { paywallHref, PaywallTab } from "@/utils/navigation/paywall-href";
+
 /**
  * ジャーナル表示・Days 表示で共通のヘッダー左側アイテム（ペイウォール・設定）
  */
-export const useMainHeaderLeftItems = (tab: "journal" | "template"): NativeStackHeaderItem[] => {
+export const useMainHeaderLeftItems = (tab: PaywallTab): NativeStackHeaderItem[] => {
   const { t } = useTranslation();
   const router = useRouter();
   const colorScheme = useColorScheme();
@@ -17,14 +19,12 @@ export const useMainHeaderLeftItems = (tab: "journal" | "template"): NativeStack
       ? require("@/assets/images/app-logo/nav-icon-dark.png")
       : require("@/assets/images/app-logo/nav-icon.png");
 
-  const href = tab === "journal" ? "(journal)" : "template";
-
   return [
     {
       type: "button",
       label: t("purchases.title"),
       icon: { type: "image", source: appIcon, tinted: false },
-      onPress: () => router.push(`/${href}/paywall`),
+      onPress: () => router.push(paywallHref(tab)),
     },
   ];
 };
