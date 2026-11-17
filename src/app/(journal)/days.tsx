@@ -201,6 +201,18 @@ export default function DaysScreen() {
               icon: { type: "sfSymbol", name: "books.vertical" },
               onPress: () => router.back(),
             },
+            {
+              type: "menu" as const,
+              label: t("common.options"),
+              icon: {
+                type: "sfSymbol" as const,
+                name: "ellipsis" as const,
+              },
+              menu: {
+                // journalと同様bookmark, 日毎に書き出す処理を追加
+                items: [],
+              },
+            },
           ],
         }}
       />
