@@ -1,18 +1,10 @@
-import { and, count, eq, gte, lt } from "drizzle-orm";
+import { and, count, eq, gte, inArray, lt } from "drizzle-orm";
 
 import { db } from "@/db/client";
 import { addDays, startOfDay } from "@/utils/date";
 import { deleteMediaImage } from "@/utils/entry/media-file";
 
-import {
-  entries,
-  EntryObj,
-  EntryValueObj,
-  entryValues,
-  fields,
-  journals,
-  reflections,
-} from "../schemas";
+import { entries, EntryObj, EntryValueObj, entryValues, fields, journals } from "../schemas";
 
 /**
  * ジャーナルに紐付いたエントリー一覧をフィールドとともに取得するクエリ
@@ -125,6 +117,26 @@ export const deleteEntry = async (entryId: string) => {
 };
 
 /**
+ * 指定した複数のエントリーを削除するクエリ
+ * @param entryIds エントリーID一覧
+ */
+export const deleteEntries = async (entryIds: string[]) => {
+  if (entryIds.length === 0) return;
+
+  const mediaValues = await db
+    .select({ value: entryValues.value })
+    .from(entryValues)
+    .innerJoin(fields, eq(entryValues.fieldId, fields.id))
+    .where(and(inArray(entryValues.entryId, entryIds), eq(fields.type, "media")));
+
+  await db.delete(entries).where(inArray(entries.id, entryIds));
+
+  for (const row of mediaValues) {
+    if (row.value) deleteMediaImage(row.value);
+  }
+};
+
+/**
  * 全てのエントリーを削除するクエリ
  * @param journalId ジャーナルID
  */
@@ -228,7 +240,7 @@ export const hasTodayEntryForOneEntry = (journalId: string): boolean => {
 };
 
 /**
- * すべてのジャーナル・エントリー・振り返りを削除する
+ * すべてのジャーナル・エントリーを削除する
  */
 export const deleteAllData = async () => {
   const mediaValues = await db.transaction(async (tx) => {
@@ -238,7 +250,6 @@ export const deleteAllData = async () => {
       .innerJoin(fields, eq(entryValues.fieldId, fields.id))
       .where(eq(fields.type, "media"));
 
-    await tx.delete(reflections);
     await tx.delete(entries);
     await tx.delete(journals);
 

@@ -13,9 +13,9 @@ import { Support } from "@/components/settings/support";
 import { deleteAllData } from "@/db/queries/entries";
 
 /**
- * Nicky 設定画面
+ * Nicky 設定画面の中身
  */
-export default function SettingsScreen() {
+export function SettingsView() {
   const [showDeleteAlert, setShowDeleteAlert] = useState<boolean>(false);
   const { t } = useTranslation();
 

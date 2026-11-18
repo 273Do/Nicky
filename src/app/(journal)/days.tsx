@@ -16,7 +16,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { BottomSheet, DatePicker, Host } from "@expo/ui/swift-ui";
+import { Alert, BottomSheet, Button, DatePicker, Host, Text as SwiftText } from "@expo/ui/swift-ui";
 import { datePickerStyle, tint } from "@expo/ui/swift-ui/modifiers";
 import { GlassView } from "expo-glass-effect";
 import { Stack, useRouter } from "expo-router";
@@ -24,18 +24,23 @@ import { Stack, useRouter } from "expo-router";
 import { DaysHeaderSlot } from "@/components/days/days-header-slot";
 import { DaysPageSlot } from "@/components/days/days-page-slot";
 import { DaysView } from "@/components/days/days-view";
+import { deleteEntries } from "@/db/queries/entries";
 import { useDaysEntries } from "@/hooks/days/use-days-entries";
+import { useMainHeaderLeftItems } from "@/hooks/navigation/use-main-header-left-items";
 import { addDays, formatDateDays, startOfDay } from "@/utils/date";
+import { exportDayEntries } from "@/utils/entry/export-entry";
 
 const SWIPE_THRESHOLD = 50;
 
 /**
- * Days 画面
+ * Days 画面 — 日付ごとのエントリーをスワイプで切り替える
+ * ジャーナル画面のヘッダーボタンからアニメーションなしで push され、戻るとジャーナル画面に戻る
  */
 export default function DaysScreen() {
   const { t } = useTranslation();
-  const { width: screenWidth } = useWindowDimensions();
   const router = useRouter();
+  const { width: screenWidth } = useWindowDimensions();
+  const headerLeftItems = useMainHeaderLeftItems("journal");
 
   const today = startOfDay();
 
@@ -47,7 +52,8 @@ export default function DaysScreen() {
     selectedDate: today,
     slotDates: [addDays(today, -1), today, addDays(today, 1)],
   }));
-  const [showCalendar, setShowCalendar] = useState(false);
+  const [showCalendar, setShowCalendar] = useState<boolean>(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState<boolean>(false);
 
   // Shared values
   const centerSlot = useSharedValue(1);
@@ -77,6 +83,9 @@ export default function DaysScreen() {
 
   // Data lifting — 1 query for entire range
   const entriesByDate = useDaysEntries(selectedDate);
+  // 表示中の日のエントリー（ロック中のジャーナルは含まない）
+  const selectedEntries = entriesByDate.get(selectedDate.getTime()) ?? [];
+  const hasEntries = selectedEntries.length > 0;
 
   // After swipe: recycle the off-screen slot, update selectedDate
   const afterSwipe = (newCenter: number, direction: "left" | "right") => {
@@ -146,7 +155,6 @@ export default function DaysScreen() {
     <>
       <Stack.Screen
         options={{
-          headerLargeTitleEnabled: false,
           headerTitle: () => (
             <Pressable onPress={() => setShowCalendar(true)}>
               {/* 幅計測用（不可視・GlassView外） */}
@@ -191,12 +199,51 @@ export default function DaysScreen() {
               </GlassView>
             </Pressable>
           ),
+          unstable_headerLeftItems: () => headerLeftItems,
           unstable_headerRightItems: () => [
             {
               type: "button",
-              label: t("settings.title"),
-              icon: { type: "sfSymbol", name: "gearshape" },
-              onPress: () => router.navigate("/days/settings"),
+              label: t("tabs.journal"),
+              icon: { type: "sfSymbol", name: "books.vertical" },
+              onPress: () => router.back(),
+            },
+            {
+              type: "menu" as const,
+              label: t("common.options"),
+              icon: {
+                type: "sfSymbol" as const,
+                name: "ellipsis" as const,
+              },
+              menu: {
+                title: formatDateDays(selectedDate),
+                items: [
+                  {
+                    type: "action" as const,
+                    icon: {
+                      type: "sfSymbol" as const,
+                      name: "square.and.arrow.up.on.square" as const,
+                    },
+                    label: t("entry.exportAllEntry"),
+                    state: "off" as const,
+                    disabled: !hasEntries,
+                    onPress: async () => {
+                      await exportDayEntries(selectedEntries, selectedDate);
+                    },
+                  },
+                  {
+                    type: "action" as const,
+                    label: t("journal.deleteAllEntries"),
+                    icon: {
+                      type: "sfSymbol" as const,
+                      name: "trash" as const,
+                    },
+                    state: "off" as const,
+                    destructive: true,
+                    disabled: !hasEntries,
+                    onPress: () => setShowDeleteAlert(true),
+                  },
+                ],
+              },
             },
           ],
         }}
@@ -228,6 +275,29 @@ export default function DaysScreen() {
             range={{ end: today }}
           />
         </BottomSheet>
+
+        <Alert
+          title={t("entry.deleteDayEntriesTitle", { date: formatDateDays(selectedDate) })}
+          isPresented={showDeleteAlert}
+          onIsPresentedChange={setShowDeleteAlert}
+        >
+          <Alert.Trigger>
+            <SwiftText>{""}</SwiftText>
+          </Alert.Trigger>
+          <Alert.Message>
+            <SwiftText>{t("journal.deleteConfirm")}</SwiftText>
+          </Alert.Message>
+          <Alert.Actions>
+            <Button label={t("common.cancel")} role="cancel" />
+            <Button
+              label={t("journal.deleteAll")}
+              role="destructive"
+              onPress={() => {
+                deleteEntries(selectedEntries.map((e) => e.id)).catch(console.error);
+              }}
+            />
+          </Alert.Actions>
+        </Alert>
       </Host>
     </>
   );

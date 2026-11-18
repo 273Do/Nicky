@@ -2,7 +2,11 @@
   "tabs": {
     "journal": "Journal",
     "days": "Days",
-    "search": "Search"
+    "search": "Search",
+    "template": "Templates"
+  },
+  "template": {
+    "title": "Templates"
   },
   "common": {
     "save": "Save",
@@ -51,7 +55,8 @@
     "unbookmark": "Remove Bookmark",
     "noEntries": "No Entries",
     "showLess": "Show Less",
-    "showMore": "Show {{count}} More"
+    "showMore": "Show {{count}} More",
+    "deleteDayEntriesTitle": "Delete All Entries on {{date}}?"
   },
   "field": {
     "text": "Text",
@@ -74,9 +79,6 @@
   "settings": {
     "title": "Settings",
     "notification": "Notifications",
-    "aiReflection": "AI Reflection",
-    "reflectionTime": "Reflection Time",
-    "clearModel": "Clear AI Model",
     "language": "Language",
     "currentLanguage": "English",
     "exportJournalDialogTitle": "Export Journal Template",
@@ -158,12 +160,8 @@
     "customJournalsDesc": "Create journals with text, numbers, dates, locations, photos, and more — tailored to how you want to record.",
     "dailyEntriesTitle": "Capture Every Moment",
     "dailyEntriesDesc": "Write entries, bookmark what matters, and find anything with search.",
-    "reflectionTitle": "AI-Powered Reflections",
-    "reflectionDesc": "Get personalized daily insights generated entirely on your device, on your schedule.",
     "importExportTitle": "Take It With You",
     "importExportDesc": "Import templates to get started quickly, and export your journals and entries anytime.",
-    "enableReflection": "Enable AI Reflection",
-    "downloadingModel": "Downloading AI model…",
     "getStarted": "Get Started"
   }
 }

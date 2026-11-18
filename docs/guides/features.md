@@ -1,23 +1,5 @@
 # Features
 
-## AI Reflection Pipeline
-
-On-device LLM generates daily reflections from journal entries:
-
-1. **Entry collection** — `src/db/queries/entries.ts` fetches all entries for a given day (`DailyEntryObj[]`)
-2. **Text conversion** — `src/utils/days/reflection/get-reflection.ts` formats entries into structured text (journal name + field labels/values)
-3. **LLM inference** — `@react-native-ai/llama` downloads a GGUF model, Vercel `ai` package's `generateText()` runs inference with a system prompt
-4. **Parsing** — JSON output is extracted via regex and validated with `reflectionSchema` (Zod)
-5. **Storage** — Result saved to `reflections` table (one per day, keyed by midnight timestamp)
-
-**Supported models** (defined in `src/constants/ai-models.ts`): Gemma 3 4B, Qwen 3 4B, Phi-4 Mini — all Q4_K_M quantization from HuggingFace.
-
-**Settings** are stored in the `settings` KVS table, managed by `src/hooks/settings/use-ai-reflection-settings.ts`:
-
-- `aiReflectionEnabled` — on/off toggle
-- `aiReflectionModelId` — selected GGUF model
-- `aiReflectionTime` — time of day to auto-generate (via `use-auto-reflection.ts`)
-
 ## Export / Import Pipeline
 
 **Journal template export** (`src/utils/journal/export-journal.ts`):
@@ -41,7 +23,7 @@ On-device LLM generates daily reflections from journal entries:
 - Icons and field types are stored as indexes into `JOURNAL_ICONS` / `fieldTypeSchema.options`. **Only append to these lists, never reorder** — an old link would silently map to a different icon / type and still pass the signature check
 - Signature: SHA-256 of the payload string, truncated to `TEMPLATE_LINK_SIGNATURE_LENGTH` (16 hex chars) and prepended: `t = <signature><lz-string compressToEncodedURIComponent(payload)>`. The value is wrapped in `encodeURIComponent` because the lz-string alphabet contains `+`, which query parsers may read as a space; `importJournalFromLink` also maps spaces back to `+` defensively
 - The signature is checked against the decompressed payload, not the link text. lz-string ignores anything after its end marker and the last character is often zero padding, so appending characters or dropping the last one can still decode to the same payload and pass — any change to the actual content is rejected
-- Import: `nicky://create?t=...` resolves to `src/app/(journal)/create.tsx`. `importJournalFromLink` → `decodeJournalLink` splits the signature, decompresses, verifies it, validates the tuple with Zod (`linkPayloadSchema`, index ranges included) and returns a `JournalTemplate` (the subset of `JournalDetail` the form needs); any failure shows `error.linkInvalid*`. The screen applies it with the same `applyImportedJournal` as the file import (Pro items stripped on the free plan)
+- Import: `nicky://template/create?t=...` resolves to `src/app/template/create.tsx`. `importJournalFromLink` → `decodeJournalLink` splits the signature, decompresses, verifies it, validates the tuple with Zod (`linkPayloadSchema`, index ranges included) and returns a `JournalTemplate` (the subset of `JournalDetail` the form needs); any failure shows `error.linkInvalid*`. The screen applies it with the same `applyImportedJournal` as the file import (Pro items stripped on the free plan)
 - Signature verification is async, so the link is applied from a `useEffect` (via `useEffectEvent`) instead of as initial state — it waits for `loading === false` so a Pro user's items aren't stripped during the subscription fetch, runs once (`useRef`), and clears `t` with `router.setParams`
 - `(journal)/_layout.tsx` sets `unstable_settings.anchor = "index"` so the journal list is placed beneath any deep-linked screen (e.g. a shared link), letting Back return to the list
 - Moving to universal links later: host `apple-app-site-association` on a domain, add `ios.associatedDomains` in `app.json`, and change `TEMPLATE_LINK_BASE` (`src/constants/journal.ts`) to `https://<domain>/create`. The route and the `t` format stay the same, so old `nicky://` links keep working

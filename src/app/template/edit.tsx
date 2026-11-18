@@ -58,7 +58,7 @@ function JournalEditForm({ journal }: FormProps) {
       await updateJournal(journal.id);
       router.back();
     } catch (error) {
-      handleSaveError(error);
+      handleSaveError(error, "template");
     }
   };
 

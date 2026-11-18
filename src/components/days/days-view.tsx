@@ -2,12 +2,11 @@ import { useTranslation } from "react-i18next";
 import { PlatformColor, Text, View } from "react-native";
 
 import { Host, List } from "@expo/ui/swift-ui";
-import { frame, listSectionSpacing, listStyle } from "@expo/ui/swift-ui/modifiers";
+import { frame, listStyle } from "@expo/ui/swift-ui/modifiers";
 
 import { type DailyEntryObj } from "@/db/queries/entries";
 
 import { DaysCard } from "./days-card";
-import { DaysReflection } from "./days-reflection";
 
 /** エントリーをジャーナルごとにグループ化 */
 const groupByJournal = (entries: DailyEntryObj[]): [string, DailyEntryObj[]][] => {
@@ -56,14 +55,7 @@ export function DaysView({ date, entries }: Props) {
   return (
     <View style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}>
       <Host key={date.getTime()} style={{ flex: 1 }} useViewportSizeMeasurement>
-        <List
-          modifiers={[
-            frame({ maxWidth: 9999, maxHeight: 9999 }),
-            listStyle("plain"),
-            listSectionSpacing(0),
-          ]}
-        >
-          <DaysReflection date={date} />
+        <List modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 }), listStyle("plain")]}>
           {groupByJournal(entries).map(([journalId, journalEntries]) => (
             <DaysCard key={journalId} journalEntries={journalEntries} />
           ))}

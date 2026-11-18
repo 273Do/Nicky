@@ -4,13 +4,12 @@
 
 Drizzle ORM + expo-sqlite. Schema is split by domain in `src/db/schemas/`:
 
-| File             | Tables                                            |
-| ---------------- | ------------------------------------------------- |
-| `journals.ts`    | `journals`                                        |
-| `fields.ts`      | `fields` (field definitions per journal)          |
-| `entries.ts`     | `entries`, `entry_values`                         |
-| `reflections.ts` | `reflections` (one AI-generated reflection/day)   |
-| `settings.ts`    | `settings` (KVS — key/value pairs for app config) |
+| File          | Tables                                            |
+| ------------- | ------------------------------------------------- |
+| `journals.ts` | `journals`                                        |
+| `fields.ts`   | `fields` (field definitions per journal)          |
+| `entries.ts`  | `entries`, `entry_values`                         |
+| `settings.ts` | `settings` (KVS — key/value pairs for app config) |
 
 ```mermaid
 erDiagram
@@ -47,17 +46,6 @@ erDiagram
         TEXT entryId FK
         TEXT fieldId FK
         TEXT value
-    }
-
-    reflections {
-        TEXT id PK
-        INTEGER date "unique, midnight timestamp"
-        TEXT title
-        TEXT firstCategory
-        TEXT firstContent
-        TEXT secondCategory
-        TEXT secondContent
-        INTEGER createdAt
     }
 
     settings {
