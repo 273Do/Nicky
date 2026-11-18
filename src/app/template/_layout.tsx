@@ -20,6 +20,13 @@ export default function TemplateLayout() {
       }}
     >
       <Stack.Screen
+        name="edit"
+        options={{
+          title: "",
+          headerLargeTitleEnabled: false,
+        }}
+      />
+      <Stack.Screen
         name="settings"
         options={{
           title: t("settings.title"),
