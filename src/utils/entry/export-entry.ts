@@ -5,7 +5,7 @@ import * as Sharing from "expo-sharing";
 import JSZip from "jszip";
 
 import { db } from "@/db/client";
-import { EntryDetailObj } from "@/db/queries/entries";
+import { DailyEntryObj, EntryDetailObj } from "@/db/queries/entries";
 import i18n from "@/i18n";
 
 import { formatFieldValue } from "./preview";
@@ -147,4 +147,28 @@ export const exportAllEntries = async (): Promise<void> => {
   });
 
   await exportEntriesAsZip(journals, "entries.zip", i18n.t("settings.exportAllEntries"));
+};
+
+/**
+ * 指定日のエントリーをジャーナルごとにフォルダ分けして zip で書き出すための関数
+ * @param entries 指定日のエントリー一覧
+ * @param date 対象日
+ */
+export const exportDayEntries = async (entries: DailyEntryObj[], date: Date): Promise<void> => {
+  const byJournal = new Map<string, { name: string; entries: EntryDetailObj[] }>();
+  for (const entry of entries) {
+    const group = byJournal.get(entry.journal.id);
+    if (group) group.entries.push(entry);
+    else byJournal.set(entry.journal.id, { name: entry.journal.name, entries: [entry] });
+  }
+
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+
+  await exportEntriesAsZip(
+    [...byJournal.values()],
+    `${y}-${m}-${d}_entries.zip`,
+    i18n.t("entry.exportDayEntries"),
+  );
 };

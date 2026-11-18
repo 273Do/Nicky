@@ -1,4 +1,4 @@
-import { and, count, eq, gte, lt } from "drizzle-orm";
+import { and, count, eq, gte, inArray, lt } from "drizzle-orm";
 
 import { db } from "@/db/client";
 import { addDays, startOfDay } from "@/utils/date";
@@ -111,6 +111,26 @@ export const deleteEntry = async (entryId: string) => {
   await db.delete(entries).where(eq(entries.id, entryId));
 
   // DB 削除成功後にメディア画像を削除
+  for (const row of mediaValues) {
+    if (row.value) deleteMediaImage(row.value);
+  }
+};
+
+/**
+ * 指定した複数のエントリーを削除するクエリ
+ * @param entryIds エントリーID一覧
+ */
+export const deleteEntries = async (entryIds: string[]) => {
+  if (entryIds.length === 0) return;
+
+  const mediaValues = await db
+    .select({ value: entryValues.value })
+    .from(entryValues)
+    .innerJoin(fields, eq(entryValues.fieldId, fields.id))
+    .where(and(inArray(entryValues.entryId, entryIds), eq(fields.type, "media")));
+
+  await db.delete(entries).where(inArray(entries.id, entryIds));
+
   for (const row of mediaValues) {
     if (row.value) deleteMediaImage(row.value);
   }

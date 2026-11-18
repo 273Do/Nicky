@@ -55,7 +55,8 @@
     "unbookmark": "ブックマークを解除",
     "noEntries": "エントリーなし",
     "showLess": "表示を減らす",
-    "showMore": "さらに{{count}}件表示"
+    "showMore": "さらに{{count}}件表示",
+    "deleteDayEntriesTitle": "{{date}}のエントリーをすべて削除しますか？"
   },
   "field": {
     "text": "テキスト",

@@ -55,7 +55,8 @@
     "unbookmark": "Remove Bookmark",
     "noEntries": "No Entries",
     "showLess": "Show Less",
-    "showMore": "Show {{count}} More"
+    "showMore": "Show {{count}} More",
+    "deleteDayEntriesTitle": "Delete All Entries on {{date}}?"
   },
   "field": {
     "text": "Text",
