@@ -6,16 +6,17 @@ import { font, foregroundStyle } from "@expo/ui/swift-ui/modifiers";
 import { type DailyEntryObj } from "@/db/queries/entries";
 import { buildPreviewEntry } from "@/utils/entry/preview";
 
-import { EntryRow } from "../entry/entry-row";
+import { type EntryBasePath, EntryRow } from "../entry/entry-row";
 
 type Props = {
   journalEntries: DailyEntryObj[];
+  basePath?: EntryBasePath;
 };
 
 /**
  * Days画面 — ジャーナル単位のタイムラインセクション
  */
-export function DaysCard({ journalEntries }: Props) {
+export function DaysCard({ journalEntries, basePath }: Props) {
   const { journal } = journalEntries[0];
 
   return (
@@ -39,7 +40,12 @@ export function DaysCard({ journalEntries }: Props) {
       }
     >
       {journalEntries.map((entry) => (
-        <EntryRow key={entry.id} journalName={journal.name} entry={buildPreviewEntry(entry)} />
+        <EntryRow
+          key={entry.id}
+          journalName={journal.name}
+          entry={buildPreviewEntry(entry)}
+          basePath={basePath}
+        />
       ))}
     </Section>
   );

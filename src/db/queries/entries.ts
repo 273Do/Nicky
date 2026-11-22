@@ -199,6 +199,19 @@ export const getEntriesByRangeQuery = (start: Date, end: Date) =>
     },
   });
 
+/**
+ * 全エントリーをジャーナル・フィールドとともに取得するクエリ
+ */
+export const getAllEntriesWithJournalQuery = () =>
+  db.query.entries.findMany({
+    with: {
+      journal: true,
+      values: {
+        with: { field: true },
+      },
+    },
+  });
+
 /** エントリー詳細の型 */
 export type EntryDetailObj = Awaited<ReturnType<typeof getEntriesQuery>>[number];
 

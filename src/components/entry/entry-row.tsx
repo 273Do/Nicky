@@ -9,6 +9,8 @@ import { bookmarkEntry, deleteEntry } from "@/db/queries/entries";
 import { formatDate } from "@/utils/date";
 import { PreviewEntryObj } from "@/utils/entry/preview";
 
+export type EntryBasePath = "/(journal)/entry" | "/search/entry";
+
 export const secondary = foregroundStyle({ type: "hierarchical", style: "secondary" });
 
 type Props = {
@@ -16,12 +18,14 @@ type Props = {
   journalName: string;
   /** エントリーデータ */
   entry: PreviewEntryObj;
+  /** エントリー詳細のパス */
+  basePath?: EntryBasePath;
 };
 
 /**
  * エントリー行
  */
-export function EntryRow({ journalName, entry }: Props) {
+export function EntryRow({ journalName, entry, basePath = "/(journal)/entry" }: Props) {
   const { t } = useTranslation();
   const router = useRouter();
 
@@ -30,7 +34,7 @@ export function EntryRow({ journalName, entry }: Props) {
       <ContextMenu.Trigger>
         <Button
           modifiers={[foregroundStyle({ type: "hierarchical", style: "primary" })]}
-          onPress={() => router.push(`/(journal)/entry/${entry.id}?journalName=${journalName}`)}
+          onPress={() => router.push(`${basePath}/${entry.id}?journalName=${journalName}`)}
         >
           <VStack alignment="leading" spacing={2}>
             <HStack alignment="center" spacing={6}>
@@ -57,7 +61,7 @@ export function EntryRow({ journalName, entry }: Props) {
           label={t("common.edit")}
           systemImage="ellipsis.circle"
           onPress={() =>
-            router.push(`/(journal)/entry/${entry.id}?journalName=${journalName}&edit=true`)
+            router.push(`${basePath}/${entry.id}?journalName=${journalName}&edit=true`)
           }
         />
         <Button
