@@ -14,7 +14,7 @@ import {
 import { DaysCard } from "@/components/days/days-card";
 import { type DailyEntryObj } from "@/db/queries/entries";
 
-/** エントリーをジャーナルごとにグループ化（並び順は維持） */
+/** エントリーをジャーナルごとにグループ化 */
 const groupByJournal = (entries: DailyEntryObj[]): [string, DailyEntryObj[]][] => {
   const map = new Map<string, DailyEntryObj[]>();
   for (const entry of entries) {
@@ -33,7 +33,7 @@ type Props = {
 };
 
 /**
- * 検索結果一覧（ジャーナルごとにセクション表示）
+ * 検索結果一覧
  */
 export function SearchResultsView({ query, results }: Props) {
   const { t } = useTranslation();
@@ -45,7 +45,6 @@ export function SearchResultsView({ query, results }: Props) {
       useViewportSizeMeasurement
     >
       {trimmed && results.length === 0 ? (
-        // ジャーナルのロック画面と同じレイアウト
         <VStack modifiers={[frame({ maxWidth: 9999, maxHeight: 9999 })]}>
           <Spacer />
           <Image systemName="magnifyingglass" color={PlatformColor("secondaryLabel")} size={42} />
