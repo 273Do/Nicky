@@ -24,12 +24,16 @@ src/app/
     paywall.tsx                # Nicky Pro paywall (modal)
   search/
     _layout.tsx                # Stack — scoped to search tab
-    index.tsx                  # Journal entry search
+    index.tsx                  # Journal entry search (header search bar, results grouped by journal)
+    entry/
+      [id].tsx                 # Entry detail — re-exports (journal)/entry/[id] so it opens inside the search tab
 ```
 
 **Navigation flow:** Journal screen (chip select) → tap entry → `entry/[id]` (entry detail)
 
 **View toggle:** The journal screen's header button pushes `days` with `animation: "none"`, hidden back button and swipe-back disabled, so it reads as a view switch; the Days screen's header button calls `router.back()`. There is no separate Days tab. Both screens share the header-left items (paywall, settings) via `useMainHeaderLeftItems`. Days stays a separate route (not a conditional render inside `index.tsx`) so its pan gesture mounts on its own screen
+
+**Search:** `useSearchEntries` filters all entries in JS (title + every field's display value, all space-separated terms must match, locked journals excluded). Rows push `/search/entry/[id]` via `EntryRow`'s `basePath` so the search tab stays selected.
 
 **Journal management:** Creating and editing journals happens only in the template tab. Locked journals require Face ID / Touch ID before the edit screen opens.
 

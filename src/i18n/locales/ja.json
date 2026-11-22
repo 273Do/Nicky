@@ -27,8 +27,8 @@
     "bookmarkedOnly": "ブックマーク",
     "deleteJournal": "ジャーナルを削除",
     "deleteAllEntries": "すべてのエントリーを削除",
-    "deleteJournalTitle": "\u201c{{name}}\u201dを削除しますか？",
-    "deleteAllEntriesTitle": "\u201c{{name}}\u201dのすべてのエントリーを削除しますか？",
+    "deleteJournalTitle": "“{{name}}”を削除しますか？",
+    "deleteAllEntriesTitle": "“{{name}}”のすべてのエントリーを削除しますか？",
     "deleteConfirm": "この操作は取り消せません。",
     "deleteAll": "すべて削除",
     "namePlaceholder": "名前",
@@ -151,7 +151,9 @@
   },
   "search": {
     "title": "検索",
-    "placeholder": "検索"
+    "placeholder": "検索",
+    "noResults": "“{{query}}”の検索結果なし",
+    "noResultsDesc": "スペルをチェックするか、新規検索をしてみてください。"
   },
   "onboarding": {
     "welcome": "Nickyへようこそ",
