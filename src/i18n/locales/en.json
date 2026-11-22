@@ -27,8 +27,8 @@
     "bookmarkedOnly": "Bookmarked",
     "deleteJournal": "Delete Journal",
     "deleteAllEntries": "Delete All Entries",
-    "deleteJournalTitle": "Delete \u201c{{name}}\u201d?",
-    "deleteAllEntriesTitle": "Delete All Entries in \u201c{{name}}\u201d?",
+    "deleteJournalTitle": "Delete “{{name}}”?",
+    "deleteAllEntriesTitle": "Delete All Entries in “{{name}}”?",
     "deleteConfirm": "This action cannot be undone.",
     "deleteAll": "Delete All",
     "namePlaceholder": "Name",
@@ -151,7 +151,9 @@
   },
   "search": {
     "title": "Search",
-    "placeholder": "Search"
+    "placeholder": "Search",
+    "noResults": "No Results for “{{query}}”",
+    "noResultsDesc": "Check the spelling or try a new search."
   },
   "onboarding": {
     "welcome": "Welcome to Nicky",
